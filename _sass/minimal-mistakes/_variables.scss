@@ -6,17 +6,17 @@
    Typography
    ========================================================================== */
 
-$doc-font-size: 16 !default;
+$doc-font-size: 18 !default;
 
 /* paragraph indention */
 $paragraph-indent: false !default; // true, false (default)
 $indent-var: 1.3em !default;
 
 /* system typefaces */
-$serif: Georgia, Times, serif !default;
-$sans-serif: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI",
-  "Helvetica Neue", "Lucida Grande", Arial, sans-serif !default;
-$monospace: Monaco, Consolas, "Lucida Console", monospace !default;
+$serif: "Libertinus Serif", "Palatino Linotype", Palatino, Georgia, serif !default;
+$sans-serif: "Source Sans 3", "Freight Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+   "Helvetica Neue", Arial, sans-serif !default;
+$monospace: "JetBrains Mono", Monaco, Consolas, "Lucida Console", monospace !default;
 
 /* sans serif typefaces */
 $sans-serif-narrow: $sans-serif !default;
@@ -29,7 +29,7 @@ $bodoni: "Bodoni MT", serif !default;
 $calisto: "Calisto MT", serif !default;
 $garamond: Garamond, serif !default;
 
-$global-font-family: $sans-serif !default;
+$global-font-family: $serif !default;
 $header-font-family: $sans-serif !default;
 $caption-font-family: $serif !default;
 
@@ -44,7 +44,7 @@ $type-size-7: 0.6875em !default; // ~11px
 $type-size-8: 0.625em !default; // ~10px
 
 /* headline scale */
-$h-size-1: 1.563em !default; // ~25.008px
+$h-size-1: 2em !default; // ~36px at the LW hybrid base size
 $h-size-2: 1.25em !default; // ~20px
 $h-size-3: 1.125em !default; // ~18px
 $h-size-4: 1.0625em !default; // ~17px

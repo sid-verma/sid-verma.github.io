@@ -1,0 +1,24 @@
+<nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    {% for item in site.data.navigation.main %}
+      {% assign active = false %}
+      {% if page.url == item.url or page.url contains item.url and item.url != "/" %}
+        {% assign active = true %}
+      {% endif %}
+      <a class="lw-left-nav__link{% if active %} is-active{% endif %}" href="{{ item.url | relative_url }}"{% if active %} aria-current="page"{% endif %}>
+        {% if item.icon %}<i class="fas fa-{{ item.icon }}" aria-hidden="true"></i>{% endif %}
+        <span>{{ item.title }}</span>
+      </a>
+    {% endfor %}
+  </section>
+  {% for section in site.data.navigation.sidebar %}
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">{{ section.title }}</h2>
+      <ul class="lw-left-nav__children">
+        {% for child in section.children %}
+          <li><a href="{{ child.url | relative_url }}">{{ child.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endfor %}
+</nav>

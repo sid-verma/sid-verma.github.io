@@ -12,15 +12,15 @@
 
 # theme                  : "theme: jekyll-theme-hydejack"
 # remote_theme           : "mmistakes/minimal-mistakes"
-minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+minimal_mistakes_skin    : "lesswrong-hybrid"
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Site Title"
+title                    : "AI & ML Engineering Blog"
 title_separator          : "-"
-subtitle                 : # site tagline that appears below site title in masthead
-name                     : "Your Name"
-description              : "An amazing website."
+subtitle                 : "Deep dives into ML, causal inference & AI systems"
+name                     : "Sid Verma"
+description              : "Deep dives into machine learning, causal inference, ad tech, and AI systems."
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -59,8 +59,8 @@ reCaptcha:
 atom_feed:
   path                   : # blank (default) uses feed.xml
   hide                   : # true, false (default)
-search                   : # true, false (default)
-search_full_content      : # true, false (default)
+search                   : true
+search_full_content      : true
 search_provider          : # lunr (default), algolia, google
 algolia:
   application_id         : # YOUR_APPLICATION_ID
@@ -102,10 +102,10 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Sid Verma"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
-  location         : "Somewhere"
+  bio              : "ML Engineer · Causal Inference · Ad Tech · AI Systems"
+  location         : # "Location"
   email            :
   links:
     - label: "Email"
@@ -154,6 +154,7 @@ footer:
 include:
   - .htaccess
   - _pages
+  - _redirects
 exclude:
   - "*.sublime-project"
   - "*.sublime-workspace"
@@ -187,6 +188,10 @@ keep_files:
 encoding: "utf-8"
 markdown_ext: "markdown,mkdown,mkdn,mkd,md"
 
+collections:
+  sequences:
+    output: true
+
 
 # Conversion
 markdown: kramdown
@@ -215,8 +220,8 @@ sass:
 
 
 # Outputting
-permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
+permalink: /posts/:title/
+paginate: 20 # amount of posts to show
 paginate_path: /page:num/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
@@ -228,6 +233,7 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-drawio
 
 # mimic GitHub Pages with --safe
 whitelist:
@@ -236,6 +242,7 @@ whitelist:
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-drawio
 
 
 # Archives
@@ -274,6 +281,11 @@ compress_html:
   ignore:
     envs: development
 
+# Custom scripts. Particles.js is loaded lazily by assets/js/custom.js only when
+# a particles container is present.
+after_footer_scripts:
+  - "/assets/js/custom.js"
+
 
 # Defaults
 defaults:
@@ -283,8 +295,8 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: true
+      author_profile: false
       read_time: true
       comments: # true
-      share: true
-      related: true
+      share: false
+      related: false

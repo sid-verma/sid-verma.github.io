@@ -1,0 +1,18 @@
+{% assign spotlight = site.data.spotlight | first %}
+{% if spotlight %}
+  {% assign spotlight_post = site.posts | where: "slug", spotlight.post | first %}
+  <section class="lw-spotlight" aria-label="Spotlight">
+    {% include particles-hero.html %}
+    <div class="lw-spotlight__inner">
+      <p class="lw-spotlight__label">{{ spotlight.label | default: "Spotlight" }}</p>
+      <h2 class="lw-spotlight__title">
+        <a href="{{ spotlight.url | default: spotlight_post.url | relative_url }}">
+          {{ spotlight.title | default: spotlight_post.title }}
+        </a>
+      </h2>
+      <p class="lw-spotlight__excerpt">
+        {{ spotlight.excerpt | default: spotlight_post.excerpt | markdownify | strip_html | normalize_whitespace | truncate: 220 }}
+      </p>
+    </div>
+  </section>
+{% endif %}

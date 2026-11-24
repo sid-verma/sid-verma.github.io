@@ -1,0 +1,23 @@
+<section class="lw-bestof" aria-labelledby="lw-bestof-title" style="--atlas-image: url('{{ '/assets/images/home/renaissance-topic-sheet.jpg' | relative_url }}');">
+  <header class="lw-bestof-hero">
+    <p class="lw-bestof-hero__kicker">Selected essays</p>
+    <h1 id="lw-bestof-title">An Illustrated Atlas of Machine Learning, Causality, and AI Systems</h1>
+    <p>
+      A curated map through the main branches of this site: causal reasoning, ranking systems,
+      ad measurement, agentic AI, production ML, and the foundations underneath them.
+    </p>
+    <a class="lw-bestof-hero__recent" href="#recent-posts">Read the latest essays <span aria-hidden="true">↓</span></a>
+  </header>
+
+  <nav class="lw-bestof-tabs" aria-label="Homepage collections">
+    {% for collection in site.data.home_collections %}
+      <button class="lw-bestof-tab{% if forloop.first %} is-active{% endif %}" type="button" data-home-tab="{{ collection.slug }}" aria-controls="{{ collection.slug }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ collection.title }}</button>
+    {% endfor %}
+  </nav>
+
+  <div class="lw-bestof-catalog">
+    {% for collection in site.data.home_collections %}
+      {% include lw-home-collection.html collection=collection expanded=true %}
+    {% endfor %}
+  </div>
+</section>

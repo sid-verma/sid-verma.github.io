@@ -1,0 +1,68 @@
+.lw-sequence-index {
+  display: grid;
+  gap: 1rem;
+}
+
+.lw-sequence-card {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.lw-sequence-card h2,
+.lw-sequence-page h1 {
+  margin-top: 0;
+}
+
+.lw-sequence-card a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.lw-sequence-card a:hover {
+  color: var(--accent);
+}
+
+.lw-sequence-card__meta,
+.lw-sequence-card p {
+  color: var(--text-secondary);
+  font-family: $header-font-family;
+}
+
+.lw-sequence-posts {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.lw-sequence-posts li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.lw-sequence-nav {
+  margin: 1.2rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-family: $header-font-family;
+}
+
+.lw-sequence-nav__label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.lw-sequence-nav__links {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.45rem;
+}
+
+.lw-sequence-nav a {
+  color: var(--accent);
+  text-decoration: none;
+}

@@ -1,12 +1,41 @@
-# main links
 main:
-  - title: "Quick-Start Guide"
-    url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
-  # - title: "About"
-  #   url: https://mmistakes.github.io/minimal-mistakes/about/
-  # - title: "Sample Posts"
-  #   url: /year-archive/
-  # - title: "Sample Collections"
-  #   url: /collection-archive/
-  # - title: "Sitemap"
-  #   url: /sitemap/
+  - title: "Home"
+    url: /
+    icon: "home"
+  - title: "All Posts"
+    url: /posts/
+    icon: "newspaper"
+  - title: "Tags"
+    url: /tags/
+    icon: "tags"
+  - title: "Sequences"
+    url: /sequences/
+    icon: "stream"
+  - title: "About"
+    url: /about/
+    icon: "user"
+  - title: "RSS"
+    url: /feed.xml
+    icon: "rss"
+
+sidebar:
+  - title: "Featured Sequences"
+    children:
+      - title: "Causal Inference"
+        url: /sequences/causal-inference/
+      - title: "Ranking & Retrieval"
+        url: /sequences/ranking-retrieval/
+      - title: "Ad Tech & Measurement"
+        url: /sequences/ad-tech-measurement/
+      - title: "Agentic AI"
+        url: /sequences/agentic-ai/
+  - title: "Topics"
+    children:
+      - title: "causal-inference"
+        url: /tags/#causal-inference
+      - title: "ranking"
+        url: /tags/#ranking
+      - title: "ad-tech"
+        url: /tags/#ad-tech
+      - title: "llm"
+        url: /tags/#llm

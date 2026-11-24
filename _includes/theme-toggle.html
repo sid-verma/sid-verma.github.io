@@ -1,0 +1,39 @@
+<button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>

@@ -1,0 +1,5 @@
+- label: "Featured Sequence"
+  title: "Agentic AI: From RAG to Autonomous Systems"
+  post: "agentic-ai"
+  url: "/sequences/agentic-ai/"
+  excerpt: "A curated path through production LLMs, retrieval, agent loops, evaluation, and the engineering stack for autonomous systems."

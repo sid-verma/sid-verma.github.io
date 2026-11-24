@@ -1,0 +1,90 @@
+- slug: causal-inference
+  title: "Causal Inference"
+  eyebrow: "Natural experiments, treatment effects, and measurement"
+  description: "Essays on estimating what actually caused an outcome when the world refuses to run a clean experiment."
+  panel: 0
+  image_mode: muted
+  accent: "#8d6f44"
+  posts:
+    - joining-amazon-causal-inference
+    - introduction-to-econometrics
+    - difference-in-differences
+    - propensity-score-matching
+    - instrumental-variables
+    - double-machine-learning
+    - observational-data-challenges
+    - causal-discovery
+- slug: ranking-retrieval
+  title: "Ranking & Retrieval"
+  eyebrow: "Search, recommenders, and relevance systems"
+  description: "From lexical retrieval to neural ranking, with the evaluation machinery that keeps relevance honest."
+  panel: 1
+  accent: "#5f766b"
+  posts:
+    - information-retrieval-key-concepts
+    - evolution-of-information-retrieval
+    - introduction-to-recommender-systems
+    - matrix-factorization-basics
+    - learning-to-rank
+    - tree-based-ranking
+    - real-time-ranking-systems
+    - evaluation-metrics-for-ranking
+    - semantic-search
+    - neural-ranking-models
+- slug: ad-tech-measurement
+  title: "Ad Tech & Measurement"
+  eyebrow: "Auctions, incrementality, and marketplace metrics"
+  description: "A tour through ad delivery systems, lift measurement, budget pacing, and the traps hiding inside attribution."
+  panel: 2
+  accent: "#9b6846"
+  posts:
+    - marketing-incrementality-measurement
+    - uplift-modeling
+    - ab-testing-statistics
+    - ab-testing-designs
+    - randomized-control-trials-in-marketing
+    - incrementality-testing-at-scale
+    - deep-dive-into-ad-systems
+    - online-bid-optimization
+    - ad-tech-metrics-explained
+    - funnel-tradeoffs-in-advertising
+- slug: agentic-ai
+  title: "Agentic AI"
+  eyebrow: "LLMs, retrieval, tools, and autonomous loops"
+  description: "How language models become systems: retrieval, planning, tool use, evaluation, and the engineering stack around agents."
+  panel: 3
+  accent: "#6f6f9a"
+  posts:
+    - llms-in-production
+    - rag-retrieval-augmented-generation
+    - the-era-of-ai-agents
+    - deep-research-agents
+    - agentic-ai-resources
+    - agentic-ai
+- slug: ml-systems-evaluation
+  title: "ML Systems & Evaluation"
+  eyebrow: "Production models, objectives, and operating constraints"
+  description: "Practical engineering essays about model quality, platform choices, latency, objectives, and robust deployment."
+  panel: 4
+  accent: "#6f7f59"
+  posts:
+    - simplifying-ml-systems
+    - model-evaluation
+    - explainable-ml
+    - multi-objective-optimization
+    - contextual-bandits
+    - personalization-at-scale
+    - implicit-vs-explicit-feedback
+- slug: foundations
+  title: "Foundations"
+  eyebrow: "Theory, algorithms, and early intuitions"
+  description: "The conceptual bedrock: game theory, classical ML, boosting, learning theory, deep learning, and the arc of AI."
+  panel: 5
+  accent: "#7c5f8d"
+  posts:
+    - musings-on-game-theory
+    - overview-of-artificial-intelligence
+    - classical-machine-learning-algorithms
+    - statistical-learning-theory
+    - gradient-boosting-machines
+    - deep-learning-vs-classical-ml

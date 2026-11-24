@@ -1,0 +1,22 @@
+<aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    {% for post in site.posts limit:5 %}
+      <a class="lw-quick-take" href="{{ post.url | relative_url }}">
+        <span class="lw-quick-take__title">{{ post.title | default: post.slug }}</span>
+        <span class="lw-quick-take__meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+      </a>
+    {% endfor %}
+  </section>
+  {% if site.data.quick_takes %}
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      {% for item in site.data.quick_takes %}
+        <a class="lw-quick-take" href="{{ item.url | relative_url }}">
+          <span class="lw-quick-take__title">{{ item.title }}</span>
+          {% if item.note %}<span class="lw-quick-take__meta">{{ item.note }}</span>{% endif %}
+        </a>
+      {% endfor %}
+    </section>
+  {% endif %}
+</aside>
