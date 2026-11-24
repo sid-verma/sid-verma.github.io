@@ -74,3 +74,18 @@ task :preview do
 
   Jekyll::Commands::Serve.process(options)
 end
+
+namespace :site do
+  desc "Build the production Jekyll site"
+  task :build do
+    sh "bundle exec jekyll build"
+  end
+
+  desc "Audit curated data, payload budgets, Sass ownership, and built internal links"
+  task :audit do
+    ruby "script/site_audit.rb"
+  end
+
+  desc "Build and audit the site"
+  task :verify => [:build, :audit]
+end
