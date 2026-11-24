@@ -1,0 +1,39 @@
+/* ==========================================================================
+   Dark Premium Skin — AI/ML Engineering Blog
+   ========================================================================== */
+
+/* Core palette */
+$background-color: #0d1117 !default;
+$text-color: #c9d1d9 !default;
+$primary-color: #58a6ff !default;
+$muted-text-color: #8b949e !default;
+$border-color: #30363d !default;
+$footer-background-color: #161b22 !default;
+$code-background-color: #161b22 !default;
+$code-background-color-dark: #1c2129 !default;
+$form-background-color: #161b22 !default;
+
+/* Links */
+$link-color: #58a6ff !default;
+$link-color-hover: #79c0ff !default;
+$link-color-visited: mix(#fff, #58a6ff, 15%) !default;
+$masthead-link-color: #c9d1d9 !default;
+$masthead-link-color-hover: #58a6ff !default;
+$navicon-link-color-hover: mix(#fff, #58a6ff, 75%) !default;
+
+/* Semantic colours */
+$info-color: #58a6ff !default;
+$success-color: #3fb950 !default;
+$warning-color: #d29922 !default;
+$danger-color: #f85149 !default;
+$focus-color: $primary-color !default;
+$active-color: mix(#000, $primary-color, 40%) !default;
+
+/* Notices */
+$notice-background-mix: 15% !default;
+$code-notice-background-mix: 20% !default;
+
+/* Contrast helpers */
+$yiq-contrasted-dark-default: #c9d1d9 !default;
+$yiq-contrasted-light-default: #0d1117 !default;
+$yiq-contrasted-threshold: 175 !default;
