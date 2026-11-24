@@ -1,0 +1,10 @@
+{% assign chip_tag = include.tag | to_s %}
+{% assign chip_slug = chip_tag | slugify %}
+{% if include.url %}
+  {% assign chip_url = include.url %}
+{% else %}
+  {% assign chip_url = "/tags/#" | append: chip_slug %}
+{% endif %}
+<a class="lw-tag-chip{% if include.active %} is-active{% endif %}" href="{{ chip_url | relative_url }}" data-tag="{{ chip_tag | slugify }}">
+  {{ chip_tag }}
+</a>

@@ -1,0 +1,24 @@
+{% assign collection = include.collection %}
+<section
+  id="{{ collection.slug }}"
+  class="lw-bestof-section is-panel-{{ collection.panel }}{% if collection.image_mode %} is-{{ collection.image_mode }}{% endif %}"
+  data-home-collection="{{ collection.slug }}"
+  aria-labelledby="lw-bestof-title-{{ collection.slug }}"
+  aria-describedby="lw-bestof-desc-{{ collection.slug }}"
+  style="--collection-accent: {{ collection.accent | default: '#9a6e3a' }};"
+>
+  <div class="lw-bestof-section__label" aria-hidden="true">
+    <span class="lw-bestof-section__label-text">{{ collection.title }}</span>
+  </div>
+  <div class="lw-bestof-window">
+    <div class="lw-bestof-window__art" aria-hidden="true"></div>
+    <h2 id="lw-bestof-title-{{ collection.slug }}" class="screen-reader-text">{{ collection.title }}</h2>
+    <p id="lw-bestof-desc-{{ collection.slug }}" class="screen-reader-text">{{ collection.description }}</p>
+    <div class="lw-bestof-window__tiles">
+      {% for slug in collection.posts %}
+        {% assign collection_post = site.posts | where: "slug", slug | first %}
+        {% include lw-home-tile.html post=collection_post %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

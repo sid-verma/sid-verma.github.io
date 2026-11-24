@@ -1,0 +1,34 @@
+/* ==========================================================================
+   LessWrong Hybrid Skin
+   ========================================================================== */
+
+$background-color: #ffffff !default;
+$text-color: #212121 !default;
+$primary-color: #9a6e3a !default;
+$muted-text-color: #757575 !default;
+$border-color: #e0e0e0 !default;
+$footer-background-color: #fcfcfc !default;
+$code-background-color: #f2f2f2 !default;
+$code-background-color-dark: #e8e8e8 !default;
+$form-background-color: #fcfcfc !default;
+
+$link-color: #9a6e3a !default;
+$link-color-hover: #bf360c !default;
+$link-color-visited: mix(#000, #9a6e3a, 12%) !default;
+$masthead-link-color: #212121 !default;
+$masthead-link-color-hover: #9a6e3a !default;
+$navicon-link-color-hover: mix(#fff, #9a6e3a, 75%) !default;
+
+$info-color: #9a6e3a !default;
+$success-color: #5f9b65 !default;
+$warning-color: #b7772a !default;
+$danger-color: #e04e4b !default;
+$focus-color: $primary-color !default;
+$active-color: mix(#fff, $primary-color, 82%) !default;
+
+$notice-background-mix: 88% !default;
+$code-notice-background-mix: 92% !default;
+
+$yiq-contrasted-dark-default: #212121 !default;
+$yiq-contrasted-light-default: #ffffff !default;
+$yiq-contrasted-threshold: 175 !default;

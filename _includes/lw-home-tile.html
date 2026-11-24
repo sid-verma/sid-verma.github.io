@@ -1,0 +1,6 @@
+{% assign post = include.post %}
+{% if post %}
+  <a class="lw-bestof-tile" href="{{ post.url | relative_url }}" data-home-tile>
+    <span class="lw-bestof-tile__title">{{ post.title }}</span>
+  </a>
+{% endif %}

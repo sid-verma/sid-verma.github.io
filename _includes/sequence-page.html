@@ -1,0 +1,18 @@
+{% assign sequence = site.data.sequences | where: "slug", include.slug | first %}
+<div id="main" role="main">
+  <section class="archive lw-sequence-page">
+    <h1 id="page-title" class="page__title">{{ sequence.title }}</h1>
+    <p>{{ sequence.description }}</p>
+    <ol class="lw-sequence-posts">
+      {% for slug in sequence.posts %}
+        {% assign sequence_post = site.posts | where: "slug", slug | first %}
+        {% if sequence_post %}
+          <li>
+            <a href="{{ sequence_post.url | relative_url }}">{{ sequence_post.title }}</a>
+            <div class="lw-sequence-card__meta">{{ sequence_post.date | date: "%b %-d, %Y" }}</div>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ol>
+  </section>
+</div>

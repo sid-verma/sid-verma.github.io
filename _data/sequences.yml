@@ -1,0 +1,51 @@
+- slug: causal-inference
+  title: "Causal Inference"
+  description: "From econometric foundations to modern causal ML and experiment design."
+  posts:
+    - joining-amazon-causal-inference
+    - introduction-to-econometrics
+    - difference-in-differences
+    - propensity-score-matching
+    - instrumental-variables
+    - double-machine-learning
+    - observational-data-challenges
+    - causal-discovery
+- slug: ranking-retrieval
+  title: "Ranking & Retrieval"
+  description: "Search, recommendation, ranking objectives, and evaluation."
+  posts:
+    - information-retrieval-key-concepts
+    - evolution-of-information-retrieval
+    - introduction-to-recommender-systems
+    - matrix-factorization-basics
+    - learning-to-rank
+    - tree-based-ranking
+    - real-time-ranking-systems
+    - evaluation-metrics-for-ranking
+    - semantic-search
+    - neural-ranking-models
+- slug: ad-tech-measurement
+  title: "Ad Tech & Measurement"
+  description: "Incrementality, experimentation, auctions, and ad systems."
+  posts:
+    - marketing-incrementality-measurement
+    - uplift-modeling
+    - ab-testing-statistics
+    - ab-testing-designs
+    - randomized-control-trials-in-marketing
+    - incrementality-testing-at-scale
+    - deep-dive-into-ad-systems
+    - online-bid-optimization
+    - ad-tech-metrics-explained
+    - funnel-tradeoffs-in-advertising
+- slug: agentic-ai
+  title: "Agentic AI"
+  description: "LLMs in production, RAG, agents, and the emerging agent engineering stack."
+  posts:
+    - llms-in-production
+    - rag-retrieval-augmented-generation
+    - the-era-of-ai-agents
+    - deep-research-agents
+    - agentic-ai-resources
+    - agentic-ai
+    - future-of-ai

@@ -1,22 +1,41 @@
 ---
-layout: archive
+layout: default
 ---
 
-{{ content }}
+<div id="main" role="main">
+  <section class="archive lw-home">
+    {{ content }}
+    {% include lw-home-bestof.html %}
 
-<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3>
+    <div class="lw-feed__header" id="recent-posts">
+      <h2 class="lw-feed__title">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h2>
+      <nav class="lw-feed__tabs" aria-label="Explore writing">
+        <a class="lw-feed__tab is-active" href="#recent-posts">Recent</a>
+        <a class="lw-feed__tab" href="{{ '/sequences/' | relative_url }}">Sequences</a>
+        <a class="lw-feed__tab" href="#lw-bestof-title">Selected essays</a>
+      </nav>
+    </div>
 
-{% if paginator %}
-  {% assign posts = paginator.posts %}
-{% else %}
-  {% assign posts = site.posts %}
-{% endif %}
+    <div class="lw-tag-filter" aria-label="Filter posts by tag">
+      <button class="lw-tag-chip is-active" type="button" data-filter-tag="all" aria-pressed="true">all</button>
+      {% assign popular_tags = "causal-inference,ranking,ad-tech,llm,experimentation" | split: "," %}
+      {% for tag in popular_tags %}
+        <button class="lw-tag-chip" type="button" data-filter-tag="{{ tag | slugify }}" aria-pressed="false">{{ tag }}</button>
+      {% endfor %}
+    </div>
 
-{% assign entries_layout = page.entries_layout | default: 'list' %}
-<div class="entries-{{ entries_layout }}">
-  {% for post in posts %}
-    {% include archive-single.html type=entries_layout %}
-  {% endfor %}
+    <p class="lw-feed__status" data-lw-feed-status role="status" aria-live="polite">Browse all {{ site.posts.size }} essays, newest first.</p>
+    <p class="lw-feed__empty" data-lw-feed-empty hidden>No essays match this topic. Choose “all” to see every essay.</p>
+
+    <div class="lw-post-list" data-lw-post-list>
+      {% for post in site.posts %}
+        {% include lw-post-row.html post=post %}
+      {% endfor %}
+    </div>
+
+    <div class="lw-feed__more">
+      <button class="lw-load-more" type="button" data-lw-load-more hidden>Load more essays</button>
+      <a class="lw-feed__archive" href="{{ '/posts/' | relative_url }}">Browse the full archive <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
 </div>
-
-{% include paginator.html %}

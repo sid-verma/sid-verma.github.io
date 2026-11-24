@@ -1,0 +1,30 @@
+{% assign current_sequence = nil %}
+{% assign current_position = nil %}
+{% assign current_sequence_posts = nil %}
+{% for sequence in site.data.sequences %}
+  {% for slug in sequence.posts %}
+    {% if slug == page.slug %}
+      {% assign current_sequence = sequence %}
+      {% assign current_position = forloop.index0 %}
+      {% assign current_sequence_posts = sequence.posts %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{% if current_sequence %}
+  {% assign prev_position = current_position | minus: 1 %}
+  {% assign next_position = current_position | plus: 1 %}
+  {% assign prev_slug = current_sequence_posts[prev_position] %}
+  {% assign next_slug = current_sequence_posts[next_position] %}
+  {% assign prev_post = site.posts | where: "slug", prev_slug | first %}
+  {% assign next_post = site.posts | where: "slug", next_slug | first %}
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      {{ current_sequence.title }} · {{ current_position | plus: 1 }} / {{ current_sequence_posts | size }}
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span>{% if current_position > 0 and prev_post %}<a href="{{ prev_post.url | relative_url }}">Previous: {{ prev_post.title }}</a>{% endif %}</span>
+      <span>{% if next_post %}<a href="{{ next_post.url | relative_url }}">Next: {{ next_post.title }}</a>{% endif %}</span>
+    </div>
+  </nav>
+{% endif %}

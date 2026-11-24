@@ -1,5 +1,188 @@
 <!-- start custom head snippets -->
 
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+{% if page.layout == "home" %}
+<link rel="preload" as="image" href="{{ '/assets/images/home/renaissance-topic-sheet.jpg' | relative_url }}">
+{% endif %}
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
 <!-- insert favicons. use https://realfavicongenerator.net/ -->
 
 <!-- end custom head snippets -->

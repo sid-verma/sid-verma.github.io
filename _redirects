@@ -1,0 +1,5 @@
+---
+layout: none
+---
+{% for post in site.posts %}{% if post.categories and post.categories.size > 0 %}/{{ post.categories | join: "/" | slugify }}/{{ post.slug }}/ {{ post.url }} 301
+{% endif %}{% endfor %}

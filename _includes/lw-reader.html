@@ -1,0 +1,14 @@
+<div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>

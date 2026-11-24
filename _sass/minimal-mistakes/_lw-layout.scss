@@ -1,0 +1,124 @@
+:root {
+  --lw-header-height: 3.5rem;
+  --lw-motion-fast: 150ms;
+  --lw-motion-overlay: 200ms;
+  --lw-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+// Keep rem-based controls stable; the inherited theme enlarges the root at
+// several breakpoints, which also changes the sticky header's geometry.
+html {
+  font-size: 18px;
+  scroll-padding-top: calc(var(--lw-header-height) + 1rem);
+}
+
+body :focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 3px;
+}
+
+.lw-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.lw-shell {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 820px) minmax(200px, 240px);
+  gap: 1.5rem;
+  width: min(100% - 2rem, 1360px);
+  margin: 0 auto;
+  padding: 1.25rem 0 3rem;
+}
+
+.lw-main {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lw-main #main {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lw-main .archive,
+.lw-main .page {
+  float: none;
+  width: auto;
+  padding: 0;
+}
+
+.lw-right-rail,
+.lw-left-nav {
+  min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--lw-header-height, 3.5rem) + 1.25rem);
+}
+
+.page__footer {
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 1199px) {
+  .lw-shell {
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 240px);
+  }
+
+  .lw-left-nav {
+    position: fixed;
+    inset: var(--lw-header-height, 3.5rem) auto 0 0;
+    z-index: 1100;
+    width: min(78vw, 280px);
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-right: 1px solid var(--border);
+    transform: translateX(-105%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform var(--lw-motion-overlay) var(--lw-ease), visibility 0s linear var(--lw-motion-overlay);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  body.lw-nav-open .lw-left-nav {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+}
+
+@media (max-width: 899px) {
+  .lw-shell {
+    grid-template-columns: 1fr;
+    width: min(100% - 2rem, 820px);
+    gap: 1.5rem;
+  }
+
+  .lw-right-rail {
+    position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lw-motion-fast: 0ms;
+    --lw-motion-overlay: 0ms;
+  }
+
+  html:focus-within,
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
