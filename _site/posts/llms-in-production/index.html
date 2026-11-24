@@ -1,0 +1,1212 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>LLMs in Production: From Prompting to Fine-Tuning at Scale - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Large Language Models have transformed NLP, enabling capabilities that seemed impossible just years ago. But deploying LLMs in production requires understanding prompting strategies, fine-tuning approaches, and the engineering challenges of serving large models efficiently.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="LLMs in Production: From Prompting to Fine-Tuning at Scale">
+<meta property="og:url" content="http://localhost:4000/posts/llms-in-production/">
+
+
+  <meta property="og:description" content="Large Language Models have transformed NLP, enabling capabilities that seemed impossible just years ago. But deploying LLMs in production requires understanding prompting strategies, fine-tuning approaches, and the engineering challenges of serving large models efficiently.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-12-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/llms-in-production/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="LLMs in Production: From Prompting to Fine-Tuning at Scale">
+    
+    <meta itemprop="description" content="Large Language Models have transformed NLP, enabling capabilities that seemed impossible just years ago. But deploying LLMs in production requires understanding prompting strategies, fine-tuning approaches, and the engineering challenges of serving large models efficiently.">
+    
+    
+    <meta itemprop="datePublished" content="2024-12-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/llms-in-production/" class="u-url" itemprop="url">LLMs in Production: From Prompting to Fine-Tuning at Scale
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          7 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#large-language-models" data-tag="large-language-models">
+  large-language-models
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#prompting" data-tag="prompting">
+  prompting
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#nlp" data-tag="nlp">
+  nlp
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 1 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/rag-retrieval-augmented-generation/">Next: RAG: Retrieval-Augmented Generation for Grounded LLM Responses</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Large Language Models have transformed NLP, enabling capabilities that seemed impossible just years ago. But deploying LLMs in production requires understanding prompting strategies, fine-tuning approaches, and the engineering challenges of serving large models efficiently.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>The first LLM feature I helped ship "worked" in staging and demo environments—then promptly blew up in production. Latency doubled, costs spiked, and users found creative ways to elicit unsafe outputs the prompt never anticipated. We hadn’t built the right observability, guardrails, or evaluation, because we were still thinking like people shipping small classifiers instead of <strong>open-ended generative systems</strong>.</p>
+
+<p>GPT-4, Claude, Llama, and Gemini represent a paradigm shift. Instead of training task-specific models, we prompt general-purpose models or fine-tune them with minimal data. This changes how ML engineers approach NLP problems.</p>
+
+<p>But LLMs come with challenges: high latency, expensive inference, hallucination risks, and prompt sensitivity. Understanding how to use them effectively is essential for modern ML practitioners—and most of the work is <strong>systems, evaluation, and UX</strong>, not clever prompts.</p>
+
+<h2 id="the-llm-landscape">The LLM Landscape</h2>
+
+<h3 id="model-categories">Model Categories</h3>
+
+<p><strong>Proprietary APIs</strong>: OpenAI GPT-4, Anthropic Claude, Google Gemini</p>
+<ul>
+  <li>Easiest to start</li>
+  <li>No infrastructure management</li>
+  <li>Privacy and vendor lock-in concerns</li>
+</ul>
+
+<p><strong>Open-Weight Models</strong>: Llama, Mistral, Qwen</p>
+<ul>
+  <li>Can self-host</li>
+  <li>More control</li>
+  <li>Infrastructure complexity</li>
+</ul>
+
+<h3 id="key-architectures">Key Architectures</h3>
+
+<p><strong>Decoder-only transformers</strong>: GPT-style, text completion
+<strong>Encoder-decoder</strong>: T5-style, text-to-text</p>
+
+<h3 id="model-sizes">Model Sizes</h3>
+
+<ul>
+  <li><strong>7-13B</strong>: Runnable on single GPU</li>
+  <li><strong>70B</strong>: Multi-GPU, quantization helps</li>
+  <li><strong>100B+</strong>: Multi-node, expensive inference</li>
+</ul>
+
+<h2 id="prompting-strategies">Prompting Strategies</h2>
+
+<h3 id="zero-shot">Zero-Shot</h3>
+
+<p>Direct instruction without examples:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Classify the sentiment of this review as positive, negative, or neutral:
+"Great product, exactly what I needed!"
+Sentiment:
+</code></pre></div></div>
+
+<h3 id="few-shot">Few-Shot</h3>
+
+<p>Include examples in prompt:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Classify sentiment:
+Review: "Terrible, broke after one day." → negative
+Review: "It's okay, nothing special." → neutral
+Review: "Amazing quality!" → positive
+Review: "Great product, exactly what I needed!" →
+</code></pre></div></div>
+
+<h3 id="chain-of-thought-cot">Chain of Thought (CoT)</h3>
+
+<p>Encourage step-by-step reasoning:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Question: If a train travels 120 miles in 2 hours, how fast is it going?
+Let's think step by step:
+1. Speed = Distance / Time
+2. Distance = 120 miles
+3. Time = 2 hours
+4. Speed = 120 / 2 = 60 miles per hour
+Answer: 60 mph
+</code></pre></div></div>
+
+<h3 id="react-reason--act">ReAct (Reason + Act)</h3>
+
+<p>Interleave reasoning with tool use:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Question: What is the population of the capital of France?
+Thought: I need to find the capital of France first.
+Action: search("capital of France")
+Observation: Paris is the capital of France.
+Thought: Now I need to find the population of Paris.
+Action: search("population of Paris")
+Observation: The population of Paris is approximately 2.1 million.
+Answer: 2.1 million
+</code></pre></div></div>
+
+<h2 id="fine-tuning-approaches">Fine-Tuning Approaches</h2>
+
+<h3 id="full-fine-tuning">Full Fine-Tuning</h3>
+
+<p>Update all parameters. Requires:</p>
+<ul>
+  <li>Substantial compute</li>
+  <li>Risk of catastrophic forgetting</li>
+  <li>Best for significant domain shifts</li>
+</ul>
+
+<h3 id="lora-low-rank-adaptation">LoRA (Low-Rank Adaptation)</h3>
+
+<p>Train small adapter matrices:
+\(W' = W + BA\)</p>
+
+<p>where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll \min(d, k)$.</p>
+
+<p>Benefits:</p>
+<ul>
+  <li>10-100x fewer trainable parameters</li>
+  <li>Can merge into base weights for inference</li>
+</ul>
+
+<h3 id="qlora">QLoRA</h3>
+
+<p>LoRA with quantized base model:</p>
+<ul>
+  <li>4-bit quantization for base model</li>
+  <li>Full precision for LoRA adapters</li>
+  <li>Enables 70B fine-tuning on single GPU</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">TrainingArguments</span>
+<span class="kn">from</span> <span class="n">peft</span> <span class="kn">import</span> <span class="n">LoraConfig</span><span class="p">,</span> <span class="n">get_peft_model</span>
+<span class="kn">import</span> <span class="n">torch</span>
+
+<span class="c1"># Load model (using smaller model for example)
+</span><span class="n">model_name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">meta-llama/Llama-2-7b-hf</span><span class="sh">"</span>  <span class="c1"># Requires access
+</span>
+<span class="c1"># For demonstration, using a smaller model
+</span><span class="n">model_name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">microsoft/DialoGPT-medium</span><span class="sh">"</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="p">.</span><span class="nf">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="p">.</span><span class="nf">from_pretrained</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">,</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">float16</span><span class="p">,</span>
+    <span class="n">device_map</span><span class="o">=</span><span class="sh">"</span><span class="s">auto</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="c1"># Configure LoRA
+</span><span class="n">lora_config</span> <span class="o">=</span> <span class="nc">LoraConfig</span><span class="p">(</span>
+    <span class="n">r</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>                      <span class="c1"># Rank
+</span>    <span class="n">lora_alpha</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>             <span class="c1"># Scaling factor
+</span>    <span class="n">target_modules</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="s">q_proj</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">v_proj</span><span class="sh">"</span><span class="p">],</span>  <span class="c1"># Which layers to adapt
+</span>    <span class="n">lora_dropout</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">bias</span><span class="o">=</span><span class="sh">"</span><span class="s">none</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">task_type</span><span class="o">=</span><span class="sh">"</span><span class="s">CAUSAL_LM</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="c1"># Apply LoRA
+</span><span class="n">model</span> <span class="o">=</span> <span class="nf">get_peft_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lora_config</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">print_trainable_parameters</span><span class="p">()</span>  <span class="c1"># Shows dramatic reduction
+</span>
+<span class="c1"># Inference with prompting
+</span><span class="k">def</span> <span class="nf">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_new_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="nf">tokenizer</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="sh">"</span><span class="s">pt</span><span class="sh">"</span><span class="p">).</span><span class="nf">to</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">inputs</span><span class="p">,</span>
+            <span class="n">max_new_tokens</span><span class="o">=</span><span class="n">max_new_tokens</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+            <span class="n">do_sample</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+            <span class="n">pad_token_id</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">eos_token_id</span>
+        <span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="nf">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">):]</span>
+
+
+<span class="c1"># Structured output with function calling
+</span><span class="kn">import</span> <span class="n">json</span>
+
+<span class="k">def</span> <span class="nf">extract_entities</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Extract named entities using LLM</span><span class="sh">"""</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">Extract named entities from the following text.
+Return a JSON object with keys: </span><span class="sh">"</span><span class="s">people</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">organizations</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">locations</span><span class="sh">"</span><span class="s">.
+
+Text: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s">
+
+JSON:</span><span class="sh">"""</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="nf">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">entities</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entities</span>
+    <span class="k">except</span> <span class="n">json</span><span class="p">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="c1"># Fallback parsing
+</span>        <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Failed to parse</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">raw</span><span class="sh">"</span><span class="p">:</span> <span class="n">response</span><span class="p">}</span>
+
+
+<span class="c1"># Evaluation: measuring LLM performance
+</span><span class="kn">from</span> <span class="n">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">def</span> <span class="nf">evaluate_classification</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Evaluate LLM on classification task</span><span class="sh">"""</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Classify the sentiment as </span><span class="sh">'</span><span class="s">positive</span><span class="sh">'</span><span class="s"> or </span><span class="sh">'</span><span class="s">negative</span><span class="sh">'</span><span class="s">: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="s">Sentiment:</span><span class="sh">"</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="nf">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">10</span><span class="p">).</span><span class="nf">strip</span><span class="p">().</span><span class="nf">lower</span><span class="p">()</span>
+
+        <span class="c1"># Parse response
+</span>        <span class="k">if</span> <span class="sh">'</span><span class="s">positive</span><span class="sh">'</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="sh">'</span><span class="s">positive</span><span class="sh">'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="sh">'</span><span class="s">negative</span><span class="sh">'</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="sh">'</span><span class="s">negative</span><span class="sh">'</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="sh">'</span><span class="s">unknown</span><span class="sh">'</span><span class="p">)</span>
+
+    <span class="c1"># Calculate metrics
+</span>    <span class="n">valid_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="sh">'</span><span class="s">unknown</span><span class="sh">'</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">valid_idx</span><span class="p">:</span>
+        <span class="n">valid_preds</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">valid_idx</span><span class="p">]</span>
+        <span class="n">valid_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">valid_idx</span><span class="p">]</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="nf">accuracy_score</span><span class="p">(</span><span class="n">valid_labels</span><span class="p">,</span> <span class="n">valid_preds</span><span class="p">)</span>
+        <span class="n">coverage</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">)</span> <span class="o">/</span> <span class="nf">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">coverage</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="sh">'</span><span class="s">accuracy</span><span class="sh">'</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">,</span> <span class="sh">'</span><span class="s">coverage</span><span class="sh">'</span><span class="p">:</span> <span class="n">coverage</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="a-realistic-llm-feature-architecture">A Realistic LLM Feature Architecture</h2>
+
+<p>Regardless of vendor or model, most production LLM features end up looking like this:</p>
+
+<ol>
+  <li><strong>Request layer</strong>
+    <ul>
+      <li>Receives user input + context (auth, locale, product state)</li>
+    </ul>
+  </li>
+  <li><strong>Guardrails &amp; preprocessing</strong>
+    <ul>
+      <li>PII scrubbing, input validation, safety filters</li>
+    </ul>
+  </li>
+  <li><strong>Retrieval / tools (optional)</strong>
+    <ul>
+      <li>Vector search, SQL, HTTP APIs, internal services</li>
+    </ul>
+  </li>
+  <li><strong>Prompt construction</strong>
+    <ul>
+      <li>System + developer + user messages, tool schemas</li>
+    </ul>
+  </li>
+  <li><strong>Model invocation</strong>
+    <ul>
+      <li>Choose model (size, provider), decoding parameters</li>
+    </ul>
+  </li>
+  <li><strong>Post-processing</strong>
+    <ul>
+      <li>JSON parsing, schema validation, truncation, redaction</li>
+    </ul>
+  </li>
+  <li><strong>Logging &amp; feedback</strong>
+    <ul>
+      <li>Inputs, outputs, latency, cost, quality signals</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Thinking in terms of this pipeline makes it easier to reason about <strong>where</strong> failures come from (prompt, retrieval, model, post-processing, or surrounding systems).</p>
+
+<h2 id="production-considerations">Production Considerations</h2>
+
+<h3 id="latency-optimization">Latency Optimization</h3>
+
+<ul>
+  <li><strong>Quantization</strong>: 4-bit, 8-bit inference for open-weight models</li>
+  <li><strong>Batching</strong>: Group similar requests to amortize overhead</li>
+  <li><strong>KV-cache</strong>: Reuse past key/value states for multi-turn chats</li>
+  <li><strong>Speculative decoding</strong>: Use a small model to draft, a larger one to verify</li>
+</ul>
+
+<h3 id="cost-management">Cost Management</h3>
+
+<ul>
+  <li><strong>Token limits</strong>: Truncate long histories and overlong documents</li>
+  <li><strong>Caching</strong>: Cache responses for deterministic prompts or common queries</li>
+  <li><strong>Model selection</strong>: Route to the <strong>smallest model that meets quality bar</strong></li>
+  <li><strong>Async processing</strong>: Batch non-urgent jobs (e.g., summarizing logs overnight)</li>
+</ul>
+
+<h3 id="reliability">Reliability</h3>
+
+<ul>
+  <li><strong>Hallucination mitigation</strong>: Retrieval-augmented generation, constrained decoding, and explicit "I don’t know" paths</li>
+  <li><strong>Output validation</strong>: JSON schema checks, regex validation, type coercion</li>
+  <li><strong>Fallbacks</strong>: Simpler models, templates, or rule-based logic when the LLM fails</li>
+  <li><strong>Monitoring</strong>: Latency, error rates, cost, and <em>quality</em> proxies (e.g., rejection rate, manual review flags)</li>
+</ul>
+
+<h2 id="evaluation">Evaluation</h2>
+
+<h3 id="benchmarks">Benchmarks</h3>
+<ul>
+  <li>MMLU: Multi-task language understanding</li>
+  <li>HumanEval: Code generation</li>
+  <li>TruthfulQA: Factual accuracy</li>
+</ul>
+
+<h3 id="task-specific">Task-Specific</h3>
+<ul>
+  <li>Classification: Accuracy, F1</li>
+  <li>Generation: BLEU, ROUGE, human eval</li>
+  <li>Retrieval: Recall, precision</li>
+</ul>
+
+<h2 id="common-failure-modes-and-what-to-do-instead">Common Failure Modes (and What to Do Instead)</h2>
+
+<ol>
+  <li><strong>Unbounded prompts</strong>
+    <ul>
+      <li>Symptom: Prompt templates accrete requirements until every call is 10k+ tokens.</li>
+      <li>Fixes:
+        <ul>
+          <li>Introduce <strong>strict prompt budgets</strong> per feature.</li>
+          <li>Factor out common instructions into system messages instead of repeating.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Hallucinated structure</strong>
+    <ul>
+      <li>Symptom: Model returns malformed JSON or fields that don’t exist in your schema.</li>
+      <li>Fixes:
+        <ul>
+          <li>Use <strong>function calling / tool schemas</strong> where available.</li>
+          <li>Add robust JSON repair + schema validation layer.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Silent prompt drift</strong>
+    <ul>
+      <li>Symptom: A copy edit to the prompt or small model change regresses behavior.</li>
+      <li>Fixes:
+        <ul>
+          <li>Maintain a set of <strong>golden test cases</strong> and run them on every prompt/model change.</li>
+          <li>Version prompts and models; treat them like code.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>LLM overuse</strong>
+    <ul>
+      <li>Symptom: Using an LLM where a regex, lookup table, or classifier would suffice; costs and latency are high with no real benefit.</li>
+      <li>Fixes:
+        <ul>
+          <li>Add a “<strong>LLM or not?</strong>” review step in your design process.</li>
+          <li>Whenever an LLM is used, document what simpler baselines were tried.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="summary">Summary</h2>
+
+<p>LLMs enable powerful NLP with prompting and minimal fine-tuning. Key takeaways:</p>
+
+<ul>
+  <li>Prompting strategies (few-shot, CoT, ReAct) dramatically affect performance and should be treated as part of the model design.</li>
+  <li>LoRA/QLoRA enable efficient fine-tuning without full retrains, especially for domain adaptation.</li>
+  <li>Production LLM systems are <strong>pipelines</strong>, not just model calls: guardrails, retrieval, evaluation, and monitoring matter as much as the base model.</li>
+  <li>Cost, latency, and reliability constraints should drive model choice and architecture, not the other way around.</li>
+</ul>
+
+<h3 id="checklist-shipping-an-llm-feature-responsibly">Checklist: Shipping an LLM Feature Responsibly</h3>
+
+<p>Before you roll out a new LLM-powered feature to users, ask:</p>
+
+<ol>
+  <li><strong>Problem fit</strong>
+    <ul>
+      <li>Is an LLM actually needed, or would a smaller model or heuristic suffice?</li>
+    </ul>
+  </li>
+  <li><strong>Architecture</strong>
+    <ul>
+      <li>Do you have a clear request → guardrail → retrieval → prompt → model → post-processing → logging pipeline?</li>
+    </ul>
+  </li>
+  <li><strong>Evaluation</strong>
+    <ul>
+      <li>Do you have:
+        <ul>
+          <li>Offline test cases?</li>
+          <li>A plan for online A/B metrics?</li>
+          <li>A process for human review of edge cases?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Safety &amp; compliance</strong>
+    <ul>
+      <li>Are you handling PII correctly?</li>
+      <li>Do you have content and data usage policies enforced at the system level?</li>
+    </ul>
+  </li>
+  <li><strong>Operations</strong>
+    <ul>
+      <li>Are you monitoring latency, cost, and error rates?</li>
+      <li>Do you have a rollback plan if a new prompt/model misbehaves?</li>
+    </ul>
+  </li>
+</ol>
+
+<p>If the answer to several of these is "no," you’re still at the <strong>prototype</strong> stage. Borrow a page from production systems like Pinterest’s: treat your LLM feature like any other critical service—with SLAs, guardrails, and a clear story about how it creates value.</p>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Hu et al., “LoRA: Low-Rank Adaptation of Large Language Models”</li>
+  <li>Wei et al., “Chain-of-Thought Prompting Elicits Reasoning”</li>
+  <li>OpenAI Cookbook, Anthropic prompt engineering guide</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 1 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/rag-retrieval-augmented-generation/">Next: RAG: Retrieval-Augmented Generation for Grounded LLM Responses</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#large-language-models" class="page__taxonomy-item p-category" rel="tag">large-language-models</a><span class="sep">, </span>
+    
+      <a href="/tags/#llms" class="page__taxonomy-item p-category" rel="tag">llms</a><span class="sep">, </span>
+    
+      <a href="/tags/#nlp" class="page__taxonomy-item p-category" rel="tag">nlp</a><span class="sep">, </span>
+    
+      <a href="/tags/#prompting" class="page__taxonomy-item p-category" rel="tag">prompting</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2024-12-01T00:00:00-08:00">December 1, 2024</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/explainable-ml/" class="pagination--pager" title="Opening the Black Box: Explainability Methods for Modern ML
+">Previous</a>
+    
+    
+      <a href="/posts/randomized-control-trials-in-marketing/" class="pagination--pager" title="Randomized Control Trials in Marketing: Measuring True Incrementality
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

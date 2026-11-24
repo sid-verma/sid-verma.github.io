@@ -1,0 +1,1133 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>RAG: Retrieval-Augmented Generation for Grounded LLM Responses - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="In 2023, ChatGPT confidently told a user that the 2024 Olympics were canceled—because its training data cut off in 2021. LLMs are brilliant, but they’re frozen in time, prone to hallucination, and can’t access your private data.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="RAG: Retrieval-Augmented Generation for Grounded LLM Responses">
+<meta property="og:url" content="http://localhost:4000/posts/rag-retrieval-augmented-generation/">
+
+
+  <meta property="og:description" content="In 2023, ChatGPT confidently told a user that the 2024 Olympics were canceled—because its training data cut off in 2021. LLMs are brilliant, but they’re frozen in time, prone to hallucination, and can’t access your private data.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-11-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/rag-retrieval-augmented-generation/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="RAG: Retrieval-Augmented Generation for Grounded LLM Responses">
+    
+    <meta itemprop="description" content="  In 2023, ChatGPT confidently told a user that the 2024 Olympics were canceled—because its training data cut off in 2021. LLMs are brilliant, but they’re frozen in time, prone to hallucination, and can’t access your private data.">
+    
+    
+    <meta itemprop="datePublished" content="2025-11-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/rag-retrieval-augmented-generation/" class="u-url" itemprop="url">RAG: Retrieval-Augmented Generation for Grounded LLM Responses
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#rag" data-tag="rag">
+  rag
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#retrieval-augmented-generation" data-tag="retrieval-augmented-generation">
+  retrieval-augmented-generation
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#information-retrieval" data-tag="information-retrieval">
+  information-retrieval
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 2 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/llms-in-production/">Previous: LLMs in Production: From Prompting to Fine-Tuning at Scale</a></span>
+      <span><a href="/posts/the-era-of-ai-agents/">Next: The Era of AI Agents: From Chatbots to Systems That Act</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p>In 2023, ChatGPT confidently told a user that the 2024 Olympics were canceled—because its training data cut off in 2021. LLMs are brilliant, but they’re frozen in time, prone to hallucination, and can’t access your private data.</p>
+</blockquote>
+
+<p>Retrieval-Augmented Generation (RAG) solves all three problems by grounding LLM responses in retrieved documents. Instead of relying on what the model memorized during training, RAG retrieves current, relevant information and generates answers from that evidence.</p>
+
+<p>This architecture has become the standard for knowledge-intensive applications—from customer support to legal research to internal knowledge bases. Here’s how it works and how to build it.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>LLMs have remarkable capabilities but significant limitations: they hallucinate, their knowledge has a cutoff date, and they can’t access private data. RAG addresses all three by retrieving relevant documents and incorporating them into the generation process.</p>
+
+<p>Instead of relying solely on what the model memorized during training, RAG retrieves current, relevant information and generates responses grounded in that evidence.</p>
+
+<h2 id="rag-architecture">RAG Architecture</h2>
+
+<p>The diagram below shows the end-to-end RAG pipeline—from the user query, through retrieval and context construction, to grounded generation:</p>
+
+<iframe frameborder="0" style="width:100%;height:560px" src="https://viewer.diagrams.net/?highlight=0000ff&amp;edit=_blank&amp;layers=1&amp;nav=1&amp;title=RAG%20Architecture#R%3Cdiagram%20name%3D%22RAG%20Architecture%22%20id%3D%22rag-arch%22%3E%0A%20%20%20%20%3CmxGraphModel%20dx%3D%221422%22%20dy%3D%22794%22%20grid%3D%221%22%20gridSize%3D%2210%22%20guides%3D%221%22%20tooltips%3D%221%22%20connect%3D%221%22%20arrows%3D%221%22%20fold%3D%221%22%20page%3D%221%22%20pageScale%3D%221%22%20pageWidth%3D%22827%22%20pageHeight%3D%221169%22%20math%3D%220%22%20shadow%3D%220%22%3E%0A%20%20%20%20%20%20%3Croot%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%220%22%3E%3C%2FmxCell%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%221%22%20parent%3D%220%22%3E%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Title%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22title%22%20value%3D%22RAG%20Architecture%22%20style%3D%22text%3Bhtml%3D1%3BstrokeColor%3Dnone%3BfillColor%3Dnone%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3BwhiteSpace%3Dwrap%3Brounded%3D0%3BfontSize%3D16%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22250%22%20y%3D%2220%22%20width%3D%22327%22%20height%3D%2230%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20User%20Query%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22query%22%20value%3D%22User%20Query%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e3f2fd%3BstrokeColor%3D%231976d2%3BstrokeWidth%3D2%3BfontSize%3D12%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%2280%22%20width%3D%22200%22%20height%3D%2250%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Query%20Encoder%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22encoder%22%20value%3D%22Query%20Encoder%0A%28Embedding%20Model%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22170%22%20width%3D%22200%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Vector%20Database%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22vecdb%22%20value%3D%22Vector%20Database%0A%28FAISS%2FMilvus%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23f3e5f5%3BstrokeColor%3D%237b1fa2%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22270%22%20width%3D%22200%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Document%20Store%20%28side%29%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22docstore%22%20value%3D%22Document%20Store%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23f3e5f5%3BstrokeColor%3D%237b1fa2%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22580%22%20y%3D%22270%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Top-K%20Documents%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22topk%22%20value%3D%22Top-K%20Documents%0ARetrieved%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22370%22%20width%3D%22200%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Context%20Formatter%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22formatter%22%20value%3D%22Context%20Formatter%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22470%22%20width%3D%22200%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20LLM%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22llm%22%20value%3D%22LLM%0A%28Large%20Language%20Model%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BstrokeWidth%3D2%3BfontSize%3D11%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22570%22%20width%3D%22200%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Grounded%20Response%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22response%22%20value%3D%22Grounded%20Response%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e3f2fd%3BstrokeColor%3D%231976d2%3BstrokeWidth%3D2%3BfontSize%3D12%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%22670%22%20width%3D%22200%22%20height%3D%2250%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Arrows%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow1%22%20value%3D%22Embed%20query%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22query%22%20target%3D%22encoder%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22150%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22100%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow2%22%20value%3D%22Similarity%20search%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22encoder%22%20target%3D%22vecdb%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22250%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22200%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow3%22%20value%3D%22Stores%20embeddings%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D1%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0%3BentryY%3D0.5%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%3Bdashed%3D1%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22vecdb%22%20target%3D%22docstore%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22520%22%20y%3D%22300%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22570%22%20y%3D%22250%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow4%22%20value%3D%22Retrieve%20top-K%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22vecdb%22%20target%3D%22topk%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22350%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22300%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow5%22%20value%3D%22Format%20context%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22topk%22%20target%3D%22formatter%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22450%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22400%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow6%22%20value%3D%22Generate%20response%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22formatter%22%20target%3D%22llm%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22550%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22500%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow7%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22llm%22%20target%3D%22response%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22650%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22600%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%3C%2Froot%3E%0A%20%20%20%20%3C%2FmxGraphModel%3E%0A%20%20%3C%2Fdiagram%3E"></iframe>
+
+<p><em>Figure: RAG architecture connecting the query encoder, vector database, document store, and LLM to produce grounded answers.</em></p>
+
+<h3 id="basic-pipeline">Basic Pipeline</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Query → Retriever → Top-K Documents → Context + Query → LLM → Response
+</code></pre></div></div>
+
+<ol>
+  <li><strong>Query processing</strong>: Parse user query</li>
+  <li><strong>Retrieval</strong>: Find relevant documents</li>
+  <li><strong>Context construction</strong>: Format retrieved docs</li>
+  <li><strong>Generation</strong>: LLM produces answer using context</li>
+</ol>
+
+<h3 id="components">Components</h3>
+
+<p><strong>Retriever</strong>: Dense retrieval (embedding similarity), sparse (BM25), or hybrid.</p>
+
+<p><strong>Document store</strong>: Vector database for embeddings, search index for text.</p>
+
+<p><strong>Generator</strong>: LLM that incorporates retrieved context.</p>
+
+<p><strong>Chunking</strong>: Split documents into retrievable units (paragraphs, sections).</p>
+
+<h2 id="mathematical-framework">Mathematical Framework</h2>
+
+<h3 id="retrieval">Retrieval</h3>
+
+<p>Given query $q$, retrieve documents maximizing:
+\(d^* = \arg\max_{d \in D} s(q, d)\)</p>
+
+<p>where $s$ is similarity (dot product, cosine, learned).</p>
+
+<h3 id="generation-with-context">Generation with Context</h3>
+
+\[P(y | q, D) = P(y | q, \text{top-k}(D))\]
+
+<p>The LLM conditions on retrieved documents.</p>
+
+<h3 id="joint-optimization">Joint Optimization</h3>
+
+<p>End-to-end RAG:
+\(P(y | q) = \sum_{d \in D} P(y | q, d) \cdot P(d | q)\)</p>
+
+<p>Marginalize over retrieved documents.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">sentence_transformers</span> <span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">faiss</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="k">class</span> <span class="nc">SimpleRAG</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Basic RAG implementation</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span>
+                 <span class="n">embedding_model</span><span class="o">=</span><span class="sh">'</span><span class="s">all-MiniLM-L6-v2</span><span class="sh">'</span><span class="p">,</span>
+                 <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                 <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">embedder</span> <span class="o">=</span> <span class="nc">SentenceTransformer</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">chunk_overlap</span> <span class="o">=</span> <span class="n">chunk_overlap</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">chunk_document</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Split document into chunks</span><span class="sh">"""</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="nf">split</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">words</span><span class="p">),</span> <span class="n">self</span><span class="p">.</span><span class="n">chunk_size</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">chunk_overlap</span><span class="p">):</span>
+            <span class="n">chunk_words</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">chunk_size</span><span class="p">]</span>
+            <span class="n">chunk_text</span> <span class="o">=</span> <span class="sh">'</span><span class="s"> </span><span class="sh">'</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">chunk_words</span><span class="p">)</span>
+            <span class="n">chunks</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span>
+                <span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">:</span> <span class="n">chunk_text</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">start_idx</span><span class="sh">'</span><span class="p">:</span> <span class="n">i</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">chunks</span>
+
+    <span class="k">def</span> <span class="nf">add_documents</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
+        <span class="sh">"""</span><span class="s">Add documents to the index
+
+        documents: List of {</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="s">: str, </span><span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="s">: str}
+        </span><span class="sh">"""</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="n">doc_chunks</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">chunk_document</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">],</span> <span class="n">doc</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">))</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">chunks</span><span class="p">.</span><span class="nf">extend</span><span class="p">([</span><span class="n">c</span><span class="p">[</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">doc_chunks</span><span class="p">])</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">metadata</span><span class="p">.</span><span class="nf">extend</span><span class="p">(</span><span class="n">doc_chunks</span><span class="p">)</span>
+
+        <span class="c1"># Build FAISS index
+</span>        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">embedder</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">chunks</span><span class="p">,</span> <span class="n">show_progress_bar</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">embeddings</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="nf">norm</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="p">.</span><span class="nc">IndexFlatIP</span><span class="p">(</span><span class="n">embeddings</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">embeddings</span><span class="p">.</span><span class="nf">astype</span><span class="p">(</span><span class="sh">'</span><span class="s">float32</span><span class="sh">'</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">self</span>
+
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Retrieve relevant chunks</span><span class="sh">"""</span>
+        <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">embedder</span><span class="p">.</span><span class="nf">encode</span><span class="p">([</span><span class="n">query</span><span class="p">])</span>
+        <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">query_embedding</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="nf">norm</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">)</span>
+
+        <span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">.</span><span class="nf">astype</span><span class="p">(</span><span class="sh">'</span><span class="s">float32</span><span class="sh">'</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">results</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span>
+                <span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">:</span> <span class="n">self</span><span class="p">.</span><span class="n">chunks</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                <span class="sh">'</span><span class="s">score</span><span class="sh">'</span><span class="p">:</span> <span class="nf">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span>
+                <span class="sh">'</span><span class="s">metadata</span><span class="sh">'</span><span class="p">:</span> <span class="n">self</span><span class="p">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">format_context</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">retrieved</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Format retrieved chunks for LLM context</span><span class="sh">"""</span>
+        <span class="n">context_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">retrieved</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">metadata</span><span class="sh">'</span><span class="p">].</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">Unknown</span><span class="sh">'</span><span class="p">)</span>
+            <span class="n">context_parts</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">[Source </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s">]</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="sh">"</span><span class="se">\n\n</span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">context_parts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">generate_prompt</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Create prompt for LLM</span><span class="sh">"""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">Answer the question based on the provided context. If the context doesn</span><span class="sh">'</span><span class="s">t contain enough information, say so.
+
+Context:
+</span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s">
+
+Question: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s">
+
+Answer:</span><span class="sh">"""</span>
+
+
+<span class="k">class</span> <span class="nc">AdvancedRAG</span><span class="p">(</span><span class="n">SimpleRAG</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">RAG with advanced techniques</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">query_expansion</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">reranking</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">expand_query</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Generate query variations (in practice, use LLM)</span><span class="sh">"""</span>
+        <span class="c1"># Simplified: use the query as-is
+</span>        <span class="c1"># Real implementation would use LLM to generate variations
+</span>        <span class="k">return</span> <span class="p">[</span><span class="n">query</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">retrieve_with_expansion</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Retrieve with query expansion</span><span class="sh">"""</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">expand_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen_chunks</span> <span class="o">=</span> <span class="nf">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">retrieve</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="n">chunk_hash</span> <span class="o">=</span> <span class="nf">hash</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">chunk_hash</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen_chunks</span><span class="p">:</span>
+                    <span class="n">seen_chunks</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">chunk_hash</span><span class="p">)</span>
+                    <span class="n">all_results</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># Sort by score and take top k
+</span>        <span class="n">all_results</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="sh">'</span><span class="s">score</span><span class="sh">'</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_results</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">rerank</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">retrieved</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Rerank with cross-encoder (simplified)</span><span class="sh">"""</span>
+        <span class="c1"># In practice, use a cross-encoder model
+</span>        <span class="c1"># Here we just return as-is
+</span>        <span class="k">return</span> <span class="n">retrieved</span>
+
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Full RAG pipeline</span><span class="sh">"""</span>
+        <span class="c1"># Retrieve
+</span>        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">query_expansion</span><span class="p">:</span>
+            <span class="n">retrieved</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">retrieve_with_expansion</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">retrieved</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">retrieve</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Rerank
+</span>        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">reranking</span><span class="p">:</span>
+            <span class="n">retrieved</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">rerank</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">retrieved</span><span class="p">)[:</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># Format context
+</span>        <span class="n">context</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">format_context</span><span class="p">(</span><span class="n">retrieved</span><span class="p">)</span>
+
+        <span class="c1"># Generate prompt
+</span>        <span class="n">prompt</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">generate_prompt</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">'</span><span class="s">prompt</span><span class="sh">'</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">retrieved</span><span class="sh">'</span><span class="p">:</span> <span class="n">retrieved</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">context</span><span class="sh">'</span><span class="p">:</span> <span class="n">context</span>
+        <span class="p">}</span>
+
+
+<span class="c1"># Example usage
+</span><span class="n">documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">:</span> <span class="sh">"""</span><span class="s">Machine learning is a subset of artificial intelligence that enables
+        systems to learn and improve from experience without being explicitly programmed.
+        It focuses on developing algorithms that can access data and use it to learn for
+        themselves. The learning process begins with observations or data, such as examples,
+        direct experience, or instruction, to look for patterns in data and make better
+        decisions in the future.</span><span class="sh">"""</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">ML Overview</span><span class="sh">'</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">:</span> <span class="sh">"""</span><span class="s">Deep learning is a subset of machine learning that uses neural networks
+        with many layers. These deep neural networks are capable of learning hierarchical
+        representations of data. Deep learning has achieved remarkable success in computer
+        vision, natural language processing, and speech recognition.</span><span class="sh">"""</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">Deep Learning Intro</span><span class="sh">'</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">:</span> <span class="sh">"""</span><span class="s">Transformers are a type of neural network architecture that uses
+        self-attention mechanisms. Introduced in 2017, transformers have become the
+        foundation for most modern NLP models including BERT, GPT, and T5. They are
+        particularly effective for sequence-to-sequence tasks.</span><span class="sh">"""</span><span class="p">,</span>
+        <span class="sh">'</span><span class="s">source</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">Transformers</span><span class="sh">'</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># Build RAG system
+</span><span class="n">rag</span> <span class="o">=</span> <span class="nc">AdvancedRAG</span><span class="p">()</span>
+<span class="n">rag</span><span class="p">.</span><span class="nf">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="c1"># Query
+</span><span class="n">result</span> <span class="o">=</span> <span class="n">rag</span><span class="p">.</span><span class="nf">query</span><span class="p">(</span><span class="sh">"</span><span class="s">What is deep learning?</span><span class="sh">"</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Retrieved context:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="sh">'</span><span class="s">context</span><span class="sh">'</span><span class="p">])</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">Generated prompt:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="sh">'</span><span class="s">prompt</span><span class="sh">'</span><span class="p">][:</span><span class="mi">500</span><span class="p">]</span> <span class="o">+</span> <span class="sh">"</span><span class="s">...</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="advanced-techniques">Advanced Techniques</h2>
+
+<h3 id="query-expansion">Query Expansion</h3>
+
+<p>Generate multiple query variants:</p>
+<ul>
+  <li>Hypothetical document embeddings (HyDE)</li>
+  <li>LLM-generated query reformulations</li>
+  <li>Synonym expansion</li>
+</ul>
+
+<h3 id="hybrid-retrieval">Hybrid Retrieval</h3>
+
+<p>Combine dense and sparse:
+\(s_{hybrid} = \alpha \cdot s_{dense} + (1-\alpha) \cdot s_{sparse}\)</p>
+
+<h3 id="iterative-retrieval">Iterative Retrieval</h3>
+
+<p>Multi-hop reasoning:</p>
+<ol>
+  <li>Retrieve for initial query</li>
+  <li>Generate intermediate reasoning</li>
+  <li>Retrieve for refined query</li>
+  <li>Generate final answer</li>
+</ol>
+
+<h3 id="self-rag">Self-RAG</h3>
+
+<p>Model decides when to retrieve and evaluates its own outputs.</p>
+
+<h2 id="evaluation">Evaluation</h2>
+
+<h3 id="retrieval-quality">Retrieval Quality</h3>
+<ul>
+  <li>Recall@K: Are relevant docs retrieved?</li>
+  <li>MRR: Rank of first relevant doc</li>
+</ul>
+
+<h3 id="generation-quality">Generation Quality</h3>
+<ul>
+  <li>Faithfulness: Is answer supported by retrieved docs?</li>
+  <li>Relevance: Does answer address the question?</li>
+  <li>Hallucination rate: Unsupported claims</li>
+</ul>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Chunk wisely</strong>: Semantic boundaries, not arbitrary splits.</p>
+  </li>
+  <li>
+    <p><strong>Optimize retrieval first</strong>: Generation can’t fix bad retrieval.</p>
+  </li>
+  <li>
+    <p><strong>Include citations</strong>: Help users verify claims.</p>
+  </li>
+  <li>
+    <p><strong>Handle no-context gracefully</strong>: When nothing relevant retrieved.</p>
+  </li>
+  <li>
+    <p><strong>Monitor and iterate</strong>: Track failure modes in production.</p>
+  </li>
+</ol>
+
+<h2 id="summary">Summary</h2>
+
+<p>RAG grounds LLM responses in retrieved evidence. Key takeaways:</p>
+
+<ul>
+  <li>Retrieval quality determines overall quality</li>
+  <li>Chunk documents semantically for better retrieval</li>
+  <li>Hybrid and advanced techniques improve robustness</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Lewis et al., “Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks”</li>
+  <li>Gao et al., “Retrieval-Augmented Generation for Large Language Models: A Survey”</li>
+  <li>LangChain, LlamaIndex documentation</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 2 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/llms-in-production/">Previous: LLMs in Production: From Prompting to Fine-Tuning at Scale</a></span>
+      <span><a href="/posts/the-era-of-ai-agents/">Next: The Era of AI Agents: From Chatbots to Systems That Act</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#information-retrieval" class="page__taxonomy-item p-category" rel="tag">information-retrieval</a><span class="sep">, </span>
+    
+      <a href="/tags/#llms" class="page__taxonomy-item p-category" rel="tag">llms</a><span class="sep">, </span>
+    
+      <a href="/tags/#rag" class="page__taxonomy-item p-category" rel="tag">rag</a><span class="sep">, </span>
+    
+      <a href="/tags/#retrieval-augmented-generation" class="page__taxonomy-item p-category" rel="tag">retrieval-augmented-generation</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-11-01T00:00:00-07:00">November 1, 2025</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/ad-tech-metrics-explained/" class="pagination--pager" title="Ad Tech Metrics Explained: CTR, CVR, ROAS, and Incrementality
+">Previous</a>
+    
+    
+      <a href="/posts/the-era-of-ai-agents/" class="pagination--pager" title="The Era of AI Agents: From Chatbots to Systems That Act
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

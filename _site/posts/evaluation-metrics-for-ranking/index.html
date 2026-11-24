@@ -1,0 +1,1102 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="In 2009, Microsoft researchers published a paper showing that improving NDCG@10 by just 0.01 could increase revenue by millions of dollars. Yet many ML engineers optimize for accuracy or AUC—metrics that don’t measure what actually matters in ranking systems.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics">
+<meta property="og:url" content="http://localhost:4000/posts/evaluation-metrics-for-ranking/">
+
+
+  <meta property="og:description" content="In 2009, Microsoft researchers published a paper showing that improving NDCG@10 by just 0.01 could increase revenue by millions of dollars. Yet many ML engineers optimize for accuracy or AUC—metrics that don’t measure what actually matters in ranking systems.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-01-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/evaluation-metrics-for-ranking/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics">
+    
+    <meta itemprop="description" content="  In 2009, Microsoft researchers published a paper showing that improving NDCG@10 by just 0.01 could increase revenue by millions of dollars. Yet many ML engineers optimize for accuracy or AUC—metrics that don’t measure what actually matters in ranking systems.">
+    
+    
+    <meta itemprop="datePublished" content="2024-01-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/evaluation-metrics-for-ranking/" class="u-url" itemprop="url">NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#evaluation-metrics" data-tag="evaluation-metrics">
+  evaluation-metrics
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ranking" data-tag="ranking">
+  ranking
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ndcg" data-tag="ndcg">
+  ndcg
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#information-retrieval" data-tag="information-retrieval">
+  information-retrieval
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 8 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/real-time-ranking-systems/">Previous: Sub-Millisecond Decisions: Architecture of Real-Time Ranking Systems</a></span>
+      <span><a href="/posts/semantic-search/">Next: Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p>In 2009, Microsoft researchers published a paper showing that improving NDCG@10 by just 0.01 could increase revenue by millions of dollars. Yet many ML engineers optimize for accuracy or AUC—metrics that don’t measure what actually matters in ranking systems.</p>
+</blockquote>
+
+<p>Ranking isn’t classification. Users care about order, not probabilities. The first result matters more than the tenth. And relevance isn’t binary—some results are perfect, others are just okay.</p>
+
+<p>How do you know if your ranking model is good? Classification has accuracy and AUC. Regression has RMSE. Ranking has its own family of metrics: NDCG, MAP, MRR, and more. Understanding these metrics—and when to use which—is essential for evaluating and improving ranking systems. Choosing the wrong metric can make your model worse at what actually matters.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Ranking metrics differ fundamentally from classification or regression metrics. We care about relative order, not absolute scores. We care more about top positions than bottom ones. And we often have graded relevance, not just binary labels.</p>
+
+<p>Choosing the wrong metric leads you astray. Optimize for the wrong thing, and your model gets worse at what matters. This primer covers the major ranking metrics, their properties, and when to use each.</p>
+
+<h2 id="binary-vs-graded-relevance">Binary vs. Graded Relevance</h2>
+
+<p><strong>Binary</strong>: Relevant (1) or not (0)</p>
+<ul>
+  <li>Simpler labels</li>
+  <li>Metrics: Precision, Recall, MAP, MRR</li>
+</ul>
+
+<p><strong>Graded</strong>: Relevance on a scale (0-4)</p>
+<ul>
+  <li>Captures degrees of relevance</li>
+  <li>Metrics: NDCG, ERR</li>
+</ul>
+
+<h2 id="core-metrics">Core Metrics</h2>
+
+<p>Before diving into the formulas, this decision tree summarizes when each metric is most appropriate:</p>
+
+<iframe frameborder="0" style="width:100%;height:460px" src="https://viewer.diagrams.net/?highlight=0000ff&amp;edit=_blank&amp;layers=1&amp;nav=1&amp;title=Evaluation%20Metrics%20Decision%20Tree#R%3Cdiagram%20name%3D%22Evaluation%20Metrics%20Decision%20Tree%22%20id%3D%22decision-tree%22%3E%0A%20%20%20%20%3CmxGraphModel%20dx%3D%221422%22%20dy%3D%22794%22%20grid%3D%221%22%20gridSize%3D%2210%22%20guides%3D%221%22%20tooltips%3D%221%22%20connect%3D%221%22%20arrows%3D%221%22%20fold%3D%221%22%20page%3D%221%22%20pageScale%3D%221%22%20pageWidth%3D%22827%22%20pageHeight%3D%221169%22%20math%3D%220%22%20shadow%3D%220%22%3E%0A%20%20%20%20%20%20%3Croot%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%220%22%3E%3C%2FmxCell%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%221%22%20parent%3D%220%22%3E%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Title%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22title%22%20value%3D%22When%20to%20Use%20Which%20Ranking%20Metric%3F%22%20style%3D%22text%3Bhtml%3D1%3BstrokeColor%3Dnone%3BfillColor%3Dnone%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3BwhiteSpace%3Dwrap%3Brounded%3D0%3BfontSize%3D16%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22250%22%20y%3D%2220%22%20width%3D%22327%22%20height%3D%2230%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Start%20Decision%20Node%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22start%22%20value%3D%22What%20type%20of%20query%3F%22%20style%3D%22rhombus%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e3f2fd%3BstrokeColor%3D%231976d2%3BfontSize%3D12%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22320%22%20y%3D%2280%22%20width%3D%22180%22%20height%3D%22100%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Navigational%20Path%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22nav%22%20value%3D%22Navigational%0A%28one%20answer%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%2280%22%20y%3D%22240%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22mrr%22%20value%3D%22MRR%0A%28Mean%20Reciprocal%20Rank%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BfontSize%3D11%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%2280%22%20y%3D%22340%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Informational%20Path%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22info%22%20value%3D%22Informational%0A%28multiple%20docs%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22340%22%20y%3D%22240%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22relevance%22%20value%3D%22Relevance%20type%3F%22%20style%3D%22rhombus%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e3f2fd%3BstrokeColor%3D%231976d2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22340%22%20y%3D%22340%22%20width%3D%22140%22%20height%3D%2280%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22binary%22%20value%3D%22Binary%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22240%22%20y%3D%22460%22%20width%3D%22100%22%20height%3D%2250%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22map%22%20value%3D%22MAP%0A%28Mean%20Average%20Precision%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BfontSize%3D11%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22240%22%20y%3D%22550%22%20width%3D%22100%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22graded%22%20value%3D%22Graded%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22480%22%20y%3D%22460%22%20width%3D%22100%22%20height%3D%2250%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22ndcg%22%20value%3D%22NDCG%0A%28Normalized%20DCG%29%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BfontSize%3D11%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22480%22%20y%3D%22550%22%20width%3D%22100%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20E-commerce%20Path%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22ecom%22%20value%3D%22E-commerce%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22600%22%20y%3D%22240%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22ndcg-rev%22%20value%3D%22NDCG%20%2B%20Revenue%0Ametrics%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BfontSize%3D11%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22600%22%20y%3D%22340%22%20width%3D%22140%22%20height%3D%2260%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Arrows%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow1%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.25%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22start%22%20target%3D%22nav%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22370%22%20y%3D%22200%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22420%22%20y%3D%22150%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow2%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22nav%22%20target%3D%22mrr%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22150%22%20y%3D%22320%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22200%22%20y%3D%22270%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow3%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22start%22%20target%3D%22info%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22410%22%20y%3D%22200%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22460%22%20y%3D%22150%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow4%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22info%22%20target%3D%22relevance%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22410%22%20y%3D%22320%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22460%22%20y%3D%22270%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow5%22%20value%3D%22Binary%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22relevance%22%20target%3D%22binary%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22340%22%20y%3D%22380%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22390%22%20y%3D%22330%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow6%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22binary%22%20target%3D%22map%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22290%22%20y%3D%22510%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22340%22%20y%3D%22460%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow7%22%20value%3D%22Graded%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D1%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3BlabelPosition%3Dleft%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22relevance%22%20target%3D%22graded%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22480%22%20y%3D%22380%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22530%22%20y%3D%22330%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow8%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22graded%22%20target%3D%22ndcg%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22530%22%20y%3D%22510%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22580%22%20y%3D%22460%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow9%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.75%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22start%22%20target%3D%22ecom%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22455%22%20y%3D%22200%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22505%22%20y%3D%22150%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow10%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22ecom%22%20target%3D%22ndcg-rev%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22670%22%20y%3D%22320%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22720%22%20y%3D%22270%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%3C%2Froot%3E%0A%20%20%20%20%3C%2FmxGraphModel%3E%0A%20%20%3C%2Fdiagram%3E"></iframe>
+
+<p><em>Figure: Decision tree for choosing between MRR, MAP, and NDCG based on query type and relevance labels.</em></p>
+
+<h3 id="precisionk-and-recallk">Precision@K and Recall@K</h3>
+
+<p><strong>Precision@K</strong>: Fraction of top-K results that are relevant
+\(P@K = \frac{|\text{relevant} \cap \text{top-K}|}{K}\)</p>
+
+<p><strong>Recall@K</strong>: Fraction of all relevant documents in top-K
+\(R@K = \frac{|\text{relevant} \cap \text{top-K}|}{|\text{relevant}|}\)</p>
+
+<h3 id="mean-reciprocal-rank-mrr">Mean Reciprocal Rank (MRR)</h3>
+
+<p>Position of <strong>first</strong> relevant result:
+\(\text{MRR} = \frac{1}{|Q|}\sum_{q=1}^{|Q|} \frac{1}{\text{rank}_q}\)</p>
+
+<p>Best when there’s one main answer (navigational queries, QA).</p>
+
+<h3 id="mean-average-precision-map">Mean Average Precision (MAP)</h3>
+
+<p>Average precision across recall levels:
+\(\text{AP} = \frac{\sum_{k=1}^n P@k \cdot \text{rel}(k)}{|\text{relevant}|}\)
+\(\text{MAP} = \frac{1}{|Q|}\sum_{q=1}^{|Q|} \text{AP}_q\)</p>
+
+<p>Considers all relevant documents, not just first. Good for informational queries.</p>
+
+<h3 id="normalized-discounted-cumulative-gain-ndcg">Normalized Discounted Cumulative Gain (NDCG)</h3>
+
+<p>Handles graded relevance with position discounting:</p>
+
+\[\text{DCG@K} = \sum_{i=1}^K \frac{2^{rel_i} - 1}{\log_2(i+1)}\]
+
+\[\text{NDCG@K} = \frac{\text{DCG@K}}{\text{IDCG@K}}\]
+
+<p>where IDCG is DCG of ideal ranking. NDCG ∈ [0, 1].</p>
+
+<h3 id="expected-reciprocal-rank-err">Expected Reciprocal Rank (ERR)</h3>
+
+<p>Models cascading browsing—user stops at satisfying result:
+\(\text{ERR} = \sum_{r=1}^n \frac{1}{r} \prod_{i=1}^{r-1}(1 - R_i) \cdot R_r\)</p>
+
+<p>where $R_i = \frac{2^{rel_i} - 1}{2^{max_rel}}$ is probability of satisfaction.</p>
+
+<h2 id="mathematical-properties">Mathematical Properties</h2>
+
+<h3 id="position-discounting">Position Discounting</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Position Discount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Precision</td>
+      <td>None (all equal)</td>
+    </tr>
+    <tr>
+      <td>MAP</td>
+      <td>Implicit (through AP formula)</td>
+    </tr>
+    <tr>
+      <td>MRR</td>
+      <td>1/rank (first result only)</td>
+    </tr>
+    <tr>
+      <td>NDCG</td>
+      <td>1/log(rank+1)</td>
+    </tr>
+    <tr>
+      <td>ERR</td>
+      <td>Cascade model (stops when satisfied)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="normalization">Normalization</h3>
+
+<ul>
+  <li><strong>NDCG</strong>: Normalized by ideal ranking → [0, 1]</li>
+  <li><strong>MAP</strong>: Normalized by relevant count → [0, 1]</li>
+  <li><strong>Precision/Recall</strong>: Inherently bounded [0, 1]</li>
+</ul>
+
+<h3 id="cutoff-selection-k">Cutoff Selection (K)</h3>
+
+<p>Common choices:</p>
+<ul>
+  <li><strong>K=1</strong>: First result quality (navigational)</li>
+  <li><strong>K=3-5</strong>: Above the fold</li>
+  <li><strong>K=10</strong>: First page</li>
+  <li><strong>K=20-100</strong>: Deep evaluation</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">def</span> <span class="nf">dcg_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Discounted Cumulative Gain at K</span><span class="sh">"""</span>
+    <span class="n">relevances</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">relevances</span><span class="p">)[:</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">relevances</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">discounts</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">log2</span><span class="p">(</span><span class="n">positions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">gains</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">relevances</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">discounts</span>
+    <span class="k">return</span> <span class="n">gains</span><span class="p">.</span><span class="nf">sum</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">ndcg_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Normalized DCG at K</span><span class="sh">"""</span>
+    <span class="n">dcg</span> <span class="o">=</span> <span class="nf">dcg_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">ideal_relevances</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">relevances</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">idcg</span> <span class="o">=</span> <span class="nf">dcg_at_k</span><span class="p">(</span><span class="n">ideal_relevances</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dcg</span> <span class="o">/</span> <span class="n">idcg</span> <span class="k">if</span> <span class="n">idcg</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+<span class="k">def</span> <span class="nf">precision_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Precision at K (binary relevance)</span><span class="sh">"""</span>
+    <span class="k">return</span> <span class="nf">sum</span><span class="p">(</span><span class="n">relevances</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="n">k</span>
+
+<span class="k">def</span> <span class="nf">recall_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Recall at K (binary relevance)</span><span class="sh">"""</span>
+    <span class="n">total_relevant</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">relevances</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">total_relevant</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="nf">sum</span><span class="p">(</span><span class="n">relevances</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="n">total_relevant</span>
+
+<span class="k">def</span> <span class="nf">average_precision</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Average Precision for a single query</span><span class="sh">"""</span>
+    <span class="n">relevant_count</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">relevances</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">relevant_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">precisions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">relevances</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">relevances</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">precisions</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="nf">precision_at_k</span><span class="p">(</span><span class="n">relevances</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nf">sum</span><span class="p">(</span><span class="n">precisions</span><span class="p">)</span> <span class="o">/</span> <span class="n">relevant_count</span>
+
+<span class="k">def</span> <span class="nf">reciprocal_rank</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Reciprocal Rank (position of first relevant)</span><span class="sh">"""</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rel</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">relevances</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rel</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.0</span>
+
+<span class="k">def</span> <span class="nf">err</span><span class="p">(</span><span class="n">relevances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">max_grade</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Expected Reciprocal Rank</span><span class="sh">"""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">prob_stop</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rel</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">relevances</span><span class="p">):</span>
+        <span class="c1"># Probability of satisfaction at position i
+</span>        <span class="n">utility</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">rel</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">max_grade</span><span class="p">)</span>
+        <span class="n">prob_not_stopped</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">prob_stop</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">prob_not_stopped</span> <span class="o">*</span> <span class="n">utility</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">prob_stop</span> <span class="o">+=</span> <span class="n">prob_not_stopped</span> <span class="o">*</span> <span class="n">utility</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="c1"># Example usage
+</span><span class="n">relevances_graded</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Graded 0-4
+</span><span class="n">relevances_binary</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Binary
+</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">NDCG@5: </span><span class="si">{</span><span class="nf">ndcg_at_k</span><span class="p">(</span><span class="n">relevances_graded</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">NDCG@10: </span><span class="si">{</span><span class="nf">ndcg_at_k</span><span class="p">(</span><span class="n">relevances_graded</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Precision@5: </span><span class="si">{</span><span class="nf">precision_at_k</span><span class="p">(</span><span class="n">relevances_binary</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">MAP: </span><span class="si">{</span><span class="nf">average_precision</span><span class="p">(</span><span class="n">relevances_binary</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">MRR: </span><span class="si">{</span><span class="nf">reciprocal_rank</span><span class="p">(</span><span class="n">relevances_binary</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">ERR: </span><span class="si">{</span><span class="nf">err</span><span class="p">(</span><span class="n">relevances_graded</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Compare rankings
+</span><span class="n">ranking_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Good items first
+</span><span class="n">ranking_b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># Good items last
+</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Ranking A NDCG@4: </span><span class="si">{</span><span class="nf">ndcg_at_k</span><span class="p">(</span><span class="n">ranking_a</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Ranking B NDCG@4: </span><span class="si">{</span><span class="nf">ndcg_at_k</span><span class="p">(</span><span class="n">ranking_b</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="choosing-the-right-metric">Choosing the Right Metric</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query Type</th>
+      <th>Best Metric</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Navigational (one answer)</td>
+      <td>MRR</td>
+      <td>Find the one right result</td>
+    </tr>
+    <tr>
+      <td>Informational</td>
+      <td>MAP, NDCG</td>
+      <td>All relevant docs matter</td>
+    </tr>
+    <tr>
+      <td>Graded relevance</td>
+      <td>NDCG</td>
+      <td>Distinguishes relevance levels</td>
+    </tr>
+    <tr>
+      <td>E-commerce</td>
+      <td>NDCG + Revenue</td>
+      <td>Relevance + business value</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="common-pitfalls">Common Pitfalls</h2>
+
+<ol>
+  <li>
+    <p><strong>Wrong K</strong>: Using K=10 when users only see 3 results distorts evaluation.</p>
+  </li>
+  <li>
+    <p><strong>Binary when graded</strong>: Forcing binary labels loses information. Use graded relevant and NDCG.</p>
+  </li>
+  <li>
+    <p><strong>Ignoring ties</strong>: How do you score tied predictions? Break ties randomly for unbiased estimate.</p>
+  </li>
+  <li>
+    <p><strong>Aggregation method</strong>: Mean vs. median. Mean sensitive to outliers.</p>
+  </li>
+  <li>
+    <p><strong>Offline-online gap</strong>: High NDCG doesn’t guarantee high CTR. Validate online.</p>
+  </li>
+</ol>
+
+<h2 id="advanced-considerations">Advanced Considerations</h2>
+
+<h3 id="statistical-significance">Statistical Significance</h3>
+
+<p>Use paired tests comparing metrics across queries:</p>
+<ul>
+  <li>Paired t-test</li>
+  <li>Wilcoxon signed-rank</li>
+  <li>Bootstrap confidence intervals</li>
+</ul>
+
+<h3 id="cascade-metrics">Cascade Metrics</h3>
+
+<p>Model user browsing behavior:</p>
+<ul>
+  <li>Users examine results top-to-bottom</li>
+  <li>May stop at any relevant result</li>
+  <li>ERR captures this explicitly</li>
+</ul>
+
+<h3 id="diversity-metrics">Diversity Metrics</h3>
+
+<p>Standard metrics ignore redundancy:</p>
+<ul>
+  <li>α-NDCG penalizes redundant results</li>
+  <li>Intent-aware metrics cover subtopics</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>Ranking metrics capture different aspects of quality. Key takeaways:</p>
+
+<ul>
+  <li>NDCG for graded relevance with position discounting</li>
+  <li>MAP for binary relevance, all docs matter</li>
+  <li>MRR for single-answer queries</li>
+  <li>Choose metric matching your use case; don’t optimize the wrong thing</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Järvelin &amp; Kekäläinen, “Cumulated Gain-Based Evaluation of IR Techniques”</li>
+  <li>Chapelle et al., “Expected Reciprocal Rank for Graded Relevance”</li>
+  <li>Manning, Raghavan &amp; Schütze, <em>Introduction to Information Retrieval</em>, Chapter 8</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 8 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/real-time-ranking-systems/">Previous: Sub-Millisecond Decisions: Architecture of Real-Time Ranking Systems</a></span>
+      <span><a href="/posts/semantic-search/">Next: Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#evaluation-metrics" class="page__taxonomy-item p-category" rel="tag">evaluation-metrics</a><span class="sep">, </span>
+    
+      <a href="/tags/#information-retrieval" class="page__taxonomy-item p-category" rel="tag">information-retrieval</a><span class="sep">, </span>
+    
+      <a href="/tags/#ndcg" class="page__taxonomy-item p-category" rel="tag">ndcg</a><span class="sep">, </span>
+    
+      <a href="/tags/#ranking" class="page__taxonomy-item p-category" rel="tag">ranking</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2024-01-01T00:00:00-08:00">January 1, 2024</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/implicit-vs-explicit-feedback/" class="pagination--pager" title="Clicks vs. Ratings: The Signal You Choose Shapes the Model You Build
+">Previous</a>
+    
+    
+      <a href="/posts/marketing-incrementality-measurement/" class="pagination--pager" title="Incrementality: Measuring What Marketing Actually Causes
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

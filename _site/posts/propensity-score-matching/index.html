@@ -1,0 +1,1056 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Propensity Score Matching: Creating Randomized Trials from Observational Data - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="When randomized experiments aren’t possible, propensity score methods create pseudo-randomization from observational data. By balancing treated and control groups on observed characteristics, we can estimate causal effects—under the assumption that we’ve measured all relevant confounders.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Propensity Score Matching: Creating Randomized Trials from Observational Data">
+<meta property="og:url" content="http://localhost:4000/posts/propensity-score-matching/">
+
+
+  <meta property="og:description" content="When randomized experiments aren’t possible, propensity score methods create pseudo-randomization from observational data. By balancing treated and control groups on observed characteristics, we can estimate causal effects—under the assumption that we’ve measured all relevant confounders.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-10-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/propensity-score-matching/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Propensity Score Matching: Creating Randomized Trials from Observational Data">
+    
+    <meta itemprop="description" content="When randomized experiments aren’t possible, propensity score methods create pseudo-randomization from observational data. By balancing treated and control groups on observed characteristics, we can estimate causal effects—under the assumption that we’ve measured all relevant confounders.">
+    
+    
+    <meta itemprop="datePublished" content="2019-10-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/propensity-score-matching/" class="u-url" itemprop="url">Propensity Score Matching: Creating Randomized Trials from Observational Data
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#propensity-score" data-tag="propensity-score">
+  propensity-score
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#matching" data-tag="matching">
+  matching
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#observational-studies" data-tag="observational-studies">
+  observational-studies
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 4 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/difference-in-differences/">Previous: Difference-in-Differences: The Gold Standard for Natural Experiments</a></span>
+      <span><a href="/posts/instrumental-variables/">Next: Instrumental Variables: Finding Causal Needles in Confounded Haystacks</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>When randomized experiments aren’t possible, propensity score methods create pseudo-randomization from observational data. By balancing treated and control groups on observed characteristics, we can estimate causal effects—under the assumption that we’ve measured all relevant confounders.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Doctors don’t randomly assign treatments—they consider patient health, history, and preferences. Marketers don’t randomly send promotions—they target likely responders. This non-random assignment confounds treatment-outcome relationships.</p>
+
+<p>Propensity score methods address this by modeling the treatment assignment mechanism. If we can predict who gets treatment based on observed features, we can compare treated and control units that had equal probability of treatment—mimicking randomization.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>The propensity score</strong> is the probability of receiving treatment given observed characteristics:</p>
+
+\[e(X) = P(T = 1 | X)\]
+
+<p><strong>Why it works</strong> (Rosenbaum &amp; Rubin, 1983): If treatment assignment is ignorable given X, it’s also ignorable given e(X). This reduces the dimensionality curse—instead of balancing on many covariates, we balance on a single score.</p>
+
+<p><strong>Selection on observables</strong>: The critical assumption is that all confounders are observed. If unmeasured factors affect both treatment and outcome, propensity methods fail.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="balancing-property">Balancing Property</h3>
+
+<p>The propensity score balances covariates:</p>
+
+\[T \perp X | e(X)\]
+
+<p>At any propensity score value, treatment is independent of covariates. This enables valid comparison of treated/control within propensity strata.</p>
+
+<h3 id="identification">Identification</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Under unconfoundedness ($Y(0), Y(1) \perp T</td>
+      <td>X$) and positivity ($0 &lt; e(X) &lt; 1$):</td>
+    </tr>
+  </tbody>
+</table>
+
+\[\text{ATE} = \mathbb{E}\left[\frac{TY}{e(X)} - \frac{(1-T)Y}{1-e(X)}\right]\]
+
+<h3 id="inverse-probability-weighting-ipw">Inverse Probability Weighting (IPW)</h3>
+
+<p>Weight observations by inverse of treatment probability:</p>
+
+\[\hat{\tau}_{IPW} = \frac{1}{n}\sum_{i=1}^n \left[\frac{T_i Y_i}{\hat{e}(X_i)} - \frac{(1-T_i)Y_i}{1-\hat{e}(X_i)}\right]\]
+
+<p>Reweights the sample to create pseudo-population where treatment is random.</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="propensity-score-estimation">Propensity Score Estimation</h3>
+
+<p>Usually logistic regression:
+\(\log\frac{e(X)}{1-e(X)} = \beta_0 + \beta^T X\)</p>
+
+<p>Can also use machine learning (Random Forests, GBM), but beware of overfitting.</p>
+
+<h3 id="matching-methods">Matching Methods</h3>
+
+<p><strong>Nearest neighbor</strong>: Match each treated unit to control(s) with closest propensity score.</p>
+
+<p><strong>Caliper matching</strong>: Match only within distance threshold (e.g., 0.1 SD of propensity).</p>
+
+<p><strong>Radius matching</strong>: Match to all controls within radius.</p>
+
+<p><strong>Kernel matching</strong>: Weight controls by distance from treated unit.</p>
+
+<h3 id="weighting-methods">Weighting Methods</h3>
+
+<p><strong>IPW</strong>: Weight by inverse propensity (can have high variance with extreme weights).</p>
+
+<p><strong>Stabilized weights</strong>: $w_1 = P(T=1)/e(X)$ and $w_0 = P(T=0)/(1-e(X))$</p>
+
+<p><strong>Overlap weights</strong>: $w = T(1-e(X)) + (1-T)e(X)$ — emphasizes overlap region.</p>
+
+<h3 id="balance-checking">Balance Checking</h3>
+
+<p>After matching/weighting, verify covariate balance:</p>
+<ul>
+  <li>Standardized mean differences (SMD &lt; 0.1 is good)</li>
+  <li>Variance ratios (close to 1)</li>
+  <li>Visual: love plots, density plots</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="n">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># Simulate confounded observational data
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># Confounders
+</span><span class="n">age</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">income</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">60000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Treatment probability depends on confounders
+</span><span class="n">propensity_true</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">age</span> <span class="o">+</span> <span class="mf">0.00002</span> <span class="o">*</span> <span class="n">income</span><span class="p">)))</span>
+<span class="n">treatment</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">propensity_true</span><span class="p">)</span>
+
+<span class="c1"># Outcome depends on confounders AND treatment (true effect = 10)
+</span><span class="n">outcome</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">age</span> <span class="o">+</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="n">income</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">treatment</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span>
+    <span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">:</span> <span class="n">age</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">:</span> <span class="n">income</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">:</span> <span class="n">treatment</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">:</span> <span class="n">outcome</span>
+<span class="p">})</span>
+
+<span class="c1"># Naive comparison (biased)
+</span><span class="n">naive_effect</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Naive effect: </span><span class="si">{</span><span class="n">naive_effect</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (true: 10)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Estimate propensity scores
+</span><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">ps_model</span> <span class="o">=</span> <span class="nc">LogisticRegression</span><span class="p">()</span>
+<span class="n">ps_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">propensity</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps_model</span><span class="p">.</span><span class="nf">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Propensity score matching (nearest neighbor)
+</span><span class="n">treated</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">].</span><span class="nf">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">control</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">].</span><span class="nf">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">nn</span> <span class="o">=</span> <span class="nc">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">nn</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">control</span><span class="p">[[</span><span class="sh">'</span><span class="s">propensity</span><span class="sh">'</span><span class="p">]])</span>
+<span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nf">kneighbors</span><span class="p">(</span><span class="n">treated</span><span class="p">[[</span><span class="sh">'</span><span class="s">propensity</span><span class="sh">'</span><span class="p">]])</span>
+
+<span class="n">matched_control</span> <span class="o">=</span> <span class="n">control</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">indices</span><span class="p">.</span><span class="nf">flatten</span><span class="p">()]</span>
+<span class="n">matched_effect</span> <span class="o">=</span> <span class="n">treated</span><span class="p">[</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">matched_control</span><span class="p">[</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Matched effect: </span><span class="si">{</span><span class="n">matched_effect</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># IPW estimator
+</span><span class="n">weights_treated</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">propensity</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">weights_control</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">propensity</span><span class="sh">'</span><span class="p">])</span>
+
+<span class="n">ipw_effect</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights_treated</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]).</span><span class="nf">sum</span><span class="p">()</span> <span class="o">/</span>
+    <span class="n">weights_treated</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span> <span class="o">-</span>
+    <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">outcome</span><span class="sh">'</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights_control</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]).</span><span class="nf">sum</span><span class="p">()</span> <span class="o">/</span>
+    <span class="n">weights_control</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">IPW effect: </span><span class="si">{</span><span class="n">ipw_effect</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Balance check (standardized mean differences)
+</span><span class="k">def</span> <span class="nf">smd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nf">return </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="nf">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="nf">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">((</span><span class="n">a</span><span class="p">.</span><span class="nf">var</span><span class="p">()</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="nf">var</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">Covariate balance (SMD, target: &lt;0.1):</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Before - Age: </span><span class="si">{</span><span class="nf">smd</span><span class="p">(</span><span class="n">treated</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">],</span> <span class="n">control</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">])</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Before - Income: </span><span class="si">{</span><span class="nf">smd</span><span class="p">(</span><span class="n">treated</span><span class="p">[</span><span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">],</span> <span class="n">control</span><span class="p">[</span><span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">])</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  After - Age: </span><span class="si">{</span><span class="nf">smd</span><span class="p">(</span><span class="n">treated</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">],</span> <span class="n">matched_control</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">])</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  After - Income: </span><span class="si">{</span><span class="nf">smd</span><span class="p">(</span><span class="n">treated</span><span class="p">[</span><span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">],</span> <span class="n">matched_control</span><span class="p">[</span><span class="sh">'</span><span class="s">income</span><span class="sh">'</span><span class="p">])</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Positivity violations</strong>: If some covariate values only occur in treated group, can’t estimate effect. Trim or use overlap weights.</p>
+  </li>
+  <li>
+    <p><strong>Model-dependent</strong>: Misspecified propensity model → poor balance → biased estimates. Check balance, not prediction accuracy.</p>
+  </li>
+  <li>
+    <p><strong>Extreme weights</strong>: Large weights (low propensity for treatment among treated) inflate variance. Trim or stabilize weights.</p>
+  </li>
+  <li>
+    <p><strong>Matching with replacement</strong>: Can help with limited overlap but requires correct variance estimation.</p>
+  </li>
+  <li>
+    <p><strong>Post-matching analysis</strong>: Use matched-pair methods; don’t just pool and regress.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Healthcare</strong>: Treatment effect estimation from EHR data</li>
+  <li><strong>Marketing</strong>: Campaign lift measurement</li>
+  <li><strong>Education</strong>: Program evaluation</li>
+  <li><strong>Public health</strong>: Policy impact assessment</li>
+  <li><strong>HR</strong>: Training program effectiveness</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="doubly-robust-estimation">Doubly Robust Estimation</h3>
+
+<p>Combine propensity weighting with outcome regression:</p>
+
+<p>\(\hat{\tau}_{DR} = \frac{1}{n}\sum_i \left[\frac{T_i(Y_i - \hat{m}_1(X_i))}{\hat{e}(X_i)} + \hat{m}_1(X_i)\right]\)
+\(- \frac{1}{n}\sum_i \left[\frac{(1-T_i)(Y_i - \hat{m}_0(X_i))}{1-\hat{e}(X_i)} + \hat{m}_0(X_i)\right]\)</p>
+
+<p>Consistent if either propensity or outcome model is correct.</p>
+
+<h3 id="generalized-propensity-score">Generalized Propensity Score</h3>
+
+<p>For continuous or multi-valued treatments:
+\(GPS(t, X) = f_{T|X}(t|X)\)</p>
+
+<h3 id="sensitivity-analysis">Sensitivity Analysis</h3>
+
+<p>What if there’s unmeasured confounding? Rosenbaum bounds quantify how much unmeasured confounding would be needed to explain away the effect.</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Key Strength</th>
+      <th>Weakness</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Matching</td>
+      <td>Transparent, visible balance</td>
+      <td>Discards data, curse of dimensionality</td>
+    </tr>
+    <tr>
+      <td>IPW</td>
+      <td>Uses all data</td>
+      <td>Extreme weight sensitivity</td>
+    </tr>
+    <tr>
+      <td>Doubly Robust</td>
+      <td>Protection from one misspecification</td>
+      <td>More complex</td>
+    </tr>
+    <tr>
+      <td>Regression</td>
+      <td>Simple</td>
+      <td>Functional form sensitive</td>
+    </tr>
+    <tr>
+      <td>AIPW/TMLE</td>
+      <td>Semiparametric efficiency</td>
+      <td>Implementation complexity</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Propensity scores enable causal inference by balancing observed confounders. Key takeaways:</p>
+
+<ul>
+  <li>Balance covariates by matching or weighting on propensity scores</li>
+  <li>Always check covariate balance after adjustment</li>
+  <li>Unmeasured confounding remains a threat—be transparent about assumptions</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Rosenbaum &amp; Rubin (1983), “The Central Role of the Propensity Score”</li>
+  <li>Austin (2011), “An Introduction to Propensity Score Methods” (Statistics in Medicine)</li>
+  <li>Stuart (2010), “Matching Methods for Causal Inference” (Statistical Science)</li>
+  <li>Hernán &amp; Robins, <em>Causal Inference: What If</em>, Chapter 12</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 4 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/difference-in-differences/">Previous: Difference-in-Differences: The Gold Standard for Natural Experiments</a></span>
+      <span><a href="/posts/instrumental-variables/">Next: Instrumental Variables: Finding Causal Needles in Confounded Haystacks</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#matching" class="page__taxonomy-item p-category" rel="tag">matching</a><span class="sep">, </span>
+    
+      <a href="/tags/#observational-studies" class="page__taxonomy-item p-category" rel="tag">observational-studies</a><span class="sep">, </span>
+    
+      <a href="/tags/#propensity-score" class="page__taxonomy-item p-category" rel="tag">propensity-score</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-10-01T00:00:00-07:00">October 1, 2019</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/difference-in-differences/" class="pagination--pager" title="Difference-in-Differences: The Gold Standard for Natural Experiments
+">Previous</a>
+    
+    
+      <a href="/posts/lifetime-value-estimation/" class="pagination--pager" title="Customer Lifetime Value: Predictive Models for Business Intelligence
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

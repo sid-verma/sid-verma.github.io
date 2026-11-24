@@ -1,0 +1,1158 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Semantic search understands meaning, not just keywords. When a user searches “tips for a job interview,” semantic search knows to return content about “career advice” and “interview preparation”—even without those exact words. This capability is powered by dense embeddings and neural retrieval systems.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings">
+<meta property="og:url" content="http://localhost:4000/posts/semantic-search/">
+
+
+  <meta property="og:description" content="Semantic search understands meaning, not just keywords. When a user searches “tips for a job interview,” semantic search knows to return content about “career advice” and “interview preparation”—even without those exact words. This capability is powered by dense embeddings and neural retrieval systems.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-02-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/semantic-search/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings">
+    
+    <meta itemprop="description" content="Semantic search understands meaning, not just keywords. When a user searches “tips for a job interview,” semantic search knows to return content about “career advice” and “interview preparation”—even without those exact words. This capability is powered by dense embeddings and neural retrieval systems.">
+    
+    
+    <meta itemprop="datePublished" content="2025-02-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/semantic-search/" class="u-url" itemprop="url">Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#semantic-search" data-tag="semantic-search">
+  semantic-search
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#embeddings" data-tag="embeddings">
+  embeddings
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#dense-retrieval" data-tag="dense-retrieval">
+  dense-retrieval
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#nlp" data-tag="nlp">
+  nlp
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 9 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/evaluation-metrics-for-ranking/">Previous: NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics</a></span>
+      <span><a href="/posts/neural-ranking-models/">Next: Neural Ranking Models: Cross-Encoders, Bi-Encoders, and Late Interaction</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Semantic search understands meaning, not just keywords. When a user searches “tips for a job interview,” semantic search knows to return content about “career advice” and “interview preparation”—even without those exact words. This capability is powered by dense embeddings and neural retrieval systems.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>The first time I replaced a battle-tested BM25 search with a shiny dense retriever, power users immediately complained that "search got worse." Exact ID lookups broke, long-tail queries surfaced vaguely-related docs, and suddenly we were debugging vector indices instead of shipping features.</p>
+
+<p>That experience captures both the promise and the risk of semantic search. When it works, it feels like magic: users can type natural language and get exactly what they meant, not what they typed. When it fails, it feels fuzzy and imprecise compared to the crispness of keyword matching.</p>
+
+<p>Traditional keyword search fails when users and documents use different words for the same concept. “Automobile” doesn’t match “car.” “How to fix a bug” doesn’t match “debugging tutorial.”</p>
+
+<p>Semantic search bridges this gap by representing queries and documents as dense vectors in a learned embedding space. Similar meanings cluster together, enabling retrieval based on concepts, not just lexical overlap. This post is about how to get there <strong>without breaking everything that already works</strong>.</p>
+
+<h2 id="core-concepts">Core Concepts</h2>
+
+<h3 id="dense-vs-sparse-representations">Dense vs. Sparse Representations</h3>
+
+<p><strong>Sparse (traditional)</strong>: High-dimensional vectors with mostly zeros. One dimension per word. BM25, TF-IDF.</p>
+
+<p><strong>Dense</strong>: Low-dimensional (768-1536) vectors with continuous values. Learned by neural networks. Captures semantic relationships.</p>
+
+<h3 id="embedding-models">Embedding Models</h3>
+
+<p><strong>Sentence transformers</strong>: BERT-based models trained for semantic similarity.</p>
+<ul>
+  <li>all-MiniLM-L6-v2: Fast, 384 dimensions</li>
+  <li>all-mpnet-base-v2: Better quality, 768 dimensions</li>
+  <li>E5, BGE, GTE: State-of-the-art multilingual</li>
+</ul>
+
+<p><strong>Training objectives</strong>:</p>
+<ul>
+  <li>Contrastive learning: Push similar pairs together, dissimilar apart</li>
+  <li>InfoNCE loss: Maximize similarity for positive pairs vs. negatives</li>
+</ul>
+
+<h3 id="vector-databases">Vector Databases</h3>
+
+<p>Store and search embeddings efficiently:</p>
+<ul>
+  <li><strong>FAISS</strong>: Facebook’s library for similarity search</li>
+  <li><strong>Pinecone, Weaviate, Milvus</strong>: Managed vector databases</li>
+  <li><strong>pgvector</strong>: PostgreSQL extension</li>
+</ul>
+
+<p>Approximate Nearest Neighbor (ANN) algorithms enable sub-millisecond search over millions of vectors.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="contrastive-learning">Contrastive Learning</h3>
+
+<p>InfoNCE loss for learning embeddings:</p>
+
+\[\mathcal{L} = -\log\frac{\exp(\text{sim}(q, d^+)/\tau)}{\sum_{d \in \{d^+\} \cup D^-} \exp(\text{sim}(q, d)/\tau)}\]
+
+<p>where $\tau$ is temperature, $d^+$ is positive (relevant) document, $D^-$ are negatives.</p>
+
+<h3 id="similarity-measures">Similarity Measures</h3>
+
+\[\text{Cosine similarity} = \frac{\mathbf{q} \cdot \mathbf{d}}{\|\mathbf{q}\| \|\mathbf{d}\|}\]
+
+\[\text{Dot product} = \mathbf{q} \cdot \mathbf{d}\]
+
+\[\text{Euclidean} = \|\mathbf{q} - \mathbf{d}\|_2\]
+
+<p>For normalized vectors, cosine = dot product.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">sentence_transformers</span> <span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">faiss</span>
+
+<span class="k">class</span> <span class="nc">SemanticSearch</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="sh">'</span><span class="s">all-MiniLM-L6-v2</span><span class="sh">'</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="nc">SentenceTransformer</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">index_documents</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Create searchable index from documents</span><span class="sh">"""</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">documents</span> <span class="o">=</span> <span class="n">documents</span>
+
+        <span class="c1"># Encode all documents
+</span>        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span>
+            <span class="n">documents</span><span class="p">,</span>
+            <span class="n">show_progress_bar</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">convert_to_numpy</span><span class="o">=</span><span class="bp">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Normalize for cosine similarity
+</span>        <span class="n">faiss</span><span class="p">.</span><span class="nf">normalize_L2</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
+
+        <span class="c1"># Create FAISS index
+</span>        <span class="n">dimension</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">faiss</span><span class="p">.</span><span class="nc">IndexFlatIP</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>  <span class="c1"># Inner product (cosine for normalized)
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">self</span>
+
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Search for relevant documents</span><span class="sh">"""</span>
+        <span class="c1"># Encode query
+</span>        <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">encode</span><span class="p">([</span><span class="n">query</span><span class="p">],</span> <span class="n">convert_to_numpy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">faiss</span><span class="p">.</span><span class="nf">normalize_L2</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">)</span>
+
+        <span class="c1"># Search
+</span>        <span class="n">scores</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">results</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span>
+                <span class="sh">'</span><span class="s">document</span><span class="sh">'</span><span class="p">:</span> <span class="n">self</span><span class="p">.</span><span class="n">documents</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                <span class="sh">'</span><span class="s">score</span><span class="sh">'</span><span class="p">:</span> <span class="nf">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+
+<span class="k">class</span> <span class="nc">HybridSearch</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Combine sparse (BM25) and dense retrieval</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="sh">'</span><span class="s">all-MiniLM-L6-v2</span><span class="sh">'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">dense_search</span> <span class="o">=</span> <span class="nc">SemanticSearch</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>  <span class="c1"># Weight for dense vs. sparse
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">bm25</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">index_documents</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="n">rank_bm25</span> <span class="kn">import</span> <span class="n">BM25Okapi</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">documents</span> <span class="o">=</span> <span class="n">documents</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">dense_search</span><span class="p">.</span><span class="nf">index_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+        <span class="c1"># Tokenize for BM25
+</span>        <span class="n">tokenized</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="p">.</span><span class="nf">lower</span><span class="p">().</span><span class="nf">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">bm25</span> <span class="o">=</span> <span class="nc">BM25Okapi</span><span class="p">(</span><span class="n">tokenized</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">self</span>
+
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># Dense scores
+</span>        <span class="n">dense_results</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">dense_search</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">documents</span><span class="p">))</span>
+        <span class="n">dense_scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">document</span><span class="sh">'</span><span class="p">]:</span> <span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">score</span><span class="sh">'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dense_results</span><span class="p">}</span>
+
+        <span class="c1"># Normalize dense scores
+</span>        <span class="n">max_dense</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">dense_scores</span><span class="p">.</span><span class="nf">values</span><span class="p">())</span>
+        <span class="n">dense_scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">d</span><span class="p">:</span> <span class="n">s</span><span class="o">/</span><span class="n">max_dense</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">dense_scores</span><span class="p">.</span><span class="nf">items</span><span class="p">()}</span>
+
+        <span class="c1"># BM25 scores
+</span>        <span class="n">tokenized_query</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="nf">lower</span><span class="p">().</span><span class="nf">split</span><span class="p">()</span>
+        <span class="n">bm25_scores</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">bm25</span><span class="p">.</span><span class="nf">get_scores</span><span class="p">(</span><span class="n">tokenized_query</span><span class="p">)</span>
+        <span class="n">max_bm25</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">bm25_scores</span><span class="p">)</span> <span class="k">if</span> <span class="nf">max</span><span class="p">(</span><span class="n">bm25_scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">bm25_scores</span> <span class="o">=</span> <span class="n">bm25_scores</span> <span class="o">/</span> <span class="n">max_bm25</span>
+
+        <span class="c1"># Combine
+</span>        <span class="n">hybrid_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">documents</span><span class="p">):</span>
+            <span class="n">dense</span> <span class="o">=</span> <span class="n">dense_scores</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">sparse</span> <span class="o">=</span> <span class="n">bm25_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">hybrid</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">dense</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">sparse</span>
+            <span class="n">hybrid_scores</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">doc</span><span class="p">,</span> <span class="n">hybrid</span><span class="p">,</span> <span class="n">dense</span><span class="p">,</span> <span class="n">sparse</span><span class="p">))</span>
+
+        <span class="c1"># Sort and return top k
+</span>        <span class="n">hybrid_scores</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="sh">'</span><span class="s">document</span><span class="sh">'</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">hybrid_score</span><span class="sh">'</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">dense_score</span><span class="sh">'</span><span class="p">:</span> <span class="n">d</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">sparse_score</span><span class="sh">'</span><span class="p">:</span> <span class="n">s</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">hybrid_scores</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+        <span class="p">]</span>
+
+
+<span class="c1"># Example usage
+</span><span class="n">documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sh">"</span><span class="s">Machine learning is a subset of artificial intelligence.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Deep learning uses neural networks with many layers.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Natural language processing enables computers to understand text.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Computer vision allows machines to interpret images.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Reinforcement learning trains agents through trial and error.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Transfer learning reuses knowledge from pre-trained models.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Supervised learning requires labeled training data.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Unsupervised learning finds patterns in unlabeled data.</span><span class="sh">"</span>
+<span class="p">]</span>
+
+<span class="c1"># Semantic search
+</span><span class="n">searcher</span> <span class="o">=</span> <span class="nc">SemanticSearch</span><span class="p">()</span>
+<span class="n">searcher</span><span class="p">.</span><span class="nf">index_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="sh">"</span><span class="s">how do computers understand human language</span><span class="sh">"</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">searcher</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">. [</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">score</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s">] </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">document</span><span class="sh">'</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Hybrid search
+</span><span class="n">hybrid</span> <span class="o">=</span> <span class="nc">HybridSearch</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">hybrid</span><span class="p">.</span><span class="nf">index_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="sh">"</span><span class="s">neural network layers</span><span class="sh">"</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">hybrid</span><span class="p">.</span><span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Hybrid Search: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">. [H:</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">hybrid_score</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s"> D:</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">dense_score</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s"> S:</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">sparse_score</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s">]</span><span class="sh">"</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="sh">'</span><span class="s">document</span><span class="sh">'</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="scaling-challenges">Scaling Challenges</h2>
+
+<h3 id="approximate-nearest-neighbors">Approximate Nearest Neighbors</h3>
+
+<p>Exact search is O(n). ANN algorithms trade accuracy for speed:</p>
+<ul>
+  <li><strong>IVF (Inverted File)</strong>: Cluster vectors, only search nearby clusters</li>
+  <li><strong>HNSW (Hierarchical Navigable Small World)</strong>: Graph-based search</li>
+  <li><strong>PQ (Product Quantization)</strong>: Compress vectors</li>
+</ul>
+
+<h3 id="index-sharding">Index Sharding</h3>
+
+<p>Distribute across machines for billion-scale:</p>
+<ul>
+  <li>Partition by document ID or embedding space</li>
+  <li>Query all shards, merge results</li>
+</ul>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Normalize embeddings</strong>: For cosine similarity, always normalize.</p>
+  </li>
+  <li>
+    <p><strong>Batch encode</strong>: Much faster than one-by-one encoding.</p>
+  </li>
+  <li>
+    <p><strong>Hybrid is usually best</strong>: Combine dense and sparse for robustness.</p>
+  </li>
+  <li>
+    <p><strong>Domain-specific fine-tuning</strong>: Pre-trained models may not work for specialized domains.</p>
+  </li>
+  <li>
+    <p><strong>Monitor recall</strong>: Track what percentage of relevant docs are retrieved.</p>
+  </li>
+</ol>
+
+<h2 id="failure-modes-and-how-to-avoid-them">Failure Modes and How to Avoid Them</h2>
+
+<h3 id="1-breaking-exact-lookups">1. Breaking Exact Lookups</h3>
+
+<p>If you replace keyword search wholesale with dense retrieval:</p>
+
+<ul>
+  <li>Users searching for <strong>IDs, codes, or exact titles</strong> may suddenly get approximate matches.</li>
+  <li>Example: Query <code class="language-plaintext highlighter-rouge">"order #12345"</code> returning "order #12346" because the embedding model thinks they’re similar.</li>
+</ul>
+
+<p><strong>Mitigations</strong>:</p>
+<ul>
+  <li>Detect ID-like queries (regex, heuristics) and <strong>route them to exact match</strong>.</li>
+  <li>Use <strong>hybrid scoring</strong> and give sparse matches a big boost when there is an exact hit.</li>
+</ul>
+
+<h3 id="2-embedding-drift-and-index-staleness">2. Embedding Drift and Index Staleness</h3>
+
+<p>When you:</p>
+<ul>
+  <li>Retrain your embedding model</li>
+  <li>Change preprocessing</li>
+  <li>Add new domains</li>
+</ul>
+
+<p>you can silently corrupt embedding-space assumptions:</p>
+
+<ul>
+  <li>Old vectors are no longer comparable to new ones</li>
+  <li>Relevance degrades over time without obvious failures</li>
+</ul>
+
+<p><strong>Mitigations</strong>:</p>
+<ul>
+  <li>Version your embedding models and indices</li>
+  <li>Periodically <strong>re-embed</strong> and <strong>rebuild</strong> the index as a batch job</li>
+  <li>Track <strong>recall@K</strong> on a labeled validation set across model versions</li>
+</ul>
+
+<h3 id="3-making-llms-hallucinate-more">3. Making LLMs Hallucinate More</h3>
+
+<p>In RAG systems, a weak retriever can:</p>
+
+<ul>
+  <li>Pull in semi-related but wrong documents</li>
+  <li>Cause the LLM to confidently synthesize answers that are "plausible but false"</li>
+</ul>
+
+<p><strong>Mitigations</strong>:</p>
+<ul>
+  <li>Treat retrieval quality as a <strong>first-class metric</strong> (recall@K, MRR)</li>
+  <li>Use <strong>rerankers</strong> (cross-encoders) on top of dense retrieval for critical flows</li>
+  <li>Add simple filters (e.g., require at least one document above a similarity threshold)</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>Semantic search enables meaning-based retrieval through dense embeddings. Key takeaways:</p>
+
+<ul>
+  <li>Dense embeddings capture semantic similarity and unlock natural-language search</li>
+  <li>Hybrid (dense + sparse) usually gives the best of both worlds and protects exact-match use cases</li>
+  <li>ANN algorithms enable fast search at scale, but you must handle index versioning and drift</li>
+  <li>Retrieval quality directly determines downstream RAG and LLM behavior</li>
+</ul>
+
+<h3 id="checklist-rolling-out-semantic-search-safely">Checklist: Rolling Out Semantic Search Safely</h3>
+
+<p>Before you flip traffic to a dense or hybrid retriever:</p>
+
+<ol>
+  <li><strong>Define success</strong>
+    <ul>
+      <li>What metrics matter? (Recall@K, query success rate, CTR, task completion)</li>
+      <li>Which query segments are in scope (head, torso, tail)?</li>
+    </ul>
+  </li>
+  <li><strong>Protect exact-match flows</strong>
+    <ul>
+      <li>ID/code/title lookups route to strict keyword search</li>
+      <li>Hybrid scoring strongly rewards exact token overlap for those cases</li>
+    </ul>
+  </li>
+  <li><strong>Build an eval suite</strong>
+    <ul>
+      <li>Labeled query–document pairs for offline recall@K</li>
+      <li>Real queries and click logs for implicit evaluation</li>
+    </ul>
+  </li>
+  <li><strong>Start hybrid, not dense-only</strong>
+    <ul>
+      <li>Use BM25 as a safety net</li>
+      <li>Tune the dense/sparse mixing weight per surface if needed</li>
+    </ul>
+  </li>
+  <li><strong>Version everything</strong>
+    <ul>
+      <li>Embedding model versions</li>
+      <li>Index build versions</li>
+      <li>Rollouts and rollbacks tracked per version</li>
+    </ul>
+  </li>
+  <li><strong>Monitor in production</strong>
+    <ul>
+      <li>Query success, CTR, zero-result rate, and user complaints</li>
+      <li>Guardrails for obvious regressions before ramping up traffic</li>
+    </ul>
+  </li>
+</ol>
+
+<p>If you treat semantic search as a <strong>gradual, measured upgrade to your existing stack</strong>—rather than a rip-and-replace—you can get the best parts of Eugene-style semantic IDs and dense retrieval while preserving the reliability of classic search.</p>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Reimers &amp; Gurevych, “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks”</li>
+  <li>Karpukhin et al., “Dense Passage Retrieval for Open-Domain Question Answering”</li>
+  <li>FAISS documentation and tutorials</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 9 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/evaluation-metrics-for-ranking/">Previous: NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics</a></span>
+      <span><a href="/posts/neural-ranking-models/">Next: Neural Ranking Models: Cross-Encoders, Bi-Encoders, and Late Interaction</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#dense-retrieval" class="page__taxonomy-item p-category" rel="tag">dense-retrieval</a><span class="sep">, </span>
+    
+      <a href="/tags/#embeddings" class="page__taxonomy-item p-category" rel="tag">embeddings</a><span class="sep">, </span>
+    
+      <a href="/tags/#nlp" class="page__taxonomy-item p-category" rel="tag">nlp</a><span class="sep">, </span>
+    
+      <a href="/tags/#semantic-search" class="page__taxonomy-item p-category" rel="tag">semantic-search</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-02-01T00:00:00-08:00">February 1, 2025</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/randomized-control-trials-in-marketing/" class="pagination--pager" title="Randomized Control Trials in Marketing: Measuring True Incrementality
+">Previous</a>
+    
+    
+      <a href="/posts/incrementality-testing-at-scale/" class="pagination--pager" title="Incrementality Testing at Scale: Building Always-On Measurement Platforms
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

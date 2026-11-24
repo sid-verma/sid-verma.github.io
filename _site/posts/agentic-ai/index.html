@@ -1,0 +1,1133 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Agentic AI: Building Autonomous Systems That Reason and Act - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="In 2023, an AI agent autonomously completed a software engineering task that would have taken a human hours—writing code, running tests, fixing bugs, and iterating until it worked. This wasn’t science fiction; it was AutoGPT, one of the first agentic AI systems to capture public imagination.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Agentic AI: Building Autonomous Systems That Reason and Act">
+<meta property="og:url" content="http://localhost:4000/posts/agentic-ai/">
+
+
+  <meta property="og:description" content="In 2023, an AI agent autonomously completed a software engineering task that would have taken a human hours—writing code, running tests, fixing bugs, and iterating until it worked. This wasn’t science fiction; it was AutoGPT, one of the first agentic AI systems to capture public imagination.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2026-02-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/agentic-ai/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Agentic AI: Building Autonomous Systems That Reason and Act">
+    
+    <meta itemprop="description" content="  In 2023, an AI agent autonomously completed a software engineering task that would have taken a human hours—writing code, running tests, fixing bugs, and iterating until it worked. This wasn’t science fiction; it was AutoGPT, one of the first agentic AI systems to capture public imagination.">
+    
+    
+    <meta itemprop="datePublished" content="2026-02-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/agentic-ai/" class="u-url" itemprop="url">Agentic AI: Building Autonomous Systems That Reason and Act
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#agentic-ai" data-tag="agentic-ai">
+  agentic-ai
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#autonomous-agents" data-tag="autonomous-agents">
+  autonomous-agents
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#reasoning" data-tag="reasoning">
+  reasoning
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 6 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/agentic-ai-resources/">Previous: Agentic AI Resources: A 2026 Learning Path</a></span>
+      <span><a href="/posts/future-of-ai/">Next: The Next Decade of AI: Trends, Challenges, and Opportunities</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p>In 2023, an AI agent autonomously completed a software engineering task that would have taken a human hours—writing code, running tests, fixing bugs, and iterating until it worked. This wasn’t science fiction; it was AutoGPT, one of the first agentic AI systems to capture public imagination.</p>
+</blockquote>
+
+<p>Agentic AI represents a paradigm shift: from single-turn Q&amp;A to autonomous systems that plan, execute tools, and iterate toward goals. These agents combine LLM reasoning with code execution, web search, API calls, and feedback loops.</p>
+
+<p>From coding assistants to research agents to customer service automation, agentic systems are the next wave of AI applications. This post covers how to build them.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>LLMs are impressive at generating text, but real-world tasks require action: searching databases, executing code, calling APIs, and iterating based on results. Agentic AI bridges this gap by building systems that can autonomously pursue goals.</p>
+
+<p>From coding assistants to research agents to customer service automation, agentic systems represent the next wave of AI applications.</p>
+
+<h2 id="core-components">Core Components</h2>
+
+<h3 id="the-agent-loop">The Agent Loop</h3>
+
+<p>At a high level, an agent repeatedly observes the world, thinks about what to do next, and acts using tools:</p>
+
+<iframe frameborder="0" style="width:100%;height:520px" src="https://viewer.diagrams.net/?highlight=0000ff&amp;edit=_blank&amp;layers=1&amp;nav=1&amp;title=Agent%20Loop#R%3Cdiagram%20name%3D%22Agent%20Loop%22%20id%3D%22agent-loop%22%3E%0A%20%20%20%20%3CmxGraphModel%20dx%3D%221422%22%20dy%3D%22794%22%20grid%3D%221%22%20gridSize%3D%2210%22%20guides%3D%221%22%20tooltips%3D%221%22%20connect%3D%221%22%20arrows%3D%221%22%20fold%3D%221%22%20page%3D%221%22%20pageScale%3D%221%22%20pageWidth%3D%22827%22%20pageHeight%3D%221169%22%20math%3D%220%22%20shadow%3D%220%22%3E%0A%20%20%20%20%20%20%3Croot%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%220%22%3E%3C%2FmxCell%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%221%22%20parent%3D%220%22%3E%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Title%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22title%22%20value%3D%22Agent%20Loop%3A%20Observe-Think-Act%22%20style%3D%22text%3Bhtml%3D1%3BstrokeColor%3Dnone%3BfillColor%3Dnone%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3BwhiteSpace%3Dwrap%3Brounded%3D0%3BfontSize%3D16%3BfontStyle%3D1%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22200%22%20y%3D%2220%22%20width%3D%22427%22%20height%3D%2230%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Observe%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22observe%22%20value%3D%22Observe%0A%0AReceive%20task%2Ffeedback%22%20style%3D%22ellipse%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e3f2fd%3BstrokeColor%3D%231976d2%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22350%22%20y%3D%22100%22%20width%3D%22120%22%20height%3D%22120%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Think%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22think%22%20value%3D%22Think%0A%0AReason%20about%20next%20action%22%20style%3D%22ellipse%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23fff3e0%3BstrokeColor%3D%23f57c00%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22550%22%20y%3D%22250%22%20width%3D%22120%22%20height%3D%22120%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Act%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22act%22%20value%3D%22Act%0A%0AExecute%20tool%20or%20output%22%20style%3D%22ellipse%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23e8f5e9%3BstrokeColor%3D%23388e3c%3BstrokeWidth%3D2%3BfontSize%3D11%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22350%22%20y%3D%22400%22%20width%3D%22120%22%20height%3D%22120%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Tools%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22tools%22%20value%3D%22Tools%0A%0A%26%23x2022%3B%20Code%20Execution%0A%26%23x2022%3B%20Search%0A%26%23x2022%3B%20APIs%0A%26%23x2022%3B%20File%20Ops%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfillColor%3D%23f3e5f5%3BstrokeColor%3D%237b1fa2%3BstrokeWidth%3D2%3BfontSize%3D10%3Balign%3Dleft%22%20vertex%3D%221%22%20parent%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20x%3D%22150%22%20y%3D%22250%22%20width%3D%22150%22%20height%3D%22120%22%20as%3D%22geometry%22%3E%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3C%21--%20Curved%20arrows%20--%3E%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow1%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D1%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0%3BentryY%3D0.5%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3Bcurved%3D1%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22observe%22%20target%3D%22think%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22470%22%20y%3D%22160%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22550%22%20y%3D%22310%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CArray%20as%3D%22points%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22500%22%20y%3D%22160%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22500%22%20y%3D%22310%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FArray%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow2%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D1%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D0%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3Bcurved%3D1%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22think%22%20target%3D%22act%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22610%22%20y%3D%22370%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22410%22%20y%3D%22400%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CArray%20as%3D%22points%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22610%22%20y%3D%22370%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22500%22%20y%3D%22370%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FArray%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow3%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D1%3BentryY%3D0.5%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22act%22%20target%3D%22tools%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22350%22%20y%3D%22460%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22300%22%20y%3D%22310%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow4%22%20value%3D%22Feedback%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D0.5%3BexitY%3D0%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0.5%3BentryY%3D1%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3Bcurved%3D1%3Bdashed%3D1%3BlabelPosition%3Dright%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22act%22%20target%3D%22observe%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22410%22%20y%3D%22400%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22410%22%20y%3D%22220%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CArray%20as%3D%22points%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22300%22%20y%3D%22400%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22300%22%20y%3D%22220%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2FArray%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%20%20%3CmxCell%20id%3D%22arrow5%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3BexitX%3D1%3BexitY%3D0.5%3BexitDx%3D0%3BexitDy%3D0%3BentryX%3D0%3BentryY%3D0.5%3BentryDx%3D0%3BentryDy%3D0%3BstrokeWidth%3D2%3Bdashed%3D1%22%20edge%3D%221%22%20parent%3D%221%22%20source%3D%22tools%22%20target%3D%22think%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22300%22%20y%3D%22310%22%20as%3D%22sourcePoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3CmxPoint%20x%3D%22550%22%20y%3D%22310%22%20as%3D%22targetPoint%22%3E%3C%2FmxPoint%3E%0A%20%20%20%20%20%20%20%20%20%20%3C%2FmxGeometry%3E%0A%20%20%20%20%20%20%20%20%3C%2FmxCell%3E%0A%0A%20%20%20%20%20%20%3C%2Froot%3E%0A%20%20%20%20%3C%2FmxGraphModel%3E%0A%20%20%3C%2Fdiagram%3E"></iframe>
+
+<p><em>Figure: Agentic AI loop showing how Observe, Think, and Act steps interact with tools and feed back into new observations.</em></p>
+
+<ol>
+  <li><strong>Observe</strong>: Receive task or feedback from environment</li>
+  <li><strong>Think</strong>: Reason about what to do next</li>
+  <li><strong>Act</strong>: Execute tool or produce output</li>
+  <li><strong>Iterate</strong>: Process results, continue or terminate</li>
+</ol>
+
+<h3 id="tool-use">Tool Use</h3>
+
+<p>Agents extend LLM capabilities with tools:</p>
+<ul>
+  <li><strong>Code execution</strong>: Run Python, SQL, bash</li>
+  <li><strong>Search</strong>: Web search, document retrieval</li>
+  <li><strong>APIs</strong>: External services, databases</li>
+  <li><strong>File operations</strong>: Read, write, modify</li>
+</ul>
+
+<h3 id="memory">Memory</h3>
+
+<p>Agents need context beyond single interactions:</p>
+<ul>
+  <li><strong>Short-term</strong>: Conversation history, recent actions</li>
+  <li><strong>Long-term</strong>: Persistent knowledge, learned patterns</li>
+  <li><strong>External</strong>: Retrieved documents, databases</li>
+</ul>
+
+<h3 id="planning">Planning</h3>
+
+<p>Breaking down complex tasks:</p>
+<ul>
+  <li><strong>Task decomposition</strong>: Split goal into subtasks</li>
+  <li><strong>Dependency management</strong>: Order subtasks correctly</li>
+  <li><strong>Backtracking</strong>: Recover from failed paths</li>
+</ul>
+
+<h2 id="agent-architectures">Agent Architectures</h2>
+
+<h3 id="react-reason--act">ReAct (Reason + Act)</h3>
+
+<p>Interleave reasoning and actions:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Thought: I need to find the population of Tokyo.
+Action: search("Tokyo population 2024")
+Observation: Tokyo has a population of approximately 14 million...
+Thought: Now I have the answer.
+Action: finish("Tokyo has about 14 million people")
+</code></pre></div></div>
+
+<h3 id="plan-and-execute">Plan-and-Execute</h3>
+
+<p>Generate plan upfront, execute sequentially:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Plan:
+1. Search for Tokyo population
+2. Search for New York population
+3. Compare the two
+4. Report findings
+
+Executing step 1...
+</code></pre></div></div>
+
+<h3 id="multi-agent">Multi-Agent</h3>
+
+<p>Specialized agents collaborating:</p>
+<ul>
+  <li><strong>Orchestrator</strong>: Coordinates tasks</li>
+  <li><strong>Researcher</strong>: Gathers information</li>
+  <li><strong>Coder</strong>: Writes and executes code</li>
+  <li><strong>Critic</strong>: Reviews and improves</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="n">json</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Tool</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">SimpleAgent</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">ReAct-style agent with tools</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">llm_client</span><span class="p">,</span> <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tool</span><span class="p">],</span> <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm_client</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">{</span><span class="n">tool</span><span class="p">.</span><span class="n">name</span><span class="p">:</span> <span class="n">tool</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">}</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">max_iterations</span> <span class="o">=</span> <span class="n">max_iterations</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">memory</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">generate_system_prompt</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">tool_descriptions</span> <span class="o">=</span> <span class="sh">"</span><span class="se">\n</span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">([</span>
+            <span class="sa">f</span><span class="sh">"</span><span class="s">- </span><span class="si">{</span><span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">t</span><span class="p">.</span><span class="n">description</span><span class="si">}</span><span class="sh">"</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">tools</span><span class="p">.</span><span class="nf">values</span><span class="p">()</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">You are a helpful AI assistant that can use tools to accomplish tasks.
+
+Available tools:
+</span><span class="si">{</span><span class="n">tool_descriptions</span><span class="si">}</span><span class="s">
+
+To use a tool, respond with:
+Thought: [your reasoning]
+Action: [tool_name]
+Action Input: [json input]
+
+When you have the final answer, respond with:
+Thought: [your reasoning]
+Final Answer: [your answer]
+
+Always think step by step before acting.</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">parse_response</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Parse LLM response into structured action</span><span class="sh">"""</span>
+        <span class="k">if</span> <span class="sh">"</span><span class="s">Final Answer:</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">Final Answer:</span><span class="sh">"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nf">strip</span><span class="p">()</span>
+            <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">finish</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">answer</span><span class="sh">"</span><span class="p">:</span> <span class="n">answer</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="sh">"</span><span class="s">Action:</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">response</span> <span class="ow">and</span> <span class="sh">"</span><span class="s">Action Input:</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">action_part</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">Action:</span><span class="sh">"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">action_part</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">Action Input:</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nf">strip</span><span class="p">()</span>
+            <span class="n">action_input</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">Action Input:</span><span class="sh">"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nf">strip</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">action_input</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="p">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="sh">"</span><span class="s">input</span><span class="sh">"</span><span class="p">:</span> <span class="n">action_input</span><span class="p">}</span>
+
+            <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">action</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">tool</span><span class="sh">"</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span> <span class="sh">"</span><span class="s">params</span><span class="sh">"</span><span class="p">:</span> <span class="n">params</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">unknown</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">raw</span><span class="sh">"</span><span class="p">:</span> <span class="n">response</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">execute_tool</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Execute a tool and return observation</span><span class="sh">"""</span>
+        <span class="k">if</span> <span class="n">tool_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">tools</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Error: Unknown tool </span><span class="sh">'</span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="sh">'"</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">tools</span><span class="p">[</span><span class="n">tool_name</span><span class="p">].</span><span class="nf">function</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nf">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Error executing </span><span class="si">{</span><span class="n">tool_name</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Execute agent loop until completion</span><span class="sh">"""</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">memory</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">memory</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span><span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="n">task</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">max_iterations</span><span class="p">):</span>
+            <span class="c1"># Generate LLM response
+</span>            <span class="n">response</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">llm</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span>
+                <span class="n">system</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="nf">generate_system_prompt</span><span class="p">(),</span>
+                <span class="n">messages</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">memory</span>
+            <span class="p">)</span>
+
+            <span class="n">self</span><span class="p">.</span><span class="n">memory</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span><span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">assistant</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="n">response</span><span class="p">})</span>
+
+            <span class="c1"># Parse response
+</span>            <span class="n">parsed</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">parse_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">parsed</span><span class="p">[</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">]</span> <span class="o">==</span> <span class="sh">"</span><span class="s">finish</span><span class="sh">"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">parsed</span><span class="p">[</span><span class="sh">"</span><span class="s">answer</span><span class="sh">"</span><span class="p">]</span>
+
+            <span class="k">elif</span> <span class="n">parsed</span><span class="p">[</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">]</span> <span class="o">==</span> <span class="sh">"</span><span class="s">action</span><span class="sh">"</span><span class="p">:</span>
+                <span class="n">observation</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">execute_tool</span><span class="p">(</span>
+                    <span class="n">parsed</span><span class="p">[</span><span class="sh">"</span><span class="s">tool</span><span class="sh">"</span><span class="p">],</span>
+                    <span class="n">parsed</span><span class="p">[</span><span class="sh">"</span><span class="s">params</span><span class="sh">"</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">self</span><span class="p">.</span><span class="n">memory</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span>
+                    <span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span>
+                    <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Observation: </span><span class="si">{</span><span class="n">observation</span><span class="si">}</span><span class="sh">"</span>
+                <span class="p">})</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Ask for clarification
+</span>                <span class="n">self</span><span class="p">.</span><span class="n">memory</span><span class="p">.</span><span class="nf">append</span><span class="p">({</span>
+                    <span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span>
+                    <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Please respond with a proper action or final answer.</span><span class="sh">"</span>
+                <span class="p">})</span>
+
+        <span class="k">return</span> <span class="sh">"</span><span class="s">Agent reached maximum iterations without completing task.</span><span class="sh">"</span>
+
+
+<span class="k">class</span> <span class="nc">PlanAndExecuteAgent</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Agent that plans before executing</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">llm_client</span><span class="p">,</span> <span class="n">tools</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tool</span><span class="p">]):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm_client</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">{</span><span class="n">tool</span><span class="p">.</span><span class="n">name</span><span class="p">:</span> <span class="n">tool</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">create_plan</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sh">"""</span><span class="s">Generate a plan for the task</span><span class="sh">"""</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">Create a step-by-step plan to accomplish this task:
+
+Task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s">
+
+Available tools: </span><span class="si">{</span><span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">tools</span><span class="p">.</span><span class="nf">keys</span><span class="p">())</span><span class="si">}</span><span class="s">
+
+Respond with a numbered list of steps. Each step should be actionable.
+
+Plan:</span><span class="sh">"""</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">llm</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># Parse numbered list
+</span>        <span class="n">lines</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="nf">strip</span><span class="p">().</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="se">\n</span><span class="sh">'</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="s">.</span><span class="sh">'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nf">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">l</span><span class="p">.</span><span class="nf">strip</span><span class="p">()]</span>
+
+        <span class="k">return</span> <span class="n">steps</span>
+
+    <span class="k">def</span> <span class="nf">execute_step</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Execute a single step</span><span class="sh">"""</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">Execute this step using available tools.
+
+Previous context: </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s">
+
+Step to execute: </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s">
+
+Available tools: </span><span class="si">{</span><span class="nf">list</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">tools</span><span class="p">.</span><span class="nf">keys</span><span class="p">())</span><span class="si">}</span><span class="s">
+
+Respond with the tool to use and its result.</span><span class="sh">"""</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">llm</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">Plan and execute</span><span class="sh">"""</span>
+        <span class="c1"># Phase 1: Planning
+</span>        <span class="n">plan</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">create_plan</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Generated plan with </span><span class="si">{</span><span class="nf">len</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span><span class="si">}</span><span class="s"> steps</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="c1"># Phase 2: Execution
+</span>        <span class="n">context</span> <span class="o">=</span> <span class="sh">""</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">plan</span><span class="p">):</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Executing step </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">step</span><span class="p">[</span><span class="si">:</span><span class="mi">50</span><span class="p">]</span><span class="si">}</span><span class="s">...</span><span class="sh">"</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">execute_step</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <span class="n">context</span> <span class="o">+=</span> <span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Step </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="se">\n</span><span class="s">Result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span>
+
+        <span class="c1"># Phase 3: Summarize
+</span>        <span class="n">summary_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">Summarize the results of this task:
+
+Task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s">
+
+Execution log:
+</span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s">
+
+Final answer:</span><span class="sh">"""</span>
+
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">llm</span><span class="p">.</span><span class="nf">generate</span><span class="p">(</span><span class="n">summary_prompt</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="challenges-and-solutions">Challenges and Solutions</h2>
+
+<h3 id="reliability">Reliability</h3>
+
+<p>Agents can fail, get stuck, or hallucinate actions.</p>
+<ul>
+  <li><strong>Solutions</strong>: Guardrails, validation, fallbacks, human-in-the-loop</li>
+</ul>
+
+<h3 id="context-management">Context Management</h3>
+
+<p>Long tasks exceed context windows.</p>
+<ul>
+  <li><strong>Solutions</strong>: Summarization, selective memory, external storage</li>
+</ul>
+
+<h3 id="tool-selection">Tool Selection</h3>
+
+<p>Choosing the right tool for each step.</p>
+<ul>
+  <li><strong>Solutions</strong>: Better prompting, tool retrieval, learned routing</li>
+</ul>
+
+<h3 id="safety">Safety</h3>
+
+<p>Agents can take unintended actions.</p>
+<ul>
+  <li><strong>Solutions</strong>: Sandboxing, approval workflows, capability limits</li>
+</ul>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Start simple</strong>: Single-agent, few tools. Add complexity gradually.</p>
+  </li>
+  <li>
+    <p><strong>Structured outputs</strong>: JSON mode, function calling for reliable parsing.</p>
+  </li>
+  <li>
+    <p><strong>Observability</strong>: Log every step for debugging.</p>
+  </li>
+  <li>
+    <p><strong>Graceful degradation</strong>: Handle failures, provide fallbacks.</p>
+  </li>
+  <li>
+    <p><strong>Human oversight</strong>: Keep human in the loop for high-stakes actions.</p>
+  </li>
+</ol>
+
+<h2 id="summary">Summary</h2>
+
+<p>Agentic AI extends LLMs with autonomous reasoning and action. Key takeaways:</p>
+
+<ul>
+  <li>Agents combine reasoning, tool use, and iteration</li>
+  <li>ReAct and Plan-and-Execute are common architectures</li>
+  <li>Reliability, safety, and observability are critical</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Yao et al., “ReAct: Synergizing Reasoning and Acting in Language Models”</li>
+  <li>AutoGPT, LangChain Agents, CrewAI documentation</li>
+  <li>Wu et al., “AutoGen: Enabling Next-Gen LLM Applications”</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Agentic AI · 6 / 7
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/agentic-ai-resources/">Previous: Agentic AI Resources: A 2026 Learning Path</a></span>
+      <span><a href="/posts/future-of-ai/">Next: The Next Decade of AI: Trends, Challenges, and Opportunities</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#agentic-ai" class="page__taxonomy-item p-category" rel="tag">agentic-ai</a><span class="sep">, </span>
+    
+      <a href="/tags/#autonomous-agents" class="page__taxonomy-item p-category" rel="tag">autonomous-agents</a><span class="sep">, </span>
+    
+      <a href="/tags/#llms" class="page__taxonomy-item p-category" rel="tag">llms</a><span class="sep">, </span>
+    
+      <a href="/tags/#reasoning" class="page__taxonomy-item p-category" rel="tag">reasoning</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2026-02-01T00:00:00-08:00">February 1, 2026</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/agentic-ai-resources/" class="pagination--pager" title="Agentic AI Resources: A 2026 Learning Path
+">Previous</a>
+    
+    
+      <a href="/posts/causal-discovery/" class="pagination--pager" title="Causal Discovery: Algorithms for Learning Causal Structure from Data
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

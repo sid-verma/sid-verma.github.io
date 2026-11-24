@@ -1,0 +1,1038 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Hyper-Personalization: ML Systems That Learn Individual Preferences - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Personalization has evolved from simple segmentation to models that understand individual preferences in real-time. From Netflix recommendations to personalized search results, hyper-personalization drives engagement across digital products. This primer covers architectures, techniques, and trade-offs for building personalization systems at scale.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Hyper-Personalization: ML Systems That Learn Individual Preferences">
+<meta property="og:url" content="http://localhost:4000/posts/personalization-at-scale/">
+
+
+  <meta property="og:description" content="Personalization has evolved from simple segmentation to models that understand individual preferences in real-time. From Netflix recommendations to personalized search results, hyper-personalization drives engagement across digital products. This primer covers architectures, techniques, and trade-offs for building personalization systems at scale.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-02-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/personalization-at-scale/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Hyper-Personalization: ML Systems That Learn Individual Preferences">
+    
+    <meta itemprop="description" content="Personalization has evolved from simple segmentation to models that understand individual preferences in real-time. From Netflix recommendations to personalized search results, hyper-personalization drives engagement across digital products. This primer covers architectures, techniques, and trade-offs for building personalization systems at scale.">
+    
+    
+    <meta itemprop="datePublished" content="2021-02-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/personalization-at-scale/" class="u-url" itemprop="url">Hyper-Personalization: ML Systems That Learn Individual Preferences
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#personalization" data-tag="personalization">
+  personalization
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#recommendations" data-tag="recommendations">
+  recommendations
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#user-modeling" data-tag="user-modeling">
+  user-modeling
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#machine-learning" data-tag="machine-learning">
+  machine-learning
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Personalization has evolved from simple segmentation to models that understand individual preferences in real-time. From Netflix recommendations to personalized search results, hyper-personalization drives engagement across digital products. This primer covers architectures, techniques, and trade-offs for building personalization systems at scale.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Generic experiences can’t compete with personalized ones. Users expect content tailored to their interests, history, and context. Platforms that deliver personalization see higher engagement, retention, and revenue.</p>
+
+<p>But personalization is technically challenging: you need real-time feature systems, models that generalize from sparse individual data, and infrastructure that serves billions of unique experiences. This post covers the ML foundations of building such systems.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>Personalization spectrum</strong>:</p>
+<ol>
+  <li><strong>Segmentation</strong>: Group users (e.g., new vs. returning)</li>
+  <li><strong>Cohort-based</strong>: Similar user clusters get similar treatment</li>
+  <li><strong>Individual-level</strong>: Each user gets unique experience</li>
+  <li><strong>Contextual</strong>: Individual + current context (time, device, location)</li>
+</ol>
+
+<p><strong>Key challenges</strong>:</p>
+<ul>
+  <li><strong>Cold start</strong>: New users have no history</li>
+  <li><strong>Sparsity</strong>: Most users interact with few items</li>
+  <li><strong>Computational</strong>: Billions of user-item combinations</li>
+  <li><strong>Freshness</strong>: Preferences change; models must update</li>
+</ul>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="user-item-preference-modeling">User-Item Preference Modeling</h3>
+
+<p>Learn scoring function $f(u, i, c)$ for user $u$, item $i$, context $c$:</p>
+
+\[\text{score}(u, i, c) = \mathbf{e}_u^T \mathbf{e}_i + \text{MLP}([\mathbf{e}_u; \mathbf{e}_i; \mathbf{e}_c])\]
+
+<p>Decompose into:</p>
+<ul>
+  <li><strong>User embedding</strong> $\mathbf{e}_u$: Learned representation of user</li>
+  <li><strong>Item embedding</strong> $\mathbf{e}_i$: Learned representation of item</li>
+  <li><strong>Context features</strong> $\mathbf{e}_c$: Time, device, location</li>
+</ul>
+
+<h3 id="implicit-feedback">Implicit Feedback</h3>
+
+<p>Most signals are implicit (clicks, views, time spent) not explicit (ratings). Model binary outcomes:</p>
+
+\[P(\text{interaction} | u, i) = \sigma(f(u, i))\]
+
+<p>Negative sampling critical: contrast positive items against negatives.</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="retrieval--ranking-architecture">Retrieval + Ranking Architecture</h3>
+
+<p>Modern systems use two-stage approach:</p>
+
+<p><strong>Stage 1 - Retrieval</strong>: Get candidate items from billions</p>
+<ul>
+  <li>Matrix factorization / ALS</li>
+  <li>Two-tower neural networks</li>
+  <li>Content-based filtering</li>
+  <li>Popularity baseline</li>
+</ul>
+
+<p><strong>Stage 2 - Ranking</strong>: Score candidates with rich features</p>
+<ul>
+  <li>Gradient boosting (XGBoost, LightGBM)</li>
+  <li>Deep ranking models (Wide &amp; Deep, DCN)</li>
+  <li>Learning-to-rank objectives</li>
+</ul>
+
+<h3 id="deep-learning-architectures">Deep Learning Architectures</h3>
+
+<p><strong>Two-Tower</strong>: Separate encoders for user and item, dot product scoring. Enables efficient nearest neighbor retrieval.</p>
+
+<p><strong>Wide &amp; Deep</strong>: Combine memorization (wide linear) and generalization (deep network).</p>
+
+<p><strong>Deep &amp; Cross Network (DCN)</strong>: Explicit feature crossing layers for interaction modeling.</p>
+
+<h3 id="sequential-models">Sequential Models</h3>
+
+<p>Model user behavior as sequence:</p>
+<ul>
+  <li><strong>RNNs/LSTMs</strong>: Capture temporal patterns</li>
+  <li><strong>Transformers</strong>: Self-attention over interaction history</li>
+  <li><strong>SASRec, BERT4Rec</strong>: Transformer-based sequential recommendation</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">TwoTowerModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Simple two-tower model for personalized retrieval</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">user_embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Embedding</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">item_embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Embedding</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+
+        <span class="c1"># User tower
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">user_tower</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Item tower
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">item_tower</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">embedding_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">):</span>
+        <span class="n">user_emb</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">user_embedding</span><span class="p">(</span><span class="n">user_ids</span><span class="p">)</span>
+        <span class="n">item_emb</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">item_embedding</span><span class="p">(</span><span class="n">item_ids</span><span class="p">)</span>
+
+        <span class="n">user_vec</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">user_tower</span><span class="p">(</span><span class="n">user_emb</span><span class="p">)</span>
+        <span class="n">item_vec</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">item_tower</span><span class="p">(</span><span class="n">item_emb</span><span class="p">)</span>
+
+        <span class="c1"># Normalize for cosine similarity
+</span>        <span class="n">user_vec</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="nf">normalize</span><span class="p">(</span><span class="n">user_vec</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">item_vec</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="nf">normalize</span><span class="p">(</span><span class="n">item_vec</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="nf">return </span><span class="p">(</span><span class="n">user_vec</span> <span class="o">*</span> <span class="n">item_vec</span><span class="p">).</span><span class="nf">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_user_embedding</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">For retrieval: precompute user embeddings</span><span class="sh">"""</span>
+        <span class="n">user_emb</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">user_embedding</span><span class="p">(</span><span class="n">user_ids</span><span class="p">)</span>
+        <span class="n">user_vec</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">user_tower</span><span class="p">(</span><span class="n">user_emb</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="nf">normalize</span><span class="p">(</span><span class="n">user_vec</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_item_embedding</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">For retrieval: precompute item embeddings</span><span class="sh">"""</span>
+        <span class="n">item_emb</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">item_embedding</span><span class="p">(</span><span class="n">item_ids</span><span class="p">)</span>
+        <span class="n">item_vec</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">item_tower</span><span class="p">(</span><span class="n">item_emb</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="nf">normalize</span><span class="p">(</span><span class="n">item_vec</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Training with negative sampling
+</span><span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">pos_item_ids</span><span class="p">,</span> <span class="n">neg_item_ids</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="nf">zero_grad</span><span class="p">()</span>
+
+    <span class="n">pos_scores</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">pos_item_ids</span><span class="p">)</span>
+    <span class="n">neg_scores</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">neg_item_ids</span><span class="p">)</span>
+
+    <span class="c1"># BPR loss: positive items should score higher than negative
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">pos_scores</span> <span class="o">-</span> <span class="n">neg_scores</span><span class="p">)).</span><span class="nf">mean</span><span class="p">()</span>
+
+    <span class="n">loss</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">.</span><span class="nf">item</span><span class="p">()</span>
+
+<span class="c1"># Inference: Find nearest neighbors
+</span><span class="k">def</span> <span class="nf">retrieve_candidates</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">all_item_embeddings</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+        <span class="n">user_emb</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">get_user_embedding</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nf">tensor</span><span class="p">([</span><span class="n">user_id</span><span class="p">]))</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">matmul</span><span class="p">(</span><span class="n">user_emb</span><span class="p">,</span> <span class="n">all_item_embeddings</span><span class="p">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">topk</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top_k</span><span class="p">.</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">top_k</span><span class="p">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Feature freshness</strong>: User preferences change. Update features and model regularly.</p>
+  </li>
+  <li>
+    <p><strong>Popularity bias</strong>: Without diversity, models recommend same popular items. Use exploration.</p>
+  </li>
+  <li>
+    <p><strong>Position bias</strong>: Users click higher-ranked items regardless of relevance. Account for position in training.</p>
+  </li>
+  <li>
+    <p><strong>Cold start</strong>: Use content features, popularity, or similar user behavior for new users/items.</p>
+  </li>
+  <li>
+    <p><strong>Evaluation gap</strong>: Offline metrics don’t always predict online gains. A/B test extensively.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Content platforms</strong>: Netflix, TikTok, YouTube recommendations</li>
+  <li><strong>E-commerce</strong>: Amazon, Etsy product personalization</li>
+  <li><strong>Search</strong>: Personalized Google, LinkedIn search</li>
+  <li><strong>Email</strong>: Optimized send times, content selection</li>
+  <li><strong>Advertising</strong>: User-level ad creative optimization</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="multi-task-learning">Multi-Task Learning</h3>
+
+<p>Jointly optimize multiple objectives (clicks, purchases, engagement):
+\(\mathcal{L} = \sum_t w_t \mathcal{L}_t\)</p>
+
+<p>Architectures: Shared-bottom, MMoE (Mixture of Experts), PLE.</p>
+
+<h3 id="reinforcement-learning">Reinforcement Learning</h3>
+
+<p>Model long-term user value:</p>
+<ul>
+  <li>Bandits for exploration-exploitation</li>
+  <li>RL for session-level optimization</li>
+  <li>Counterfactual learning from logged data</li>
+</ul>
+
+<h3 id="privacy-preserving-personalization">Privacy-Preserving Personalization</h3>
+
+<ul>
+  <li>Federated learning: Train on-device</li>
+  <li>Differential privacy: Bound individual contribution</li>
+  <li>On-device inference: Keep data local</li>
+</ul>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Scalability</th>
+      <th>Cold Start</th>
+      <th>Interpretability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Collaborative filtering</td>
+      <td>High</td>
+      <td>Poor</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Content-based</td>
+      <td>High</td>
+      <td>Good</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Two-tower neural</td>
+      <td>Very High</td>
+      <td>Medium</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Sequential models</td>
+      <td>Medium</td>
+      <td>Medium</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Hybrid</td>
+      <td>High</td>
+      <td>Good</td>
+      <td>Medium</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Personalization at scale requires efficient architectures and careful handling of sparse, implicit signals. Key takeaways:</p>
+
+<ul>
+  <li>Two-stage retrieval + ranking enables billion-scale personalization</li>
+  <li>Two-tower architectures enable efficient candidate retrieval</li>
+  <li>Balance exploitation (known preferences) with exploration (discovering new)</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Covington et al., “Deep Neural Networks for YouTube Recommendations” (2016)</li>
+  <li>He et al., “Neural Collaborative Filtering” (2017)</li>
+  <li>Wang et al., “Deep &amp; Cross Network” (2021)</li>
+  <li>Kang &amp; McAuley, “Self-Attentive Sequential Recommendation” (2018)</li>
+</ul>
+
+        
+        
+
+
+
+
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">machine-learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#personalization" class="page__taxonomy-item p-category" rel="tag">personalization</a><span class="sep">, </span>
+    
+      <a href="/tags/#recommendations" class="page__taxonomy-item p-category" rel="tag">recommendations</a><span class="sep">, </span>
+    
+      <a href="/tags/#user-modeling" class="page__taxonomy-item p-category" rel="tag">user-modeling</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-02-01T00:00:00-08:00">February 1, 2021</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/observational-data-challenges/" class="pagination--pager" title="The Confounding Problem: Navigating Bias in Observational Studies
+">Previous</a>
+    
+    
+      <a href="/posts/learning-to-rank/" class="pagination--pager" title="Learning to Rank: From Pointwise to Listwise Neural Ranking Models
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

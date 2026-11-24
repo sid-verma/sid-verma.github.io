@@ -1,0 +1,1070 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Causality in Industry: Why Correlation Isn’t Enough for Business Decisions - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Correlation doesn’t imply causation—but business decisions require causal understanding. Will this promotion increase sales, or are sales increasing anyway? Does our drug work, or are healthier patients choosing it? Causal inference provides tools to answer these questions from observational data when experiments aren’t possible.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Causality in Industry: Why Correlation Isn’t Enough for Business Decisions">
+<meta property="og:url" content="http://localhost:4000/posts/joining-amazon-causal-inference/">
+
+
+  <meta property="og:description" content="Correlation doesn’t imply causation—but business decisions require causal understanding. Will this promotion increase sales, or are sales increasing anyway? Does our drug work, or are healthier patients choosing it? Causal inference provides tools to answer these questions from observational data when experiments aren’t possible.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-02-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/joining-amazon-causal-inference/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Causality in Industry: Why Correlation Isn’t Enough for Business Decisions">
+    
+    <meta itemprop="description" content="Correlation doesn’t imply causation—but business decisions require causal understanding. Will this promotion increase sales, or are sales increasing anyway? Does our drug work, or are healthier patients choosing it? Causal inference provides tools to answer these questions from observational data when experiments aren’t possible.">
+    
+    
+    <meta itemprop="datePublished" content="2019-02-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/joining-amazon-causal-inference/" class="u-url" itemprop="url">Causality in Industry: Why Correlation Isn’t Enough for Business Decisions
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#observational-data" data-tag="observational-data">
+  observational-data
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#confounding" data-tag="confounding">
+  confounding
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#business-analytics" data-tag="business-analytics">
+  business-analytics
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 1 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/introduction-to-econometrics/">Next: Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Correlation doesn’t imply causation—but business decisions require causal understanding. Will this promotion increase sales, or are sales increasing anyway? Does our drug work, or are healthier patients choosing it? Causal inference provides tools to answer these questions from observational data when experiments aren’t possible.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Machine learning excels at prediction but often fails at causal questions. A model might predict that customers who receive promotional emails buy more, but this doesn’t mean emails cause purchases—perhaps engaged customers are both more likely to buy and more likely to be emailed.</p>
+
+<p>In industry, we constantly need causal answers: What’s the ROI of this marketing campaign? Does this feature improve retention? Should we change pricing? Traditional ML gives correlations; causal inference gives actionable insights.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p>The fundamental challenge: we can never observe both potential outcomes for the same unit. If we give a patient drug A, we can’t see what would have happened with placebo. This is the <strong>fundamental problem of causal inference</strong>.</p>
+
+<p><strong>Key concepts</strong>:</p>
+<ul>
+  <li><strong>Treatment</strong>: The intervention we’re studying (drug, promotion, feature)</li>
+  <li><strong>Outcome</strong>: What we’re trying to affect (health, purchase, engagement)</li>
+  <li><strong>Confounders</strong>: Variables that affect both treatment and outcome</li>
+  <li><strong>Counterfactual</strong>: What would have happened under different treatment</li>
+</ul>
+
+<p>Simpson’s Paradox illustrates the danger: a treatment can appear helpful overall but harmful in every subgroup, or vice versa. Confounders drive these paradoxes.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="potential-outcomes-framework-rubin-causal-model">Potential Outcomes Framework (Rubin Causal Model)</h3>
+
+<p>For each unit $i$, define potential outcomes:</p>
+<ul>
+  <li>$Y_i(1)$: Outcome if treated</li>
+  <li>$Y_i(0)$: Outcome if not treated</li>
+</ul>
+
+<p><strong>Individual Treatment Effect</strong>: $\tau_i = Y_i(1) - Y_i(0)$</p>
+
+<p>We only observe one: $Y_i = T_i \cdot Y_i(1) + (1-T_i) \cdot Y_i(0)$</p>
+
+<p><strong>Average Treatment Effect (ATE)</strong>: $\tau = \mathbb{E}[Y(1) - Y(0)]$</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Average Treatment Effect on Treated (ATT)</strong>: $\tau_{ATT} = \mathbb{E}[Y(1) - Y(0)</td>
+      <td>T=1]$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="identification-assumptions">Identification Assumptions</h3>
+
+<p>To estimate causal effects from observational data:</p>
+
+<ol>
+  <li><strong>SUTVA</strong> (Stable Unit Treatment Value): No interference between units; one version of treatment</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Ignorability</strong> (Unconfoundedness): $Y(0), Y(1) \perp T</td>
+          <td>X$ — no unmeasured confounders</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Positivity</strong>: $0 &lt; P(T=1</td>
+          <td>X) &lt; 1$ — all units have some chance of treatment</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ol>
+
+<table>
+  <tbody>
+    <tr>
+      <td>When these hold: $\mathbb{E}[Y(1) - Y(0)</td>
+      <td>X] = \mathbb{E}[Y</td>
+      <td>T=1, X] - \mathbb{E}[Y</td>
+      <td>T=0, X]$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="randomized-controlled-trials-rcts">Randomized Controlled Trials (RCTs)</h3>
+
+<p>Gold standard: randomly assign treatment. Randomization ensures $T \perp X$, eliminating confounding. A/B tests are online RCTs.</p>
+
+<h3 id="statistical-adjustment">Statistical Adjustment</h3>
+
+<p>Control for confounders via regression:
+\(Y = \beta_0 + \beta_1 T + \beta_2 X + \epsilon\)</p>
+
+<p>$\beta_1$ estimates treatment effect conditional on $X$. Assumes correct functional form.</p>
+
+<h3 id="propensity-score-methods">Propensity Score Methods</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Model treatment probability: $e(X) = P(T=1</td>
+      <td>X)$</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Matching</strong>: Pair treated/control with similar propensity scores</li>
+  <li><strong>Weighting (IPW)</strong>: Weight by inverse of treatment probability</li>
+  <li><strong>Stratification</strong>: Analyze within propensity score strata</li>
+</ul>
+
+<h3 id="difference-in-differences">Difference-in-Differences</h3>
+
+<p>Compare changes over time between treated and control groups:
+\(\tau = (Y_{treat,after} - Y_{treat,before}) - (Y_{control,after} - Y_{control,before})\)</p>
+
+<p>Requires parallel trends assumption.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span><span class="p">,</span> <span class="n">LinearRegression</span>
+<span class="kn">import</span> <span class="n">statsmodels.formula.api</span> <span class="k">as</span> <span class="n">smf</span>
+
+<span class="c1"># Simulate observational data with confounding
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># Confounder: customer engagement level
+</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Treatment depends on confounder (more engaged customers get promo)
+</span><span class="n">propensity_true</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)))</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">propensity_true</span><span class="p">)</span>
+
+<span class="c1"># Outcome depends on both treatment AND confounder
+# True treatment effect is 2.0
+</span><span class="n">Y</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="sh">'</span><span class="s">T</span><span class="sh">'</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">:</span> <span class="n">Y</span><span class="p">})</span>
+
+<span class="c1"># Naive comparison (biased due to confounding)
+</span><span class="n">naive_effect</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">T</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">T</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Naive treatment effect: </span><span class="si">{</span><span class="n">naive_effect</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (biased)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Regression adjustment
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="p">.</span><span class="nf">ols</span><span class="p">(</span><span class="sh">'</span><span class="s">Y ~ T + X</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Adjusted treatment effect: </span><span class="si">{</span><span class="n">model</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">T</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (closer to true effect of 2.0)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Propensity score IPW
+</span><span class="n">ps_model</span> <span class="o">=</span> <span class="nc">LogisticRegression</span><span class="p">()</span>
+<span class="n">ps_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]],</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">T</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">propensity</span> <span class="o">=</span> <span class="n">ps_model</span><span class="p">.</span><span class="nf">predict_proba</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]])[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># IPW estimator
+</span><span class="n">weights</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="n">propensity</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">propensity</span><span class="p">)</span>
+<span class="n">ipw_effect</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">/</span> <span class="n">propensity</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">/</span> <span class="n">propensity</span><span class="p">)</span> <span class="o">-</span>
+    <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">propensity</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">propensity</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">IPW treatment effect: </span><span class="si">{</span><span class="n">ipw_effect</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">True treatment effect: 2.00</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Unmeasured confounding</strong>: No method can adjust for variables you didn’t measure. Always consider what’s missing.</p>
+  </li>
+  <li>
+    <p><strong>P-hacking causal claims</strong>: Just because a coefficient is significant doesn’t mean it’s causal. Be rigorous about assumptions.</p>
+  </li>
+  <li>
+    <p><strong>Confusing prediction with causation</strong>: Good predictive models can have acausal features. Would removing the feature change the outcome?</p>
+  </li>
+  <li>
+    <p><strong>Ignoring selection effects</strong>: Who’s in your sample matters. Treatment effects may not generalize.</p>
+  </li>
+  <li>
+    <p><strong>Functional form assumptions</strong>: Linear regression assumes linear relationships. Test assumptions or use flexible models.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Marketing</strong>: Does this campaign increase purchases (not just predict them)?</li>
+  <li><strong>Product</strong>: Does this feature improve retention (not just correlate)?</li>
+  <li><strong>Pricing</strong>: What’s the demand elasticity (not just price-sales correlation)?</li>
+  <li><strong>Healthcare</strong>: Does this treatment improve outcomes (controlling for patient health)?</li>
+  <li><strong>Policy</strong>: Did this intervention reduce crime (accounting for trends)?</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="instrumental-variables">Instrumental Variables</h3>
+
+<p>When there’s unmeasured confounding, use instruments: variables that affect treatment but not outcome directly. Example: distance to hospital affects treatment choice but not health directly.</p>
+
+<h3 id="regression-discontinuity">Regression Discontinuity</h3>
+
+<p>When treatment is assigned by a threshold (test score, age, income), compare just above vs. just below the threshold.</p>
+
+<h3 id="synthetic-control">Synthetic Control</h3>
+
+<p>For aggregate interventions (policy change in one state), construct synthetic control from weighted average of similar untreated units.</p>
+
+<h3 id="double-machine-learning">Double Machine Learning</h3>
+
+<p>Use ML for nuisance parameters (propensity, outcome models) while maintaining valid inference for causal parameters.</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Requires</th>
+      <th>Handles</th>
+      <th>Weakness</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>RCT</td>
+      <td>Random assignment</td>
+      <td>All confounders</td>
+      <td>Expensive, not always feasible</td>
+    </tr>
+    <tr>
+      <td>Regression</td>
+      <td>Measured confounders</td>
+      <td>Measured confounding</td>
+      <td>Functional form assumptions</td>
+    </tr>
+    <tr>
+      <td>Propensity Score</td>
+      <td>Measured confounders</td>
+      <td>Measured confounding</td>
+      <td>Positivity violations</td>
+    </tr>
+    <tr>
+      <td>IV</td>
+      <td>Valid instrument</td>
+      <td>Unmeasured confounding</td>
+      <td>Hard to find valid instruments</td>
+    </tr>
+    <tr>
+      <td>DiD</td>
+      <td>Parallel trends</td>
+      <td>Time-invariant confounders</td>
+      <td>Trend assumption untestable</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Causal inference moves beyond prediction to understand what actually changes outcomes. Key takeaways:</p>
+
+<ul>
+  <li>Correlation ≠ causation; confounders create spurious associations</li>
+  <li>RCTs eliminate confounding; observational methods require assumptions</li>
+  <li>Always be explicit about identification assumptions</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Angrist &amp; Pischke, <em>Mostly Harmless Econometrics</em></li>
+  <li>Imbens &amp; Rubin, <em>Causal Inference for Statistics, Social, and Biomedical Sciences</em></li>
+  <li>Cunningham, <em>Causal Inference: The Mixtape</em> (free online)</li>
+  <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (free online)</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 1 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/introduction-to-econometrics/">Next: Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#business-analytics" class="page__taxonomy-item p-category" rel="tag">business-analytics</a><span class="sep">, </span>
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#confounding" class="page__taxonomy-item p-category" rel="tag">confounding</a><span class="sep">, </span>
+    
+      <a href="/tags/#observational-data" class="page__taxonomy-item p-category" rel="tag">observational-data</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-02-01T00:00:00-08:00">February 1, 2019</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/matrix-factorization-basics/" class="pagination--pager" title="Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond
+">Previous</a>
+    
+    
+      <a href="/posts/introduction-to-econometrics/" class="pagination--pager" title="Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

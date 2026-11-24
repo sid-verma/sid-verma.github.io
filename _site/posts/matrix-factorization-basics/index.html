@@ -1,0 +1,1052 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Matrix factorization revolutionized recommender systems and earned fame through the Netflix Prize. By decomposing user-item matrices into latent factors, it captures hidden patterns in sparse data. The technique extends far beyond recommendations to topic modeling, feature learning, and data imputation.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond">
+<meta property="og:url" content="http://localhost:4000/posts/matrix-factorization-basics/">
+
+
+  <meta property="og:description" content="Matrix factorization revolutionized recommender systems and earned fame through the Netflix Prize. By decomposing user-item matrices into latent factors, it captures hidden patterns in sparse data. The technique extends far beyond recommendations to topic modeling, feature learning, and data imputation.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-11-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/matrix-factorization-basics/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond">
+    
+    <meta itemprop="description" content="Matrix factorization revolutionized recommender systems and earned fame through the Netflix Prize. By decomposing user-item matrices into latent factors, it captures hidden patterns in sparse data. The technique extends far beyond recommendations to topic modeling, feature learning, and data imputation.">
+    
+    
+    <meta itemprop="datePublished" content="2018-11-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/matrix-factorization-basics/" class="u-url" itemprop="url">Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#matrix-factorization" data-tag="matrix-factorization">
+  matrix-factorization
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#svd" data-tag="svd">
+  svd
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#recommendations" data-tag="recommendations">
+  recommendations
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#dimensionality-reduction" data-tag="dimensionality-reduction">
+  dimensionality-reduction
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 4 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/introduction-to-recommender-systems/">Previous: The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval</a></span>
+      <span><a href="/posts/learning-to-rank/">Next: Learning to Rank: From Pointwise to Listwise Neural Ranking Models</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Matrix factorization revolutionized recommender systems and earned fame through the Netflix Prize. By decomposing user-item matrices into latent factors, it captures hidden patterns in sparse data. The technique extends far beyond recommendations to topic modeling, feature learning, and data imputation.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>The Netflix Prize ($1 million competition, 2006-2009) thrust matrix factorization into the spotlight. The winning solution relied heavily on SVD-based techniques that outperformed all previous methods. Today, these techniques remain foundational in recommendation systems at Spotify, Amazon, and Netflix.</p>
+
+<p>Understanding matrix factorization develops intuition for representation learning more broadly. The idea of learning latent factors underlies word embeddings, topic models, and even deep learning’s hidden layers.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p>Imagine a matrix where rows are users, columns are movies, and entries are ratings. Most entries are missing—users only rate a few movies. Matrix factorization assumes a low-rank structure: user preferences and movie attributes can be captured by a small number of latent factors.</p>
+
+<p><strong>Key insight</strong>: A 5-star rating of <em>The Matrix</em> might decompose into: User likes sci-fi (+) × Movie is sci-fi (+) + User likes action (+) × Movie is action (+). The latent factors capture these hidden attributes.</p>
+
+<p>Mathematically, we factor the rating matrix $\mathbf{R} \in \mathbb{R}^{m \times n}$ as:
+\(\mathbf{R} \approx \mathbf{P}\mathbf{Q}^T\)</p>
+
+<p>where $\mathbf{P} \in \mathbb{R}^{m \times k}$ (user factors) and $\mathbf{Q} \in \mathbb{R}^{n \times k}$ (item factors), with $k \ll \min(m, n)$.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="singular-value-decomposition-svd">Singular Value Decomposition (SVD)</h3>
+
+<p>Classical SVD factors a matrix exactly:
+\(\mathbf{R} = \mathbf{U}\mathbf{\Sigma}\mathbf{V}^T\)</p>
+
+<p>For recommendations, we use truncated SVD keeping only top-$k$ singular values:
+\(\mathbf{R}_k = \mathbf{U}_k\mathbf{\Sigma}_k\mathbf{V}_k^T\)</p>
+
+<p>This gives the best rank-$k$ approximation in Frobenius norm.</p>
+
+<h3 id="funk-svd-for-sparse-data">Funk SVD (for Sparse Data)</h3>
+
+<p>With missing entries, classical SVD doesn’t apply. Simon Funk’s approach fits factors by minimizing error on observed ratings:</p>
+
+\[\min_{\mathbf{P}, \mathbf{Q}} \sum_{(u,i) \in \text{observed}} (R_{ui} - \mathbf{p}_u^T\mathbf{q}_i)^2 + \lambda(\|\mathbf{p}_u\|^2 + \|\mathbf{q}_i\|^2)\]
+
+<h3 id="biased-matrix-factorization">Biased Matrix Factorization</h3>
+
+<p>Add biases to capture systematic effects:
+\(\hat{R}_{ui} = \mu + b_u + b_i + \mathbf{p}_u^T\mathbf{q}_i\)</p>
+
+<ul>
+  <li>$\mu$: Global average rating</li>
+  <li>$b_u$: User bias (tough vs. lenient rater)</li>
+  <li>$b_i$: Item bias (popular vs. niche item)</li>
+</ul>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="stochastic-gradient-descent-sgd">Stochastic Gradient Descent (SGD)</h3>
+
+<p>For each observed rating $(u, i, R_{ui})$:</p>
+
+<ol>
+  <li>Compute prediction error: $e_{ui} = R_{ui} - \hat{R}_{ui}$</li>
+  <li>Update factors:
+    <ul>
+      <li>$\mathbf{p}<em>u \leftarrow \mathbf{p}_u + \alpha(e</em>{ui}\mathbf{q}_i - \lambda\mathbf{p}_u)$</li>
+      <li>$\mathbf{q}<em>i \leftarrow \mathbf{q}_i + \alpha(e</em>{ui}\mathbf{p}_u - \lambda\mathbf{q}_i)$</li>
+    </ul>
+  </li>
+</ol>
+
+<p>SGD scales well but may converge slowly.</p>
+
+<h3 id="alternating-least-squares-als">Alternating Least Squares (ALS)</h3>
+
+<p>Fix one factor matrix, solve for the other in closed form:</p>
+
+<ol>
+  <li>Fix $\mathbf{Q}$, solve for each $\mathbf{p}_u$:
+\(\mathbf{p}_u = (\mathbf{Q}_{I_u}^T\mathbf{Q}_{I_u} + \lambda\mathbf{I})^{-1}\mathbf{Q}_{I_u}^T\mathbf{r}_u\)</li>
+  <li>Fix $\mathbf{P}$, solve for each $\mathbf{q}_i$</li>
+</ol>
+
+<p>ALS parallelizes easily and handles implicit feedback well.</p>
+
+<h3 id="non-negative-matrix-factorization-nmf">Non-negative Matrix Factorization (NMF)</h3>
+
+<p>Constrain factors to be non-negative:
+\(\mathbf{R} \approx \mathbf{W}\mathbf{H}^T \quad \text{where } W_{ij} \geq 0, H_{ij} \geq 0\)</p>
+
+<p>Produces interpretable, additive parts (topics in text, components in images).</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
+<span class="kn">from</span> <span class="n">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">svds</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># Create synthetic ratings matrix with latent structure
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">k_true</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5</span>
+
+<span class="c1"># True latent factors
+</span><span class="n">P_true</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">k_true</span><span class="p">)</span>
+<span class="n">Q_true</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">k_true</span><span class="p">)</span>
+<span class="n">R_full</span> <span class="o">=</span> <span class="n">P_true</span> <span class="o">@</span> <span class="n">Q_true</span><span class="p">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+<span class="c1"># Create sparse observations (10% density)
+</span><span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">random</span><span class="p">((</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.1</span>
+<span class="n">R_observed</span> <span class="o">=</span> <span class="n">R_full</span> <span class="o">*</span> <span class="n">mask</span>
+
+<span class="c1"># SVD-based matrix factorization
+</span><span class="n">k</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of factors to learn
+</span><span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="nf">svds</span><span class="p">(</span><span class="nf">csr_matrix</span><span class="p">(</span><span class="n">R_observed</span><span class="p">),</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+<span class="n">R_pred</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">np</span><span class="p">.</span><span class="nf">diag</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">@</span> <span class="n">Vt</span>
+
+<span class="c1"># Funk SVD via gradient descent
+</span><span class="k">class</span> <span class="nc">FunkSVD</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">lambda_reg</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="n">lambda_reg</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">n_epochs</span> <span class="o">=</span> <span class="n">n_epochs</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">R</span><span class="p">.</span><span class="n">shape</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">mask</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">n_epochs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">]:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">@</span> <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="n">self</span><span class="p">.</span><span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">error</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lambda_reg</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>
+                        <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">error</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="n">P</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lambda_reg</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="c1"># Compute RMSE
+</span>            <span class="n">pred</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">P</span> <span class="o">@</span> <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">.</span><span class="n">T</span>
+            <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(((</span><span class="n">R</span> <span class="o">-</span> <span class="n">pred</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">).</span><span class="nf">mean</span><span class="p">())</span>
+            <span class="nf">if </span><span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s">, RMSE: </span><span class="si">{</span><span class="n">rmse</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">self</span><span class="p">.</span><span class="n">P</span> <span class="o">@</span> <span class="n">self</span><span class="p">.</span><span class="n">Q</span><span class="p">.</span><span class="n">T</span>
+
+<span class="c1"># Train Funk SVD
+</span><span class="n">funk</span> <span class="o">=</span> <span class="nc">FunkSVD</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">R_funk</span> <span class="o">=</span> <span class="n">funk</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">R_observed</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+<span class="c1"># Evaluate prediction on held-out entries
+</span><span class="n">test_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">random</span><span class="p">((</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">rmse_funk</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(((</span><span class="n">R_full</span> <span class="o">-</span> <span class="n">R_funk</span><span class="p">)[</span><span class="n">test_mask</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">).</span><span class="nf">mean</span><span class="p">())</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Test RMSE (Funk SVD): </span><span class="si">{</span><span class="n">rmse_funk</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Choosing k</strong>: Too small loses signal; too large overfits. Cross-validate on held-out ratings.</p>
+  </li>
+  <li>
+    <p><strong>Cold start</strong>: New users/items have no factors. Use content features, popularity baseline, or hybrid approaches.</p>
+  </li>
+  <li>
+    <p><strong>Implicit vs. explicit</strong>: Clicks ≠ ratings. Weight implicit feedback by confidence (see Hu et al., 2008).</p>
+  </li>
+  <li>
+    <p><strong>Regularization tuning</strong>: λ trades off fitting observed data vs. preventing overfitting. Critical for sparse data.</p>
+  </li>
+  <li>
+    <p><strong>Scalability</strong>: For millions of users/items, use distributed ALS (Spark MLlib) or approximate methods.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Recommendations</strong>: Netflix, Spotify, Amazon product recommendations</li>
+  <li><strong>Collaborative filtering</strong>: Any domain with user-item interactions</li>
+  <li><strong>Topic modeling</strong>: NMF on document-term matrices discovers topics</li>
+  <li><strong>Image processing</strong>: NMF for face parts, feature extraction</li>
+  <li><strong>Missing data imputation</strong>: Fill in survey responses, sensor readings</li>
+  <li><strong>Dimensionality reduction</strong>: Alternative to PCA for non-negative data</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="temporal-dynamics">Temporal Dynamics</h3>
+
+<p>User preferences change over time:
+\(\hat{R}_{ui}(t) = \mu + b_u(t) + b_i(t) + \mathbf{p}_u(t)^T\mathbf{q}_i(t)\)</p>
+
+<h3 id="side-information-svd">Side Information (SVD++)</h3>
+
+<p>Incorporate implicit feedback into user factors:
+\(\hat{R}_{ui} = \mu + b_u + b_i + \left(\mathbf{p}_u + \frac{1}{\sqrt{|N_u|}}\sum_{j \in N_u} \mathbf{y}_j\right)^T\mathbf{q}_i\)</p>
+
+<p>where $N_u$ is items user $u$ has interacted with.</p>
+
+<h3 id="neural-matrix-factorization">Neural Matrix Factorization</h3>
+
+<p>Replace dot product with neural network:
+\(\hat{R}_{ui} = f_\theta([\mathbf{p}_u; \mathbf{q}_i])\)</p>
+
+<p>Captures non-linear user-item interactions.</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Interpretability</th>
+      <th>Scalability</th>
+      <th>Cold Start</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SVD/ALS</td>
+      <td>Medium</td>
+      <td>High</td>
+      <td>Poor</td>
+    </tr>
+    <tr>
+      <td>NMF</td>
+      <td>High</td>
+      <td>Medium</td>
+      <td>Poor</td>
+    </tr>
+    <tr>
+      <td>Neural MF</td>
+      <td>Low</td>
+      <td>Medium</td>
+      <td>Poor</td>
+    </tr>
+    <tr>
+      <td>Content-based</td>
+      <td>High</td>
+      <td>High</td>
+      <td><strong>Good</strong></td>
+    </tr>
+    <tr>
+      <td>Hybrid</td>
+      <td>Medium</td>
+      <td>Medium</td>
+      <td><strong>Good</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Matrix factorization uncovers latent structure in sparse data. Key takeaways:</p>
+
+<ul>
+  <li>Decompose user-item matrices into low-rank factors</li>
+  <li>ALS and SGD are the main optimization approaches</li>
+  <li>Add biases and regularization for better predictions</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Koren, Bell &amp; Volinsky, “Matrix Factorization Techniques for Recommender Systems”</li>
+  <li>Hu, Koren &amp; Volinsky, “Collaborative Filtering for Implicit Feedback Datasets”</li>
+  <li>Lee &amp; Seung, “Algorithms for Non-negative Matrix Factorization”</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 4 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/introduction-to-recommender-systems/">Previous: The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval</a></span>
+      <span><a href="/posts/learning-to-rank/">Next: Learning to Rank: From Pointwise to Listwise Neural Ranking Models</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#dimensionality-reduction" class="page__taxonomy-item p-category" rel="tag">dimensionality-reduction</a><span class="sep">, </span>
+    
+      <a href="/tags/#matrix-factorization" class="page__taxonomy-item p-category" rel="tag">matrix-factorization</a><span class="sep">, </span>
+    
+      <a href="/tags/#recommendations" class="page__taxonomy-item p-category" rel="tag">recommendations</a><span class="sep">, </span>
+    
+      <a href="/tags/#svd" class="page__taxonomy-item p-category" rel="tag">svd</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2018-11-01T00:00:00-07:00">November 1, 2018</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/evolution-of-information-retrieval/" class="pagination--pager" title="From Boolean to BERT: The Evolution of Search and Information Retrieval
+">Previous</a>
+    
+    
+      <a href="/posts/joining-amazon-causal-inference/" class="pagination--pager" title="Causality in Industry: Why Correlation Isn’t Enough for Business Decisions
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

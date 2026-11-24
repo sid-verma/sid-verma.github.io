@@ -1,0 +1,1039 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Instrumental Variables: Finding Causal Needles in Confounded Haystacks - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="When unmeasured confounders bias your estimates, instrumental variables (IV) offer a path to causal inference. By finding exogenous variation that affects treatment but not outcome directly, IV methods isolate causal effects even with hidden confounding. This technique is a cornerstone of causal econometrics.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Instrumental Variables: Finding Causal Needles in Confounded Haystacks">
+<meta property="og:url" content="http://localhost:4000/posts/instrumental-variables/">
+
+
+  <meta property="og:description" content="When unmeasured confounders bias your estimates, instrumental variables (IV) offer a path to causal inference. By finding exogenous variation that affects treatment but not outcome directly, IV methods isolate causal effects even with hidden confounding. This technique is a cornerstone of causal econometrics.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-05-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/instrumental-variables/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Instrumental Variables: Finding Causal Needles in Confounded Haystacks">
+    
+    <meta itemprop="description" content="When unmeasured confounders bias your estimates, instrumental variables (IV) offer a path to causal inference. By finding exogenous variation that affects treatment but not outcome directly, IV methods isolate causal effects even with hidden confounding. This technique is a cornerstone of causal econometrics.">
+    
+    
+    <meta itemprop="datePublished" content="2020-05-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/instrumental-variables/" class="u-url" itemprop="url">Instrumental Variables: Finding Causal Needles in Confounded Haystacks
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#instrumental-variables" data-tag="instrumental-variables">
+  instrumental-variables
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#econometrics" data-tag="econometrics">
+  econometrics
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#endogeneity" data-tag="endogeneity">
+  endogeneity
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 5 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/propensity-score-matching/">Previous: Propensity Score Matching: Creating Randomized Trials from Observational Data</a></span>
+      <span><a href="/posts/double-machine-learning/">Next: Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>When unmeasured confounders bias your estimates, instrumental variables (IV) offer a path to causal inference. By finding exogenous variation that affects treatment but not outcome directly, IV methods isolate causal effects even with hidden confounding. This technique is a cornerstone of causal econometrics.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Standard regression fails when treatment and error are correlated—unmeasured confounders create endogeneity. Propensity scores can’t help without measuring those confounders. Experiments may be impossible.</p>
+
+<p>Instrumental variables provide a solution: find an external source of variation in treatment that’s uncorrelated with confounders. Use this variation to identify the causal effect. IV is the go-to tool when you suspect unmeasured confounding.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p>Imagine studying whether education increases earnings. Ability confounds this relationship—smart people get more education AND earn more. We can’t measure ability perfectly.</p>
+
+<p><strong>The instrument</strong>: Draft lottery numbers during Vietnam War. Being drafted is random (uncorrelated with ability), affects education (drafted men had education interrupted), but doesn’t directly affect later earnings (which is debatable). Draft number variability lets us isolate education’s causal effect.</p>
+
+<p><strong>Two requirements for a valid instrument</strong>:</p>
+<ol>
+  <li><strong>Relevance</strong>: Instrument affects treatment (first stage)</li>
+  <li><strong>Exclusion restriction</strong>: Instrument affects outcome ONLY through treatment</li>
+</ol>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="the-endogeneity-problem">The Endogeneity Problem</h3>
+
+<p>Model: $Y = \beta_0 + \beta_1 X + \epsilon$</p>
+
+<p>If $\text{Cov}(X, \epsilon) \neq 0$, OLS is biased:
+\(\hat{\beta}_{OLS} = \beta_1 + \frac{\text{Cov}(X, \epsilon)}{\text{Var}(X)}\)</p>
+
+<h3 id="iv-solution">IV Solution</h3>
+
+<p>Let $Z$ be instrument. Identify $\beta_1$ using:
+\(\beta_1 = \frac{\text{Cov}(Y, Z)}{\text{Cov}(X, Z)} = \frac{\text{Reduced Form}}{\text{First Stage}}\)</p>
+
+<p>If $\text{Cov}(Z, \epsilon) = 0$ (exclusion), this is consistent.</p>
+
+<h3 id="two-stage-least-squares-2sls">Two-Stage Least Squares (2SLS)</h3>
+
+<p><strong>Stage 1</strong>: Regress treatment on instrument
+\(X = \gamma_0 + \gamma_1 Z + \nu\)</p>
+
+<p><strong>Stage 2</strong>: Regress outcome on fitted values
+\(Y = \beta_0 + \beta_1 \hat{X} + \epsilon\)</p>
+
+<h3 id="local-average-treatment-effect-late">Local Average Treatment Effect (LATE)</h3>
+
+<p>IV estimates the effect on <strong>compliers</strong>—those whose treatment status is changed by the instrument. This is a local effect, not ATE.</p>
+
+\[\text{LATE} = \frac{E[Y|Z=1] - E[Y|Z=0]}{E[X|Z=1] - E[X|Z=0]}\]
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="testing-instrument-validity">Testing Instrument Validity</h3>
+
+<p><strong>Relevance</strong>: First-stage F-statistic should be &gt; 10 (Staiger-Stock rule). Weak instruments cause severe bias.</p>
+
+<p><strong>Exclusion</strong>: Untestable by data. Requires domain knowledge and argumentation.</p>
+
+<p><strong>Over-identification tests</strong>: With multiple instruments, test if they give same estimate (Hansen’s J test).</p>
+
+<h3 id="just-identified-vs-over-identified">Just-Identified vs. Over-Identified</h3>
+
+<ul>
+  <li><strong>Just-identified</strong>: Same number of instruments as endogenous variables. Exactly identified, no testable restrictions.</li>
+  <li><strong>Over-identified</strong>: More instruments than endogenous variables. Can test over-identifying restrictions.</li>
+</ul>
+
+<h3 id="weak-instruments">Weak Instruments</h3>
+
+<p>When first stage is weak, 2SLS is biased toward OLS. Solutions:</p>
+<ul>
+  <li>Use LIML (Limited Information Maximum Likelihood) instead of 2SLS</li>
+  <li>Report Anderson-Rubin confidence intervals</li>
+  <li>Find stronger instruments</li>
+</ul>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">statsmodels.api</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="kn">from</span> <span class="n">linearmodels.iv</span> <span class="kn">import</span> <span class="n">IV2SLS</span>
+<span class="kn">from</span> <span class="n">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># Simulate IV scenario: returns to education
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5000</span>
+
+<span class="c1"># Unmeasured confounder: ability
+</span><span class="n">ability</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Instrument: proximity to college (random, affects education, not earnings directly)
+</span><span class="n">proximity</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Education depends on ability AND proximity
+</span><span class="n">education</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ability</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">proximity</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Earnings depend on ability AND education (true effect = 1000 per year)
+</span><span class="n">earnings</span> <span class="o">=</span> <span class="mi">20000</span> <span class="o">+</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">education</span> <span class="o">+</span> <span class="mi">5000</span> <span class="o">*</span> <span class="n">ability</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span>
+    <span class="sh">'</span><span class="s">earnings</span><span class="sh">'</span><span class="p">:</span> <span class="n">earnings</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">:</span> <span class="n">education</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">proximity</span><span class="sh">'</span><span class="p">:</span> <span class="n">proximity</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">const</span><span class="sh">'</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">})</span>
+
+<span class="c1"># OLS (biased due to omitted ability)
+</span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="nc">OLS</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">earnings</span><span class="sh">'</span><span class="p">],</span> <span class="n">sm</span><span class="p">.</span><span class="nf">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">])).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">OLS estimate: </span><span class="si">{</span><span class="n">ols</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">0</span><span class="n">f</span><span class="si">}</span><span class="s"> per year education</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  (Biased upward due to ability, true effect is 1000)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># 2SLS with IV
+</span><span class="n">iv_model</span> <span class="o">=</span> <span class="n">IV2SLS</span><span class="p">.</span><span class="nf">from_formula</span><span class="p">(</span><span class="sh">'</span><span class="s">earnings ~ 1 + [education ~ proximity]</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<span class="n">iv_results</span> <span class="o">=</span> <span class="n">iv_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">2SLS estimate: </span><span class="si">{</span><span class="n">iv_results</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">0</span><span class="n">f</span><span class="si">}</span><span class="s"> per year education</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  (Closer to true effect of 1000)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># First stage diagnostics
+</span><span class="n">first_stage</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="nc">OLS</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">],</span> <span class="n">sm</span><span class="p">.</span><span class="nf">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">proximity</span><span class="sh">'</span><span class="p">])).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">First stage F-statistic: </span><span class="si">{</span><span class="n">first_stage</span><span class="p">.</span><span class="n">fvalue</span><span class="si">:</span><span class="p">.</span><span class="mi">1</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  (Should be &gt; 10 for strong instrument)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Manual 2SLS for understanding
+# Stage 1: regress education on proximity
+</span><span class="n">stage1</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="nc">OLS</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">education</span><span class="sh">'</span><span class="p">],</span> <span class="n">sm</span><span class="p">.</span><span class="nf">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">proximity</span><span class="sh">'</span><span class="p">])).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">education_hat</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage1</span><span class="p">.</span><span class="n">fittedvalues</span>
+
+<span class="c1"># Stage 2: regress earnings on predicted education
+</span><span class="n">stage2</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="nc">OLS</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">earnings</span><span class="sh">'</span><span class="p">],</span> <span class="n">sm</span><span class="p">.</span><span class="nf">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">education_hat</span><span class="sh">'</span><span class="p">])).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Manual 2SLS: </span><span class="si">{</span><span class="n">stage2</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">education_hat</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">0</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Weak instruments</strong>: First-stage F &lt; 10 means biased estimates. Find stronger instruments or use robust methods.</p>
+  </li>
+  <li>
+    <p><strong>Exclusion violation</strong>: The hardest part. Think carefully about direct effects of instrument on outcome.</p>
+  </li>
+  <li>
+    <p><strong>LATE ≠ ATE</strong>: IV estimates effect on compliers only. Consider whether this is the relevant population.</p>
+  </li>
+  <li>
+    <p><strong>Many instruments</strong>: Too many instruments relative to sample size can over-fit first stage.</p>
+  </li>
+  <li>
+    <p><strong>Instrument hunting</strong>: Searching for instruments that “work” is p-hacking. Pre-specify and justify instruments.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<p><strong>Classic instruments</strong>:</p>
+<ul>
+  <li><strong>Distance to college</strong>: Education returns</li>
+  <li><strong>Draft lottery</strong>: Vietnam-era studies</li>
+  <li><strong>Quarter of birth</strong>: Compulsory schooling effects</li>
+  <li><strong>Rainfall</strong>: Agricultural productivity, conflict</li>
+  <li><strong>Shift-share</strong>: Labor market shocks</li>
+</ul>
+
+<p><strong>Tech/business applications</strong>:</p>
+<ul>
+  <li><strong>Price elasticity</strong>: Cost shocks as instruments for price</li>
+  <li><strong>Ad effectiveness</strong>: Regional ad cost variation</li>
+  <li><strong>Feature usage</strong>: Random assignment to default settings</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="control-function-approach">Control Function Approach</h3>
+
+<p>Alternative to 2SLS that’s more efficient with non-linear first stages:</p>
+
+<ol>
+  <li>Estimate first stage, get residuals $\hat{\nu}$</li>
+  <li>Include $\hat{\nu}$ as control in outcome regression:
+$Y = \beta_0 + \beta_1 X + \theta \hat{\nu} + \epsilon$</li>
+</ol>
+
+<h3 id="regression-discontinuity-as-iv">Regression Discontinuity as IV</h3>
+
+<p>RD can be viewed as IV where instrument is crossing the threshold:
+\(Z_i = \mathbb{1}[X_i \geq c]\)</p>
+
+<h3 id="machine-learning-for-iv">Machine Learning for IV</h3>
+
+<p><strong>Double/Debiased ML</strong>: Use ML for first stage while maintaining valid inference.</p>
+
+<p><strong>Deep IV</strong>: Neural networks for non-linear first and second stages.</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Handles Unmeasured Confounding?</th>
+      <th>Requirement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OLS</td>
+      <td>No</td>
+      <td>Correct specification</td>
+    </tr>
+    <tr>
+      <td>Propensity Score</td>
+      <td>No</td>
+      <td>All confounders measured</td>
+    </tr>
+    <tr>
+      <td>IV</td>
+      <td><strong>Yes</strong></td>
+      <td>Valid instrument</td>
+    </tr>
+    <tr>
+      <td>DiD</td>
+      <td>Partially (time-invariant)</td>
+      <td>Parallel trends</td>
+    </tr>
+    <tr>
+      <td>RDD</td>
+      <td><strong>Yes</strong> (locally)</td>
+      <td>Threshold assignment</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Instrumental variables enable causal inference when unmeasured confounders exist. Key takeaways:</p>
+
+<ul>
+  <li>Instruments must affect treatment (relevance) but not outcome directly (exclusion)</li>
+  <li>Weak instruments cause severe bias; always check first-stage F</li>
+  <li>IV estimates LATE, not ATE—the effect on compliers</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Angrist &amp; Pischke, <em>Mostly Harmless Econometrics</em>, Chapter 4</li>
+  <li>Angrist, Imbens &amp; Rubin, “Identification of Causal Effects Using Instrumental Variables” (1996)</li>
+  <li>Stock, Wright &amp; Yogo, “A Survey of Weak Instruments” (2002)</li>
+  <li>Cunningham, <em>Causal Inference: The Mixtape</em>, IV chapter</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 5 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/propensity-score-matching/">Previous: Propensity Score Matching: Creating Randomized Trials from Observational Data</a></span>
+      <span><a href="/posts/double-machine-learning/">Next: Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#econometrics" class="page__taxonomy-item p-category" rel="tag">econometrics</a><span class="sep">, </span>
+    
+      <a href="/tags/#endogeneity" class="page__taxonomy-item p-category" rel="tag">endogeneity</a><span class="sep">, </span>
+    
+      <a href="/tags/#instrumental-variables" class="page__taxonomy-item p-category" rel="tag">instrumental-variables</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2020-05-01T00:00:00-07:00">May 1, 2020</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/lifetime-value-estimation/" class="pagination--pager" title="Customer Lifetime Value: Predictive Models for Business Intelligence
+">Previous</a>
+    
+    
+      <a href="/posts/double-machine-learning/" class="pagination--pager" title="Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

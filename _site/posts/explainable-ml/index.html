@@ -1,0 +1,1032 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Opening the Black Box: Explainability Methods for Modern ML - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="As ML models make high-stakes decisions, explaining why becomes essential. Explainability methods reveal what input features drive predictions, enabling debugging, building trust, and meeting regulatory requirements. This primer covers SHAP, LIME, and other key techniques for making black-box models interpretable.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Opening the Black Box: Explainability Methods for Modern ML">
+<meta property="og:url" content="http://localhost:4000/posts/explainable-ml/">
+
+
+  <meta property="og:description" content="As ML models make high-stakes decisions, explaining why becomes essential. Explainability methods reveal what input features drive predictions, enabling debugging, building trust, and meeting regulatory requirements. This primer covers SHAP, LIME, and other key techniques for making black-box models interpretable.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-10-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/explainable-ml/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Opening the Black Box: Explainability Methods for Modern ML">
+    
+    <meta itemprop="description" content="As ML models make high-stakes decisions, explaining why becomes essential. Explainability methods reveal what input features drive predictions, enabling debugging, building trust, and meeting regulatory requirements. This primer covers SHAP, LIME, and other key techniques for making black-box models interpretable.">
+    
+    
+    <meta itemprop="datePublished" content="2024-10-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/explainable-ml/" class="u-url" itemprop="url">Opening the Black Box: Explainability Methods for Modern ML
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#explainability" data-tag="explainability">
+  explainability
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#interpretability" data-tag="interpretability">
+  interpretability
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#shap" data-tag="shap">
+  shap
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#xai" data-tag="xai">
+  xai
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>As ML models make high-stakes decisions, explaining <em>why</em> becomes essential. Explainability methods reveal what input features drive predictions, enabling debugging, building trust, and meeting regulatory requirements. This primer covers SHAP, LIME, and other key techniques for making black-box models interpretable.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>A model denies a loan. Why? A model flags a patient as high-risk. What drove that? When models make consequential decisions, “the algorithm said so” isn’t acceptable.</p>
+
+<p>Explainability serves multiple purposes:</p>
+<ul>
+  <li><strong>Debugging</strong>: Find model errors and biases</li>
+  <li><strong>Trust</strong>: Users and stakeholders understand decisions</li>
+  <li><strong>Compliance</strong>: Regulations (GDPR, FCRA) require explanations</li>
+  <li><strong>Improvement</strong>: Understand what the model learned</li>
+</ul>
+
+<h2 id="types-of-explainability">Types of Explainability</h2>
+
+<h3 id="global-vs-local">Global vs. Local</h3>
+
+<p><strong>Global</strong>: Overall model behavior, feature importance across all predictions.</p>
+
+<p><strong>Local</strong>: Explanation for a single prediction.</p>
+
+<h3 id="model-agnostic-vs-model-specific">Model-Agnostic vs. Model-Specific</h3>
+
+<p><strong>Model-agnostic</strong>: Works on any model (SHAP, LIME).</p>
+
+<p><strong>Model-specific</strong>: Exploits model structure (tree splits, attention weights).</p>
+
+<h3 id="intrinsic-vs-post-hoc">Intrinsic vs. Post-Hoc</h3>
+
+<p><strong>Intrinsic</strong>: Model is inherently interpretable (linear regression, small trees).</p>
+
+<p><strong>Post-hoc</strong>: Applied to any model after training.</p>
+
+<h2 id="key-methods">Key Methods</h2>
+
+<h3 id="shap-shapley-additive-explanations">SHAP (SHapley Additive exPlanations)</h3>
+
+<p>Based on Shapley values from cooperative game theory. For each feature, compute its average marginal contribution across all feature combinations.</p>
+
+\[\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(|N|-|S|-1)!}{|N|!}[f(S \cup \{i\}) - f(S)]\]
+
+<p>Properties:</p>
+<ul>
+  <li><strong>Local accuracy</strong>: Contributions sum to prediction</li>
+  <li><strong>Missingness</strong>: Features not in model get zero contribution</li>
+  <li><strong>Consistency</strong>: If feature becomes more important, its Shapley value increases</li>
+</ul>
+
+<h3 id="lime-local-interpretable-model-agnostic-explanations">LIME (Local Interpretable Model-agnostic Explanations)</h3>
+
+<p>Fit interpretable model (linear) locally around prediction:</p>
+
+<ol>
+  <li>Sample neighbors of instance</li>
+  <li>Get model predictions for neighbors</li>
+  <li>Weight samples by proximity</li>
+  <li>Fit simple model to explain local behavior</li>
+</ol>
+
+<h3 id="feature-importance">Feature Importance</h3>
+
+<p><strong>Permutation importance</strong>: Shuffle feature, measure prediction error increase.</p>
+
+<p><strong>Built-in importance</strong>: Tree split-based, gain-based importance.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">shap</span>
+<span class="kn">from</span> <span class="n">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="n">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span> <span class="n">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># Create dataset
+</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_informative</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">n_redundant</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="sh">'</span><span class="s">feature_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="sh">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">feature_names</span><span class="p">)</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="nf">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Train model
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># SHAP analysis
+</span><span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="p">.</span><span class="nc">TreeExplainer</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="p">.</span><span class="nf">shap_values</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># For binary classification, shap_values[1] is positive class
+</span><span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">shap_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="n">shap_values_class1</span> <span class="o">=</span> <span class="n">shap_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">shap_values_class1</span> <span class="o">=</span> <span class="n">shap_values</span>
+
+<span class="c1"># Summary plot (global feature importance)
+</span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">shap</span><span class="p">.</span><span class="nf">summary_plot</span><span class="p">(</span><span class="n">shap_values_class1</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="sh">"</span><span class="s">bar</span><span class="sh">"</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sh">'</span><span class="s">shap_importance.png</span><span class="sh">'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+
+<span class="c1"># Beeswarm plot (feature effects)
+</span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">shap</span><span class="p">.</span><span class="nf">summary_plot</span><span class="p">(</span><span class="n">shap_values_class1</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sh">'</span><span class="s">shap_beeswarm.png</span><span class="sh">'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+
+<span class="c1"># Local explanation for single instance
+</span><span class="n">instance_idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Prediction for instance </span><span class="si">{</span><span class="n">instance_idx</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">model</span><span class="p">.</span><span class="nf">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">instance_idx</span><span class="p">]])[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">Feature contributions:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">shap_val</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">feature_names</span><span class="p">,</span> <span class="n">shap_values_class1</span><span class="p">[</span><span class="n">instance_idx</span><span class="p">]):</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">feat</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">shap_val</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Waterfall plot for single prediction
+</span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">shap</span><span class="p">.</span><span class="n">plots</span><span class="p">.</span><span class="nf">waterfall</span><span class="p">(</span><span class="n">shap</span><span class="p">.</span><span class="nc">Explanation</span><span class="p">(</span>
+    <span class="n">values</span><span class="o">=</span><span class="n">shap_values_class1</span><span class="p">[</span><span class="n">instance_idx</span><span class="p">],</span>
+    <span class="n">base_values</span><span class="o">=</span><span class="n">explainer</span><span class="p">.</span><span class="n">expected_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">explainer</span><span class="p">.</span><span class="n">expected_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">explainer</span><span class="p">.</span><span class="n">expected_value</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">X_test</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">instance_idx</span><span class="p">],</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">feature_names</span>
+<span class="p">),</span> <span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sh">'</span><span class="s">shap_waterfall.png</span><span class="sh">'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">close</span><span class="p">()</span>
+
+
+<span class="c1"># Permutation importance
+</span><span class="kn">from</span> <span class="n">sklearn.inspection</span> <span class="kn">import</span> <span class="n">permutation_importance</span>
+
+<span class="n">perm_importance</span> <span class="o">=</span> <span class="nf">permutation_importance</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">n_repeats</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">Permutation Importance:</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">sorted_idx</span> <span class="o">=</span> <span class="n">perm_importance</span><span class="p">.</span><span class="n">importances_mean</span><span class="p">.</span><span class="nf">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">sorted_idx</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">perm_importance</span><span class="p">.</span><span class="n">importances_mean</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="s"> </span><span class="sh">"</span>
+          <span class="sa">f</span><span class="sh">"</span><span class="s">(+/- </span><span class="si">{</span><span class="n">perm_importance</span><span class="p">.</span><span class="n">importances_std</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+
+
+<span class="c1"># LIME explanation
+</span><span class="kn">from</span> <span class="n">lime.lime_tabular</span> <span class="kn">import</span> <span class="n">LimeTabularExplainer</span>
+
+<span class="n">lime_explainer</span> <span class="o">=</span> <span class="nc">LimeTabularExplainer</span><span class="p">(</span>
+    <span class="n">X_train</span><span class="p">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="n">feature_names</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
+    <span class="n">class_names</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">Negative</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">Positive</span><span class="sh">'</span><span class="p">],</span>
+    <span class="n">mode</span><span class="o">=</span><span class="sh">'</span><span class="s">classification</span><span class="sh">'</span>
+<span class="p">)</span>
+
+<span class="c1"># Explain single prediction
+</span><span class="n">lime_exp</span> <span class="o">=</span> <span class="n">lime_explainer</span><span class="p">.</span><span class="nf">explain_instance</span><span class="p">(</span>
+    <span class="n">X_test</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">values</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">predict_proba</span><span class="p">,</span>
+    <span class="n">num_features</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">LIME Explanation for instance 0:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">lime_exp</span><span class="p">.</span><span class="nf">as_list</span><span class="p">():</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">weight</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="interpreting-results">Interpreting Results</h2>
+
+<h3 id="shap-values">SHAP Values</h3>
+
+<ul>
+  <li><strong>Positive SHAP</strong>: Feature pushes prediction higher</li>
+  <li><strong>Negative SHAP</strong>: Feature pushes prediction lower</li>
+  <li><strong>Magnitude</strong>: Importance of feature for this prediction</li>
+</ul>
+
+<h3 id="feature-importance-1">Feature Importance</h3>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>**Mean</td>
+          <td>SHAP</td>
+          <td>**: Average absolute contribution</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><strong>Permutation</strong>: Drop in accuracy when shuffled</li>
+  <li><strong>Gain</strong>: Improvement in objective when splitting on feature</li>
+</ul>
+
+<h3 id="dependence-plots">Dependence Plots</h3>
+
+<p>Show how feature value affects predictions:</p>
+<ul>
+  <li>X-axis: feature value</li>
+  <li>Y-axis: SHAP value</li>
+  <li>Color: interaction feature</li>
+</ul>
+
+<h2 id="common-pitfalls">Common Pitfalls</h2>
+
+<ol>
+  <li>
+    <p><strong>Correlation confusion</strong>: Correlated features share importance. SHAP distributes fairly but may seem to underweight each.</p>
+  </li>
+  <li>
+    <p><strong>Feature engineering</strong>: Explanations depend on how features are encoded. One-hot vs. ordinal gives different insights.</p>
+  </li>
+  <li>
+    <p><strong>Model complexity</strong>: Simple model explanations may not reflect true data patterns.</p>
+  </li>
+  <li>
+    <p><strong>Confirmation bias</strong>: Looking for expected patterns; missing unexpected ones.</p>
+  </li>
+  <li>
+    <p><strong>Overfitting explanations</strong>: SHAP on overfit model explains noise, not signal.</p>
+  </li>
+</ol>
+
+<h2 id="use-cases">Use Cases</h2>
+
+<ul>
+  <li><strong>Credit risk</strong>: Which factors drove loan decision</li>
+  <li><strong>Medical</strong>: Why patient flagged as high-risk</li>
+  <li><strong>Fraud</strong>: What triggered fraud alert</li>
+  <li><strong>Debugging</strong>: Find unexpected feature dependencies</li>
+  <li><strong>Feature engineering</strong>: Understand what model actually learned</li>
+</ul>
+
+<h2 id="advanced-topics">Advanced Topics</h2>
+
+<h3 id="counterfactual-explanations">Counterfactual Explanations</h3>
+
+<p>“What would need to change for different outcome?”</p>
+
+<p>Find minimal feature changes to flip prediction.</p>
+
+<h3 id="concept-based-explanations">Concept-Based Explanations</h3>
+
+<p>Explain in human concepts, not raw features:</p>
+<ul>
+  <li>“Striped pattern” not “pixel values”</li>
+  <li>TCAV: Testing with Concept Activation Vectors</li>
+</ul>
+
+<h3 id="attention-visualization">Attention Visualization</h3>
+
+<p>For transformers, visualize attention patterns (but interpret carefully—attention ≠ importance).</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Explainability methods make ML predictions understandable. Key takeaways:</p>
+
+<ul>
+  <li>SHAP provides theoretically grounded feature attributions</li>
+  <li>LIME gives local linear approximations</li>
+  <li>Multiple methods give complementary insights</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Lundberg &amp; Lee, “A Unified Approach to Interpreting Model Predictions” (SHAP)</li>
+  <li>Ribeiro et al., “Why Should I Trust You?” (LIME)</li>
+  <li>Molnar, <em>Interpretable Machine Learning</em> (free online book)</li>
+</ul>
+
+        
+        
+
+
+
+
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#explainability" class="page__taxonomy-item p-category" rel="tag">explainability</a><span class="sep">, </span>
+    
+      <a href="/tags/#interpretability" class="page__taxonomy-item p-category" rel="tag">interpretability</a><span class="sep">, </span>
+    
+      <a href="/tags/#shap" class="page__taxonomy-item p-category" rel="tag">shap</a><span class="sep">, </span>
+    
+      <a href="/tags/#xai" class="page__taxonomy-item p-category" rel="tag">xai</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2024-10-01T00:00:00-07:00">October 1, 2024</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/ab-testing-designs/" class="pagination--pager" title="Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments
+">Previous</a>
+    
+    
+      <a href="/posts/llms-in-production/" class="pagination--pager" title="LLMs in Production: From Prompting to Fine-Tuning at Scale
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

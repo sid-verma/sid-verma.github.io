@@ -1,0 +1,984 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Deep Dive into Ad Systems: Retrieval, Ranking, and Auctions - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="“In the milliseconds it takes your page to load, a global auction happens. Millions of advertisers compete for your attention, and one winner emerges. This is the most sophisticated real-time market in human history.”">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Deep Dive into Ad Systems: Retrieval, Ranking, and Auctions">
+<meta property="og:url" content="http://localhost:4000/posts/deep-dive-into-ad-systems/">
+
+
+  <meta property="og:description" content="“In the milliseconds it takes your page to load, a global auction happens. Millions of advertisers compete for your attention, and one winner emerges. This is the most sophisticated real-time market in human history.”">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-06-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/deep-dive-into-ad-systems/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Deep Dive into Ad Systems: Retrieval, Ranking, and Auctions">
+    
+    <meta itemprop="description" content="  “In the milliseconds it takes your page to load, a global auction happens. Millions of advertisers compete for your attention, and one winner emerges. This is the most sophisticated real-time market in human history.”">
+    
+    
+    <meta itemprop="datePublished" content="2025-06-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/deep-dive-into-ad-systems/" class="u-url" itemprop="url">Deep Dive into Ad Systems: Retrieval, Ranking, and Auctions
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ranking" data-tag="ranking">
+  ranking
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#auctions" data-tag="auctions">
+  auctions
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#systems" data-tag="systems">
+  systems
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 7 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/incrementality-testing-at-scale/">Previous: Incrementality Testing at Scale: Building Always-On Measurement Platforms</a></span>
+      <span><a href="/posts/online-bid-optimization/">Next: Online Bid Optimization: Real-Time Control for Advertising Markets</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p><em>“In the milliseconds it takes your page to load, a global auction happens. Millions of advertisers compete for your attention, and one winner emerges. This is the most sophisticated real-time market in human history.”</em></p>
+</blockquote>
+
+<p>Ad Tech is often misunderstood as just “marketing.” In reality, it is high-frequency trading for attention.
+The engineering constraints are brutal:</p>
+<ol>
+  <li><strong>Latency</strong>: You have &lt;100ms to respond.</li>
+  <li><strong>Throughput</strong>: 1M+ queries per second (QPS).</li>
+  <li><strong>Data</strong>: Petabytes of user logs per day.</li>
+</ol>
+
+<p>This post dissects the architecture of a modern Ad Delivery System (like Google Ads or Meta Ads).</p>
+
+<blockquote>
+  <p><strong>Related reading</strong>: This is the system that executes the <a href="/posts/incrementality-testing-at-scale/">Incremental ROAS</a> strategy.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="chapter-i-the-ecosystem-overview">Chapter I: The Ecosystem Overview</h2>
+
+<p>When you visit a website (Publisher), the following happens:</p>
+<ol>
+  <li><strong>SSP (Supply Side Platform)</strong>: Represents the Publisher. “I have a slot available.”</li>
+  <li><strong>Ad Exchange</strong>: The marketplace.</li>
+  <li><strong>DSP (Demand Side Platform)</strong>: Represents the Advertiser. “I want to buy users who like shoes.”</li>
+</ol>
+
+<p>In Walled Gardens (Facebook/Google), these three are collapsed into one monolithic system.</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User
+    participant App as App/Website
+    participant AdServer
+    participant Retrieval
+    participant Ranking
+    participant Auction
+
+    User-&gt;&gt;App: Opens App
+    App-&gt;&gt;AdServer: Get Ad (User_ID, Context)
+    AdServer-&gt;&gt;Retrieval: Find Candidate Ads (1M+)
+    Retrieval-&gt;&gt;AdServer: Return Top 1000 Candidates
+    AdServer-&gt;&gt;Ranking: Predict pCTR &amp; pCVR
+    Ranking-&gt;&gt;AdServer: Return Top 10 with Scores
+    AdServer-&gt;&gt;Auction: Run VCG/GSP Auction
+    Auction-&gt;&gt;AdServer: Winner + Price
+    AdServer-&gt;&gt;App: Render Winner
+    App-&gt;&gt;User: Show Ad
+</code></pre>
+
+<hr />
+
+<h2 id="chapter-ii-the-4-stage-funnel">Chapter II: The 4-Stage Funnel</h2>
+
+<p>We cannot score 100 million ads for every request. We use a <strong>Cascade Architecture</strong>.</p>
+
+<h3 id="1-retrieval-matching">1. Retrieval (Matching)</h3>
+<p><strong>Goal</strong>: Reduce 100M ads → 1,000 candidates.
+<strong>Tech</strong>: Inverted Index (Elasticsearch/Lucene) or Vector Search (FAISS/ScaNN).</p>
+
+<p>Query: “User likes <em>Running</em> AND <em>Tech</em> AND Loc=<em>NYC</em>”
+Returns: All active campaigns targeting these keys.</p>
+
+<h3 id="2-light-ranking-filtering">2. Light Ranking (Filtering)</h3>
+<p><strong>Goal</strong>: Reduce 1,000 → 100.
+<strong>Logic</strong>: Hard constraints.</p>
+<ul>
+  <li>Budget exhausted?</li>
+  <li>Brand safety rules? (Don’t show gambling ads on kids’ content)</li>
+  <li>Frequency cap reached? (User saw this ad 5 times today)</li>
+</ul>
+
+<h3 id="3-heavy-ranking-scoring">3. Heavy Ranking (Scoring)</h3>
+<p><strong>Goal</strong>: Score top 100.
+<strong>Model</strong>: Deep Neural Networks (DLRM).
+The core equation for <strong>eCPM (Expected Cost Per Mille)</strong>:</p>
+
+\[eCPM = Bid \times pCTR \times pCVR \times 1000\]
+
+<ul>
+  <li><strong>pCTR</strong>: Probability of Click (Logistic Regression / GBM)</li>
+  <li><strong>pCVR</strong>: Probability of Conversion (Deep Learning)</li>
+</ul>
+
+<h3 id="4-the-auction">4. The Auction</h3>
+<p><strong>Goal</strong>: Pick 1 winner.
+<strong>Mechanism</strong>: Generalized Second Price (GSP) or VCG.</p>
+
+<hr />
+
+<h2 id="chapter-iii-the-vcg-auction">Chapter III: The VCG Auction</h2>
+
+<p>Why not just pay what you bid? (First-Price).
+Because advertisers would “shade” their bids (bid $1.01 if the next guy bids $1.00).</p>
+
+<p>In <strong>Second-Price Auctions (Vickrey-Clarke-Groves)</strong>, you pay the <strong>opportunity cost</strong> you imposed on others.</p>
+
+<p><strong>Scenario</strong>: 1 Slot.</p>
+<ul>
+  <li>Bidder A: Bids $10.</li>
+  <li>Bidder B: Bids $5.</li>
+</ul>
+
+<p><strong>Outcome</strong>:</p>
+<ul>
+  <li>A wins.</li>
+  <li>A pays $5.01 (just enough to beat B).</li>
+</ul>
+
+<p><strong>Benefit</strong>: Truthful bidding is the dominant strategy. You bid your true value, because bidding higher doesn’t increase your price (only win rate), and bidding lower risks losing a profitable impression.</p>
+
+<hr />
+
+<h2 id="chapter-iv-the-ranking-model-dlrm">Chapter IV: The Ranking Model (DLRM)</h2>
+
+<p>The heart of the system is the <strong>pCTR model</strong>.
+Meta open-sourced <strong>DLRM (Deep Learning Recommendation Model)</strong>.</p>
+
+<h3 id="architecture">Architecture</h3>
+<ol>
+  <li><strong>Dense Features</strong>: Age, Time of Day (Feed into MLP).</li>
+  <li><strong>Sparse Features</strong>: UserID, AdID, Keywords (Feed into Embedding Tables).</li>
+  <li><strong>Interaction</strong>: Dot product of embeddings.</li>
+  <li><strong>Top MLP</strong>: Sigmoid output for probability.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">SimpleDLRM</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">num_users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">,</span> <span class="n">embed_dim</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="c1"># Embeddings for sparse features
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">user_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Embedding</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">item_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Embedding</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">)</span>
+
+        <span class="c1"># MLP for dense features interaction
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">embed_dim</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">user_emb</span><span class="p">(</span><span class="n">user_ids</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">item_emb</span><span class="p">(</span><span class="n">item_ids</span><span class="p">)</span>
+
+        <span class="c1"># Concat interaction
+</span>        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">cat</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">fc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Millions of parameters, trained on billions of logs
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">SimpleDLRM</span><span class="p">(</span><span class="n">num_users</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="mi">50000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>Challenge</strong>: Embeddings are huge (TB sizes). Ad systems require <strong>Model Parallelism</strong> (splitting embeddings across GPUs) rather than just Data Parallelism.</p>
+
+<hr />
+
+<h2 id="chapter-v-pacing-and-budgeting">Chapter V: Pacing and Budgeting</h2>
+
+<p>If I have a $100/day budget, I shouldn’t spend it all at 8 AM.
+The <strong>Pacing Controller</strong> throttles the bid.</p>
+
+<p>\(Bid_{sharded} = Bid_{value} \times \psi(t)\)
+where $\psi(t) \in [0, 1]$ is the pacing multiplier.</p>
+
+<p>We use <strong>PID Controllers</strong> (Proportional-Integral-Derivative) to adjust $\psi$ in real-time.</p>
+<ul>
+  <li>Spending too fast? Drop $\psi$.</li>
+  <li>Spending too slow? Raise $\psi$.</li>
+</ul>
+
+<p>See <a href="/posts/online-bid-optimization/">Online Bid Optimization</a> for the control theory details.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<p>Ad systems are the Formula 1 of engineering. They combine:</p>
+<ul>
+  <li><strong>Search Systems</strong> (Retrieval)</li>
+  <li><strong>Recommender Systems</strong> (Ranking)</li>
+  <li><strong>Game Theory</strong> (Auctions)</li>
+  <li><strong>Control Theory</strong> (Pacing)</li>
+  <li><strong>Distributed Systems</strong> (Low latency)</li>
+</ul>
+
+<p>If you can build an ad server, you can build almost anything.</p>
+
+<blockquote>
+  <p><em>“Latency is the silent killer of revenue.”</em></p>
+</blockquote>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 7 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/incrementality-testing-at-scale/">Previous: Incrementality Testing at Scale: Building Always-On Measurement Platforms</a></span>
+      <span><a href="/posts/online-bid-optimization/">Next: Online Bid Optimization: Real-Time Control for Advertising Markets</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#ad-tech" class="page__taxonomy-item p-category" rel="tag">ad-tech</a><span class="sep">, </span>
+    
+      <a href="/tags/#auctions" class="page__taxonomy-item p-category" rel="tag">auctions</a><span class="sep">, </span>
+    
+      <a href="/tags/#ranking" class="page__taxonomy-item p-category" rel="tag">ranking</a><span class="sep">, </span>
+    
+      <a href="/tags/#systems" class="page__taxonomy-item p-category" rel="tag">systems</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-06-01T00:00:00-07:00">June 1, 2025</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/model-evaluation/" class="pagination--pager" title="Beyond Accuracy: Comprehensive Model Evaluation for Production ML
+">Previous</a>
+    
+    
+      <a href="/posts/neural-ranking-models/" class="pagination--pager" title="Neural Ranking Models: Cross-Encoders, Bi-Encoders, and Late Interaction
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

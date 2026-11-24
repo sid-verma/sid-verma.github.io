@@ -1,0 +1,1010 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Pareto Optimal ML: Balancing Multiple Objectives in Machine Learning - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Real-world ML problems rarely have a single objective. Recommenders balance relevance and diversity. Ranking balances engagement and revenue. Models trade off accuracy and latency. Multi-objective optimization provides frameworks for navigating these trade-offs systematically.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Pareto Optimal ML: Balancing Multiple Objectives in Machine Learning">
+<meta property="og:url" content="http://localhost:4000/posts/multi-objective-optimization/">
+
+
+  <meta property="og:description" content="Real-world ML problems rarely have a single objective. Recommenders balance relevance and diversity. Ranking balances engagement and revenue. Models trade off accuracy and latency. Multi-objective optimization provides frameworks for navigating these trade-offs systematically.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-06-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/multi-objective-optimization/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Pareto Optimal ML: Balancing Multiple Objectives in Machine Learning">
+    
+    <meta itemprop="description" content="Real-world ML problems rarely have a single objective. Recommenders balance relevance and diversity. Ranking balances engagement and revenue. Models trade off accuracy and latency. Multi-objective optimization provides frameworks for navigating these trade-offs systematically.">
+    
+    
+    <meta itemprop="datePublished" content="2022-06-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/multi-objective-optimization/" class="u-url" itemprop="url">Pareto Optimal ML: Balancing Multiple Objectives in Machine Learning
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#multi-objective" data-tag="multi-objective">
+  multi-objective
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#optimization" data-tag="optimization">
+  optimization
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#pareto" data-tag="pareto">
+  pareto
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#machine-learning" data-tag="machine-learning">
+  machine-learning
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Real-world ML problems rarely have a single objective. Recommenders balance relevance and diversity. Ranking balances engagement and revenue. Models trade off accuracy and latency. Multi-objective optimization provides frameworks for navigating these trade-offs systematically.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Single-objective optimization is comfortable: maximize accuracy, minimize loss. But production systems serve multiple masters. A recommendation system that maximizes clicks might show only popular items, sacrificing diversity. A model that maximizes accuracy might be too slow for real-time serving.</p>
+
+<p>Understanding Pareto optimality and multi-objective techniques helps you make principled trade-offs rather than ad-hoc compromises.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>Multiple objectives often conflict</strong>: Improving one degrades another. You can’t maximize relevance AND maximize revenue AND maximize diversity simultaneously.</p>
+
+<p><strong>Pareto optimality</strong>: Solution A dominates B if A is at least as good on all objectives and strictly better on at least one. Pareto-optimal solutions aren’t dominated by any other solution.</p>
+
+<p><strong>Pareto frontier</strong>: The set of Pareto-optimal solutions. Each point represents a different trade-off—none is objectively “best.”</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="multi-objective-problem">Multi-Objective Problem</h3>
+
+\[\min_x \mathbf{f}(x) = [f_1(x), f_2(x), ..., f_k(x)]^T\]
+
+<p>No single optimal solution; seek Pareto frontier.</p>
+
+<h3 id="pareto-dominance">Pareto Dominance</h3>
+
+<p>Solution $x$ dominates $y$ ($x \prec y$) if:</p>
+<ul>
+  <li>$f_i(x) \leq f_i(y)$ for all $i$</li>
+  <li>$f_j(x) &lt; f_j(y)$ for at least one $j$</li>
+</ul>
+
+<h3 id="weighted-sum-scalarization">Weighted Sum Scalarization</h3>
+
+<p>Convert to single objective:
+\(\min_x \sum_{i=1}^k w_i f_i(x)\)</p>
+
+<p>Different weights $w$ trace different points on Pareto frontier.</p>
+
+<h3 id="constraint-approach">Constraint Approach</h3>
+
+<p>Optimize one objective, constrain others:
+\(\min_x f_1(x) \quad \text{s.t.} \quad f_i(x) \leq \epsilon_i \text{ for } i &gt; 1\)</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="linear-scalarization">Linear Scalarization</h3>
+
+<p>Simplest approach: weighted sum of objectives.</p>
+
+<p>Pros: Simple, convex problems well-behaved
+Cons: Can’t find non-convex Pareto regions</p>
+
+<h3 id="ε-constraint-method">ε-Constraint Method</h3>
+
+<p>Fix constraints on secondary objectives, optimize primary:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">epsilon_constraint</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Optimize f1 subject to f2 &lt;= epsilon</span><span class="sh">"""</span>
+    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nf">f2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nf">float</span><span class="p">(</span><span class="sh">'</span><span class="s">inf</span><span class="sh">'</span><span class="p">)</span>  <span class="c1"># Infeasible
+</span>        <span class="k">return</span> <span class="nf">f1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nf">optimizer</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="multi-gradient-methods">Multi-Gradient Methods</h3>
+
+<p>For neural networks, compute gradients for each objective:
+\(\nabla_\theta f_i(\theta)\)</p>
+
+<p>Find update direction that improves all (or most) objectives:</p>
+<ul>
+  <li><strong>MGDA</strong>: Minimum-norm solution in gradient cone</li>
+  <li><strong>PCGrad</strong>: Project conflicting gradients</li>
+</ul>
+
+<h3 id="evolutionary-algorithms">Evolutionary Algorithms</h3>
+
+<p>NSGA-II, MOEA/D for exploring Pareto frontiers:</p>
+<ol>
+  <li>Maintain population of solutions</li>
+  <li>Evolve toward Pareto frontier</li>
+  <li>Maintain diversity along frontier</li>
+</ol>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># Example: Relevance vs. Diversity trade-off
+</span>
+<span class="k">def</span> <span class="nf">relevance_score</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">item_relevances</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Higher is better</span><span class="sh">"""</span>
+    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">item_relevances</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">diversity_score</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">item_features</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Larger spread = more diverse</span><span class="sh">"""</span>
+    <span class="n">selected_features</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">item_features</span>
+    <span class="c1"># Variance as diversity proxy
+</span>    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="nf">var</span><span class="p">(</span><span class="n">selected_features</span><span class="p">[</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">pareto_frontier</span><span class="p">(</span><span class="n">n_items</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Trace Pareto frontier by varying weights</span><span class="sh">"""</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># Item properties
+</span>    <span class="n">item_relevances</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="n">n_items</span><span class="p">)</span>
+    <span class="n">item_features</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># Scalarization weights
+</span>    <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alphas</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="o">-</span><span class="nf">relevance_score</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">item_relevances</span><span class="p">)</span>  <span class="c1"># Minimize negative
+</span>            <span class="n">div</span> <span class="o">=</span> <span class="o">-</span><span class="nf">diversity_score</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">item_features</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">rel</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">div</span>
+
+        <span class="c1"># Constraint: weights sum to 1
+</span>        <span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">eq</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">fun</span><span class="sh">'</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">*</span> <span class="n">n_items</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">n_items</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_items</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nf">minimize</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="sh">'</span><span class="s">SLSQP</span><span class="sh">'</span><span class="p">,</span>
+                         <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="p">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="n">x</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="nf">relevance_score</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">item_relevances</span><span class="p">)</span>
+            <span class="n">div</span> <span class="o">=</span> <span class="nf">diversity_score</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">item_features</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">rel</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+
+<span class="c1"># Compute Pareto frontier
+</span><span class="n">frontier</span> <span class="o">=</span> <span class="nf">pareto_frontier</span><span class="p">()</span>
+<span class="n">relevances</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">frontier</span><span class="p">]</span>
+<span class="n">diversities</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">frontier</span><span class="p">]</span>
+
+<span class="c1"># Plot
+</span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">scatter</span><span class="p">(</span><span class="n">relevances</span><span class="p">,</span> <span class="n">diversities</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">frontier</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="sh">'</span><span class="s">viridis</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Relevance</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Diversity</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">title</span><span class="p">(</span><span class="sh">'</span><span class="s">Pareto Frontier: Relevance vs. Diversity</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">Trade-off point</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sh">'</span><span class="s">pareto_frontier.png</span><span class="sh">'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+
+<span class="c1"># Multi-task neural network example
+</span><span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">MultiTaskModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">shared_dim</span><span class="p">,</span> <span class="n">n_tasks</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">shared</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">shared_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">shared_dim</span><span class="p">,</span> <span class="n">shared_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">task_heads</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">shared_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n_tasks</span><span class="p">)</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">shared</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">shared</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nf">head</span><span class="p">(</span><span class="n">shared</span><span class="p">)</span> <span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">task_heads</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">multi_task_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Weighted multi-task loss</span><span class="sh">"""</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="p">.</span><span class="nc">MSELoss</span><span class="p">()(</span><span class="n">out</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="k">for</span> <span class="n">out</span><span class="p">,</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nf">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">l</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">losses</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Ignoring trade-offs</strong>: Don’t pretend single objective captures everything. Make trade-offs explicit.</p>
+  </li>
+  <li>
+    <p><strong>Wrong weights</strong>: Weights in scalarization aren’t intuitive. A/B test to find right balance.</p>
+  </li>
+  <li>
+    <p><strong>Local solutions</strong>: Weighted sums may miss parts of Pareto frontier. Use multiple starting points.</p>
+  </li>
+  <li>
+    <p><strong>Changing preferences</strong>: Business priorities shift. Build systems that easily adjust objective weights.</p>
+  </li>
+  <li>
+    <p><strong>Metric gaming</strong>: When you optimize X, Y degrades. Monitor all relevant metrics.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Recommendations</strong>: Relevance + diversity + freshness + monetization</li>
+  <li><strong>Ranking</strong>: Engagement + revenue + user satisfaction</li>
+  <li><strong>Modeling</strong>: Accuracy + latency + memory</li>
+  <li><strong>Ads</strong>: CTR + revenue + user experience</li>
+  <li><strong>Content moderation</strong>: Precision + recall + fairness</li>
+</ul>
+
+<h2 id="advanced-topics">Advanced Topics</h2>
+
+<h3 id="hyperparameter-multi-objective">Hyperparameter Multi-Objective</h3>
+
+<p>Tuning involves multiple objectives:</p>
+<ul>
+  <li>Validation accuracy (maximize)</li>
+  <li>Training time (minimize)</li>
+  <li>Model size (minimize)</li>
+</ul>
+
+<p>Use multi-objective Bayesian optimization.</p>
+
+<h3 id="fair-ml-as-multi-objective">Fair ML as Multi-Objective</h3>
+
+<p>Balance accuracy across groups:
+\(\min_\theta \{\text{Loss}(\theta), |\text{Accuracy}_A - \text{Accuracy}_B|\}\)</p>
+
+<p>Pareto frontier shows accuracy-fairness trade-off.</p>
+
+<h3 id="online-multi-objective">Online Multi-Objective</h3>
+
+<p>Bandit settings with multiple rewards:</p>
+<ul>
+  <li>Pareto UCB algorithms</li>
+  <li>Multi-objective Thompson Sampling</li>
+</ul>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Multi-objective optimization provides principled frameworks for trade-offs. Key takeaways:</p>
+
+<ul>
+  <li>Real problems have multiple, conflicting objectives</li>
+  <li>Pareto frontier captures the set of optimal trade-offs</li>
+  <li>Scalarization, constraints, and evolutionary methods explore frontiers</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Deb, <em>Multi-Objective Optimization Using Evolutionary Algorithms</em></li>
+  <li>Sener &amp; Koltun, “Multi-Task Learning as Multi-Objective Optimization” (NeurIPS 2018)</li>
+  <li>Miettinen, <em>Nonlinear Multiobjective Optimization</em></li>
+</ul>
+
+        
+        
+
+
+
+
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">machine-learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#multi-objective" class="page__taxonomy-item p-category" rel="tag">multi-objective</a><span class="sep">, </span>
+    
+      <a href="/tags/#optimization" class="page__taxonomy-item p-category" rel="tag">optimization</a><span class="sep">, </span>
+    
+      <a href="/tags/#pareto" class="page__taxonomy-item p-category" rel="tag">pareto</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2022-06-01T00:00:00-07:00">June 1, 2022</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/tree-based-ranking/" class="pagination--pager" title="Decision Trees That Rank: GBRT and Lambda Gradients for Search
+">Previous</a>
+    
+    
+      <a href="/posts/contextual-bandits/" class="pagination--pager" title="Contextual Bandits: The Exploration-Exploitation Frontier for Personalization
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>
