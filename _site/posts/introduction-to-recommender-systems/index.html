@@ -1,0 +1,1400 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="“We’re not competing with sleep. We’re competing with HBO, Amazon, Hulu, and everything else out there.” — Reed Hastings, Netflix CEO">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval">
+<meta property="og:url" content="http://localhost:4000/posts/introduction-to-recommender-systems/">
+
+
+  <meta property="og:description" content="“We’re not competing with sleep. We’re competing with HBO, Amazon, Hulu, and everything else out there.” — Reed Hastings, Netflix CEO">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-11-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/introduction-to-recommender-systems/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval">
+    
+    <meta itemprop="description" content="  “We’re not competing with sleep. We’re competing with HBO, Amazon, Hulu, and everything else out there.”— Reed Hastings, Netflix CEO">
+    
+    
+    <meta itemprop="datePublished" content="2017-11-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/introduction-to-recommender-systems/" class="u-url" itemprop="url">The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#recommender-systems" data-tag="recommender-systems">
+  recommender-systems
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#collaborative-filtering" data-tag="collaborative-filtering">
+  collaborative-filtering
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#personalization" data-tag="personalization">
+  personalization
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#matrix-factorization" data-tag="matrix-factorization">
+  matrix-factorization
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#neural-ranking" data-tag="neural-ranking">
+  neural-ranking
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 3 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/evolution-of-information-retrieval/">Previous: From Boolean to BERT: The Evolution of Search and Information Retrieval</a></span>
+      <span><a href="/posts/matrix-factorization-basics/">Next: Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p><em>“We’re not competing with sleep. We’re competing with HBO, Amazon, Hulu, and everything else out there.”</em>
+— <strong>Reed Hastings</strong>, Netflix CEO</p>
+</blockquote>
+
+<p>On October 2, 2006, Netflix announced a challenge that would captivate the machine learning world: improve their movie recommendation algorithm by 10%, and win $1 million. Three years and thousands of competitors later, the winning team—BellKor’s Pragmatic Chaos—crossed the finish line with an ensemble of over 100 models.</p>
+
+<p>The Netflix Prize didn’t just advance recommender systems. It launched careers, sparked research programs, and demonstrated that recommendation wasn’t just a business problem—it was one of the grand challenges of applied machine learning.</p>
+
+<p>This exploration traces the journey from that pivotal competition through modern neural retrieval systems, revealing how platforms serving billions of personalized recommendations actually work.</p>
+
+<blockquote>
+  <p><strong>Related reading</strong>: Recommender systems share deep connections with <a href="/posts/information-retrieval-key-concepts/">Information Retrieval</a>—both solve the retrieval problem. And at scale, recommendation becomes a <a href="/posts/learning-to-rank/">Learning to Rank</a> challenge.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="chapter-i-the-1-million-question">Chapter I: The $1 Million Question</h2>
+
+<h3 id="the-netflix-prize">The Netflix Prize</h3>
+
+<p>Netflix’s 2006 challenge was deceptively simple: predict how users would rate movies. The dataset was unprecedented—100 million ratings from 480,000 users across 17,770 movies. The metric was RMSE (Root Mean Squared Error). The goal: beat Netflix’s existing Cinematch system by 10%.</p>
+
+<p>The competition revealed several truths:</p>
+
+<ol>
+  <li>
+    <p><strong>The power of ensembles</strong>: No single algorithm won. BellKor’s winning solution blended matrix factorization, Restricted Boltzmann Machines, k-nearest neighbors, and dozens of variations.</p>
+  </li>
+  <li>
+    <p><strong>Diminishing returns</strong>: The first 8% improvement came quickly. The final 2% took years and extraordinary complexity—so complex Netflix never fully deployed it.</p>
+  </li>
+  <li>
+    <p><strong>The importance of temporal dynamics</strong>: What you watched last week matters more than what you watched last year.</p>
+  </li>
+</ol>
+
+<h3 id="why-recommendations-matter">Why Recommendations Matter</h3>
+
+<p>Netflix estimates recommendations save $1 billion annually by reducing churn. Amazon attributes 35% of purchases to recommendations. YouTube’s recommendation engine drives over 70% of watch time.</p>
+
+<p>For the ML practitioner, recommendation is a unique arena:</p>
+<ul>
+  <li><strong>Extreme sparsity</strong>: Users interact with tiny fractions of available items</li>
+  <li><strong>Implicit signals</strong>: Clicks, views, and dwell time—not explicit ratings</li>
+  <li><strong>Real-time serving</strong>: Recommendations computed in milliseconds at massive scale</li>
+  <li><strong>Multi-objective optimization</strong>: Balance engagement, diversity, freshness, revenue</li>
+</ul>
+
+<hr />
+
+<h2 id="chapter-ii-collaborative-filtering-foundations">Chapter II: Collaborative Filtering Foundations</h2>
+
+<h3 id="the-user-item-matrix">The User-Item Matrix</h3>
+
+<p>At its core, recommendation is matrix completion. We observe a sparse matrix $\mathbf{R} \in \mathbb{R}^{m \times n}$ where $R_{ui}$ is user $u$’s interaction with item $i$. Most entries are missing.</p>
+
+<pre><code class="language-mermaid">flowchart LR
+    subgraph Users["Users (m)"]
+        U1["Alice"]
+        U2["Bob"]
+        U3["Carol"]
+    end
+
+    subgraph Items["Items (n)"]
+        I1["Inception"]
+        I2["The Matrix"]
+        I3["Titanic"]
+    end
+
+    subgraph Matrix["Sparse Rating Matrix"]
+        R["R[u,i] = rating or ?"]
+    end
+
+    Users --&gt; R
+    Items --&gt; R
+    R --&gt; Pred["Predict missing entries"]
+
+    style Matrix fill:#fff3e0
+</code></pre>
+
+<h3 id="two-philosophies">Two Philosophies</h3>
+
+<p><strong>Content-based filtering</strong>: “You liked action movies, here are more action movies.”</p>
+<ul>
+  <li>Uses item features (genre, actors, description)</li>
+  <li>Doesn’t require other users’ data</li>
+  <li>Limited by feature quality; can’t discover unexpected preferences</li>
+</ul>
+
+<p><strong>Collaborative filtering</strong>: “Users like you also liked this.”</p>
+<ul>
+  <li>Uses only interaction patterns—no item features needed</li>
+  <li>Discovers non-obvious relationships (people who like art house films often like jazz albums)</li>
+  <li>Suffers from cold start for new users/items</li>
+</ul>
+
+<h3 id="the-sparsity-challenge">The Sparsity Challenge</h3>
+
+<p>Consider Netflix’s scale: ~200 million users, ~15,000 titles. That’s 3 trillion possible user-item pairs. Even an active user might watch 100 titles—0.0000007% of possibilities.</p>
+
+<p>Learning from this extreme sparsity is recommender systems’ defining challenge.</p>
+
+<hr />
+
+<h2 id="chapter-iii-matrix-factorization--the-netflix-prize-era">Chapter III: Matrix Factorization — The Netflix Prize Era</h2>
+
+<h3 id="the-core-idea">The Core Idea</h3>
+
+<p>Factor the rating matrix into latent representations:</p>
+
+\[\mathbf{R} \approx \mathbf{P}\mathbf{Q}^T\]
+
+<p>where:</p>
+<ul>
+  <li>$\mathbf{P} \in \mathbb{R}^{m \times k}$: User latent factors (each row is a user’s “taste vector”)</li>
+  <li>$\mathbf{Q} \in \mathbb{R}^{n \times k}$: Item latent factors (each row is an item’s “characteristic vector”)</li>
+  <li>$k$: Latent dimension (typically 50-200)</li>
+</ul>
+
+<p>Predicted rating:
+\(\hat{R}_{ui} = \mathbf{p}_u^T \mathbf{q}_i = \sum_{f=1}^{k} p_{uf} \cdot q_{if}\)</p>
+
+<p>The latent factors learn interpretable patterns: one dimension might capture “cerebral vs. popcorn,” another “romance vs. action.”</p>
+
+<h3 id="adding-biases">Adding Biases</h3>
+
+<p>Users and items have inherent biases. Alice rates everything 4.5 stars; Bob is a harsh 2.5 critic. <em>The Godfather</em> averages 4.3; a B-movie averages 2.1.</p>
+
+<p>The SVD++ model captures this:</p>
+
+\[\hat{R}_{ui} = \mu + b_u + b_i + \mathbf{p}_u^T\mathbf{q}_i\]
+
+<p>where:</p>
+<ul>
+  <li>$\mu$: Global average rating</li>
+  <li>$b_u$: User bias (tendency to rate high/low)</li>
+  <li>$b_i$: Item bias (overall popularity)</li>
+</ul>
+
+<h3 id="training-als-and-sgd">Training: ALS and SGD</h3>
+
+<p><strong>Alternating Least Squares (ALS)</strong>:</p>
+<ol>
+  <li>Fix $\mathbf{Q}$, solve for each $\mathbf{p}_u$ (closed-form)</li>
+  <li>Fix $\mathbf{P}$, solve for each $\mathbf{q}_i$ (closed-form)</li>
+  <li>Repeat until convergence</li>
+</ol>
+
+<p>ALS parallelizes elegantly—each user/item update is independent.</p>
+
+<p><strong>Stochastic Gradient Descent (SGD)</strong>:
+For each observed $(u, i, R_{ui})$:
+\(e_{ui} = R_{ui} - \hat{R}_{ui}\)
+\(\mathbf{p}_u \leftarrow \mathbf{p}_u + \alpha(e_{ui}\mathbf{q}_i - \lambda\mathbf{p}_u)\)
+\(\mathbf{q}_i \leftarrow \mathbf{q}_i + \alpha(e_{ui}\mathbf{p}_u - \lambda\mathbf{q}_i)\)</p>
+
+<p>SGD works better for explicit ratings; ALS shines with implicit feedback.</p>
+
+<hr />
+
+<h2 id="chapter-iv-the-implicit-feedback-revolution">Chapter IV: The Implicit Feedback Revolution</h2>
+
+<h3 id="clicks-arent-ratings">Clicks Aren’t Ratings</h3>
+
+<p>In the real world, explicit ratings are rare. Most signals are <strong>implicit</strong>: clicks, views, purchases, dwell time, scrolls. The challenge: a non-interaction might mean “not interested” or “never seen.”</p>
+
+<p>The implicit feedback formulation (Hu, Koren &amp; Volinsky, 2008):</p>
+
+\[\min_{\mathbf{P}, \mathbf{Q}} \sum_{u,i} c_{ui}(p_{ui} - \mathbf{p}_u^T\mathbf{q}_i)^2 + \lambda(\|\mathbf{P}\|^2 + \|\mathbf{Q}\|^2)\]
+
+<p>where:</p>
+<ul>
+  <li>$p_{ui} \in {0, 1}$: preference (did user interact?)</li>
+  <li>$c_{ui} = 1 + \alpha \cdot r_{ui}$: confidence (more interactions → higher confidence)</li>
+</ul>
+
+<p>The insight: treat missing values as weak negatives (low confidence), not unknown.</p>
+
+<pre><code class="language-mermaid">flowchart TB
+    subgraph Explicit["Explicit Feedback"]
+        Stars["1-5 Star Ratings"]
+        Known["Clear signal, but rare"]
+    end
+
+    subgraph Implicit["Implicit Feedback"]
+        Clicks["Clicks, Views, Purchases"]
+        Noisy["Abundant but noisy"]
+    end
+
+    subgraph Challenge["The Challenge"]
+        Missing["Missing = not interested or not shown?"]
+    end
+
+    Explicit --&gt; Real["Real-world systems use both"]
+    Implicit --&gt; Real
+    Real --&gt; Challenge
+
+    style Implicit fill:#e3f2fd
+    style Challenge fill:#fff3e0
+</code></pre>
+
+<h3 id="bpr-bayesian-personalized-ranking">BPR: Bayesian Personalized Ranking</h3>
+
+<p>Rather than predicting absolute ratings, optimize relative rankings. For each user, prefer items they interacted with over items they didn’t:</p>
+
+\[\sum_{(u,i,j) \in D_s} \log \sigma(\hat{R}_{ui} - \hat{R}_{uj}) - \lambda \|\Theta\|^2\]
+
+<p>where $(u, i, j)$ means user $u$ prefers item $i$ over item $j$.</p>
+
+<p>BPR connects recommendation to <a href="/posts/learning-to-rank/">Learning to Rank</a>—a pairwise ranking loss.</p>
+
+<hr />
+
+<h2 id="chapter-v-two-tower-neural-retrieval">Chapter V: Two-Tower Neural Retrieval</h2>
+
+<h3 id="the-youtube-architecture">The YouTube Architecture</h3>
+
+<p>In 2016, Google published “Deep Neural Networks for YouTube Recommendations,” revealing the architecture behind YouTube’s system. The key insight: divide the problem into two stages.</p>
+
+<pre><code class="language-mermaid">flowchart TB
+    subgraph Stage1["Stage 1: Candidate Generation"]
+        Corpus["Billions of videos"]
+        TwoTower["Two-Tower Model"]
+        Candidates["~1000 candidates"]
+    end
+
+    subgraph Stage2["Stage 2: Ranking"]
+        Features["Rich features"]
+        Ranker["Deep Ranking Model"]
+        TopK["~10 videos shown"]
+    end
+
+    Corpus --&gt; TwoTower
+    TwoTower --&gt;|"High recall"| Candidates
+    Candidates --&gt; Features
+    Features --&gt; Ranker
+    Ranker --&gt;|"High precision"| TopK
+
+    style Stage1 fill:#e3f2fd
+    style Stage2 fill:#e8f5e9
+</code></pre>
+
+<p><strong>Candidate Generation</strong> (Two-Tower):</p>
+<ul>
+  <li>User tower: encodes user history, context, demographics → user embedding</li>
+  <li>Item tower: encodes item features → item embedding</li>
+  <li>Similarity: dot product or cosine between embeddings</li>
+  <li>Goal: high recall—retrieve all potentially relevant items</li>
+</ul>
+
+<p><strong>Ranking</strong>:</p>
+<ul>
+  <li>Takes ~1000 candidates from retrieval</li>
+  <li>Uses rich features: watch time history, recency, item quality signals</li>
+  <li>Goal: high precision—rank the truly relevant items highest</li>
+</ul>
+
+<h3 id="the-two-tower-model">The Two-Tower Model</h3>
+
+<pre><code class="language-mermaid">flowchart LR
+    subgraph UserTower["User Tower"]
+        UHist["Watch History"]
+        UDemo["Demographics"]
+        UContext["Context (time, device)"]
+        UEnc["Deep Network"]
+        UEmb["User Embedding (128-d)"]
+    end
+
+    subgraph ItemTower["Item Tower"]
+        ITitle["Title/Description"]
+        IMeta["Metadata"]
+        ICat["Category"]
+        IEnc["Deep Network"]
+        IEmb["Item Embedding (128-d)"]
+    end
+
+    UHist &amp; UDemo &amp; UContext --&gt; UEnc
+    UEnc --&gt; UEmb
+
+    ITitle &amp; IMeta &amp; ICat --&gt; IEnc
+    IEnc --&gt; IEmb
+
+    UEmb --&gt; Dot["Dot Product"]
+    IEmb --&gt; Dot
+    Dot --&gt; Score["Relevance Score"]
+
+    style UserTower fill:#e3f2fd
+    style ItemTower fill:#fff3e0
+</code></pre>
+
+<p><strong>Why two towers?</strong></p>
+<ul>
+  <li>Item embeddings can be pre-computed and indexed (using approximate nearest neighbor search like FAISS)</li>
+  <li>User embedding computed at request time</li>
+  <li>Similarity search over billions of items in milliseconds</li>
+</ul>
+
+<p>This architecture connects directly to <a href="/posts/information-retrieval-key-concepts/">Dense Passage Retrieval for search</a>—same dual-encoder principle.</p>
+
+<hr />
+
+<h2 id="chapter-vi-production-implementation">Chapter VI: Production Implementation</h2>
+
+<h3 id="matrix-factorization-with-implicit-feedback">Matrix Factorization with Implicit Feedback</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
+<span class="kn">import</span> <span class="n">implicit</span>
+<span class="kn">from</span> <span class="n">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="k">class</span> <span class="nc">RecommenderSystem</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">
+    Production-style recommender using implicit feedback.
+
+    This implements the weighted alternating least squares (WALS)
+    approach from Hu, Koren &amp; Volinsky (2008).
+    </span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">factors</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">regularization</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">regularization</span> <span class="o">=</span> <span class="n">regularization</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="n">iterations</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">user_item_matrix</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        Train on implicit feedback data.
+
+        Args:
+            user_ids: Array of user indices
+            item_ids: Array of item indices
+            values: Array of interaction strengths (e.g., view counts)
+        </span><span class="sh">"""</span>
+        <span class="n">n_users</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">user_ids</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">n_items</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">item_ids</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Create sparse user-item matrix
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">user_item_matrix</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">)),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Train ALS model
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">implicit</span><span class="p">.</span><span class="n">als</span><span class="p">.</span><span class="nc">AlternatingLeastSquares</span><span class="p">(</span>
+            <span class="n">factors</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">factors</span><span class="p">,</span>
+            <span class="n">regularization</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">regularization</span><span class="p">,</span>
+            <span class="n">iterations</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">iterations</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+        <span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">user_item_matrix</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">self</span>
+
+    <span class="k">def</span> <span class="nf">recommend</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">filter_seen</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Get top-N recommendations for a user.</span><span class="sh">"""</span>
+        <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nc">ValueError</span><span class="p">(</span><span class="sh">"</span><span class="s">Model not trained. Call fit() first.</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="n">recommendations</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">recommend</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="p">,</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">user_item_matrix</span><span class="p">[</span><span class="n">user_id</span><span class="p">],</span>
+            <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+            <span class="n">filter_already_liked_items</span><span class="o">=</span><span class="n">filter_seen</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">recommendations</span>
+
+    <span class="k">def</span> <span class="nf">similar_items</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Find similar items based on learned embeddings.</span><span class="sh">"""</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">similar_items</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">explain</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">n_contributions</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        Explain why an item was recommended.
+
+        Returns items the user interacted with that contributed
+        to this recommendation.
+        </span><span class="sh">"""</span>
+        <span class="c1"># Get user and item factors
+</span>        <span class="n">user_factors</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">user_factors</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span>
+        <span class="n">item_factors</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">item_factors</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span>
+
+        <span class="c1"># Find user's interacted items
+</span>        <span class="n">user_items</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">user_item_matrix</span><span class="p">[</span><span class="n">user_id</span><span class="p">].</span><span class="nf">nonzero</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">contributions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">seen_item</span> <span class="ow">in</span> <span class="n">user_items</span><span class="p">:</span>
+            <span class="n">seen_factors</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">item_factors</span><span class="p">[</span><span class="n">seen_item</span><span class="p">]</span>
+            <span class="c1"># Contribution = similarity between seen item and recommended item
+</span>            <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">item_factors</span><span class="p">,</span> <span class="n">seen_factors</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="nf">norm</span><span class="p">(</span><span class="n">item_factors</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="nf">norm</span><span class="p">(</span><span class="n">seen_factors</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span>
+            <span class="p">)</span>
+            <span class="n">contributions</span><span class="p">.</span><span class="nf">append</span><span class="p">((</span><span class="n">seen_item</span><span class="p">,</span> <span class="n">similarity</span><span class="p">))</span>
+
+        <span class="c1"># Return top contributors
+</span>        <span class="n">contributions</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">contributions</span><span class="p">[:</span><span class="n">n_contributions</span><span class="p">]</span>
+
+
+<span class="c1"># Example usage
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Simulate e-commerce interactions
+</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1000</span>
+<span class="n">n_interactions</span> <span class="o">=</span> <span class="mi">50000</span>
+
+<span class="n">user_ids</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_users</span><span class="p">,</span> <span class="n">n_interactions</span><span class="p">)</span>
+<span class="n">item_ids</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_interactions</span><span class="p">)</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">n_interactions</span><span class="p">)</span>  <span class="c1"># e.g., page views
+</span>
+<span class="c1"># Train model
+</span><span class="n">recommender</span> <span class="o">=</span> <span class="nc">RecommenderSystem</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">recommender</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">user_ids</span><span class="p">,</span> <span class="n">item_ids</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+
+<span class="c1"># Get recommendations
+</span><span class="n">user</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">recs</span> <span class="o">=</span> <span class="n">recommender</span><span class="p">.</span><span class="nf">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Recommendations for user </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s">:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">recs</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Item </span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s">: score </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Explain a recommendation
+</span><span class="k">if</span> <span class="n">recs</span><span class="p">:</span>
+    <span class="n">top_item</span> <span class="o">=</span> <span class="n">recs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">explanation</span> <span class="o">=</span> <span class="n">recommender</span><span class="p">.</span><span class="nf">explain</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">top_item</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">This was recommended because you liked items: </span><span class="si">{</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">explanation</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="evaluation-beyond-rmse">Evaluation: Beyond RMSE</h3>
+
+<p>Netflix Prize used RMSE, but it often doesn’t correlate with real engagement. Better metrics:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>What It Measures</th>
+      <th>When to Use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Precision@K</td>
+      <td>Fraction of top-K that are relevant</td>
+      <td>When false positives are costly</td>
+    </tr>
+    <tr>
+      <td>Recall@K</td>
+      <td>Fraction of relevant items in top-K</td>
+      <td>When coverage matters</td>
+    </tr>
+    <tr>
+      <td>NDCG</td>
+      <td>Position-weighted ranking quality</td>
+      <td>When position matters (it usually does)</td>
+    </tr>
+    <tr>
+      <td>Hit Rate@K</td>
+      <td>Did we recommend something they consumed?</td>
+      <td>Simple sanity check</td>
+    </tr>
+    <tr>
+      <td>Coverage</td>
+      <td>Fraction of items ever recommended</td>
+      <td>Detecting popularity bias</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>The offline-online gap</strong>: Offline metrics often don’t predict online A/B test wins. Always validate with experiments.</p>
+
+<hr />
+
+<h2 id="chapter-vii-challenges-and-advanced-topics">Chapter VII: Challenges and Advanced Topics</h2>
+
+<h3 id="the-cold-start-problem">The Cold Start Problem</h3>
+
+<p>New users have no history. New items have no interactions. Solutions:</p>
+
+<ol>
+  <li><strong>Content-based fallback</strong>: Use item features for new items</li>
+  <li><strong>Popularity</strong>: Show what’s trending</li>
+  <li><strong>Exploration</strong>: Multi-armed bandits to learn quickly (see <a href="/posts/contextual-bandits/">Contextual Bandits</a>)</li>
+  <li><strong>Side information</strong>: Onboarding surveys, demographics</li>
+</ol>
+
+<h3 id="popularity-bias">Popularity Bias</h3>
+
+<p>Models naturally favor popular items (more training signal). But long-tail discovery matters for engagement and diversity.</p>
+
+<p>Mitigation strategies:</p>
+<ul>
+  <li><strong>Popularity sampling</strong>: Undersample popular items during training</li>
+  <li><strong>Inverse propensity weighting</strong>: Weight rare items more heavily</li>
+  <li><strong>Diversity constraints</strong>: Ensure categorical diversity in recommendations</li>
+  <li><strong>Calibration</strong>: Match recommendation distribution to user consumption patterns</li>
+</ul>
+
+<h3 id="position-bias">Position Bias</h3>
+
+<p>Users click items near the top regardless of quality. A clicked item isn’t necessarily better—it was just shown in a better position.</p>
+
+<p>Solutions:</p>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Inverse propensity weighting from position</strong>: Weight clicks by 1/P(shown</td>
+          <td>position)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><strong>Unbiased LTR</strong>: Learning-to-rank methods that account for position bias</li>
+</ul>
+
+<h3 id="multi-objective-optimization">Multi-Objective Optimization</h3>
+
+<p>Real systems optimize multiple goals: engagement, diversity, freshness, revenue. See <a href="/posts/multi-objective-optimization/">Multi-Objective Optimization</a> for approaches including Pareto optimization and scalarization.</p>
+
+<hr />
+
+<h2 id="chapter-viii-the-modern-stack">Chapter VIII: The Modern Stack</h2>
+
+<h3 id="from-netflix-prize-to-production">From Netflix Prize to Production</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Era</th>
+      <th>Approach</th>
+      <th>Characteristics</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2006-2012</td>
+      <td>Matrix Factorization</td>
+      <td>Netflix Prize era; offline, batch</td>
+    </tr>
+    <tr>
+      <td>2013-2016</td>
+      <td>Feature-based ML</td>
+      <td>Gradient boosting, feature engineering</td>
+    </tr>
+    <tr>
+      <td>2016-2020</td>
+      <td>Deep Learning</td>
+      <td>Two-tower, deep ranking, end-to-end</td>
+    </tr>
+    <tr>
+      <td>2020+</td>
+      <td>Foundation Models</td>
+      <td>LLM-enhanced recommendations, conversational</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="where-recommendations-meet-other-ml">Where Recommendations Meet Other ML</h3>
+
+<p>Recommender systems connect to almost every ML discipline:</p>
+
+<ul>
+  <li><strong><a href="/posts/information-retrieval-key-concepts/">Information Retrieval</a></strong>: Same retrieval/ranking paradigm</li>
+  <li><strong><a href="/posts/learning-to-rank/">Learning to Rank</a></strong>: Recommendation as ranking</li>
+  <li><strong><a href="/posts/contextual-bandits/">Contextual Bandits</a></strong>: Explore-exploit for cold start</li>
+  <li><strong><a href="/posts/joining-amazon-causal-inference/">Causal Inference</a></strong>: Debiasing recommendations</li>
+  <li><strong><a href="/posts/ab-testing-statistics/">A/B Testing</a></strong>: Validating recommendation changes</li>
+</ul>
+
+<hr />
+
+<h2 id="references-and-further-exploration">References and Further Exploration</h2>
+
+<h3 id="foundational-papers">Foundational Papers</h3>
+<ul>
+  <li>Koren, Bell &amp; Volinsky, “Matrix Factorization Techniques for Recommender Systems” (IEEE Computer, 2009)</li>
+  <li>Hu, Koren &amp; Volinsky, “Collaborative Filtering for Implicit Feedback Datasets” (ICDM 2008)</li>
+  <li>Rendle et al., “BPR: Bayesian Personalized Ranking from Implicit Feedback” (UAI 2009)</li>
+  <li>Covington et al., “Deep Neural Networks for YouTube Recommendations” (RecSys 2016)</li>
+</ul>
+
+<h3 id="modern-approaches">Modern Approaches</h3>
+<ul>
+  <li>He et al., “Neural Collaborative Filtering” (WWW 2017)</li>
+  <li>Kang &amp; McAuley, “Self-Attentive Sequential Recommendation” (ICDM 2018) — SASRec</li>
+  <li>Sun et al., “BERT4Rec: Sequential Recommendation with Transformers” (CIKM 2019)</li>
+</ul>
+
+<h3 id="practical-resources">Practical Resources</h3>
+<ul>
+  <li><a href="https://github.com/benfred/implicit">Implicit</a> — Fast ALS for implicit feedback</li>
+  <li><a href="https://recbole.io/">RecBole</a> — Comprehensive recommendation library</li>
+  <li>Google’s <a href="https://www.tensorflow.org/recommenders">Recommenders TFX</a> tutorials</li>
+</ul>
+
+<hr />
+
+<p><em>Netflix never fully deployed the $1 million algorithm—it was too complex for production. But the Netflix Prize did something more valuable: it created a generation of researchers obsessed with personalization. Today’s systems serving billions of recommendations trace their lineage to that competition. The problem has evolved from rating prediction to real-time multi-objective ranking, but the goal remains: find what each person wants, from everything that exists.</em></p>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 3 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/evolution-of-information-retrieval/">Previous: From Boolean to BERT: The Evolution of Search and Information Retrieval</a></span>
+      <span><a href="/posts/matrix-factorization-basics/">Next: Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#collaborative-filtering" class="page__taxonomy-item p-category" rel="tag">collaborative-filtering</a><span class="sep">, </span>
+    
+      <a href="/tags/#matrix-factorization" class="page__taxonomy-item p-category" rel="tag">matrix-factorization</a><span class="sep">, </span>
+    
+      <a href="/tags/#neural-ranking" class="page__taxonomy-item p-category" rel="tag">neural-ranking</a><span class="sep">, </span>
+    
+      <a href="/tags/#personalization" class="page__taxonomy-item p-category" rel="tag">personalization</a><span class="sep">, </span>
+    
+      <a href="/tags/#recommender-systems" class="page__taxonomy-item p-category" rel="tag">recommender-systems</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2017-11-01T00:00:00-07:00">November 1, 2017</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/statistical-learning-theory/" class="pagination--pager" title="Why Machines Generalize: A Journey Through the Mathematics of Learning
+">Previous</a>
+    
+    
+      <a href="/posts/gradient-boosting-machines/" class="pagination--pager" title="The Gradient Boosting Dynasty: From Friedman’s Algorithm to XGBoost, LightGBM, and Beyond
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

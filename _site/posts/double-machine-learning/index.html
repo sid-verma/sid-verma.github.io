@@ -1,0 +1,1088 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Double Machine Learning (DML) bridges the gap between flexible ML prediction and rigorous causal inference. By using ML for nuisance parameters while maintaining valid statistical inference for causal effects, DML enables estimation of treatment effects even with many confounders and complex functional forms.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods">
+<meta property="og:url" content="http://localhost:4000/posts/double-machine-learning/">
+
+
+  <meta property="og:description" content="Double Machine Learning (DML) bridges the gap between flexible ML prediction and rigorous causal inference. By using ML for nuisance parameters while maintaining valid statistical inference for causal effects, DML enables estimation of treatment effects even with many confounders and complex functional forms.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-08-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/double-machine-learning/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods">
+    
+    <meta itemprop="description" content="Double Machine Learning (DML) bridges the gap between flexible ML prediction and rigorous causal inference. By using ML for nuisance parameters while maintaining valid statistical inference for causal effects, DML enables estimation of treatment effects even with many confounders and complex functional forms.">
+    
+    
+    <meta itemprop="datePublished" content="2020-08-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/double-machine-learning/" class="u-url" itemprop="url">Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#double-ml" data-tag="double-ml">
+  double-ml
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#machine-learning" data-tag="machine-learning">
+  machine-learning
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#econometrics" data-tag="econometrics">
+  econometrics
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 6 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/instrumental-variables/">Previous: Instrumental Variables: Finding Causal Needles in Confounded Haystacks</a></span>
+      <span><a href="/posts/observational-data-challenges/">Next: The Confounding Problem: Navigating Bias in Observational Studies</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Double Machine Learning (DML) bridges the gap between flexible ML prediction and rigorous causal inference. By using ML for nuisance parameters while maintaining valid statistical inference for causal effects, DML enables estimation of treatment effects even with many confounders and complex functional forms.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Traditional econometric methods require correct functional form specification. Machine learning handles complex relationships but doesn’t provide valid inference for causal parameters. DML combines their strengths: use ML for prediction tasks (propensity scores, outcome models) while preserving statistical properties for causal estimation.</p>
+
+<p>This is crucial in high-dimensional settings where you have many potential confounders—exactly where regularization and ML shine, but where naive application of ML for causal questions fails.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>The problem with naive ML for causality</strong>: ML models optimize prediction, not causal identification. Regularization biases coefficient estimates. Overfitting the nuisance parameters biases treatment effect estimates.</p>
+
+<p><strong>DML solution</strong>: Two key innovations:</p>
+<ol>
+  <li><strong>Neyman-orthogonal scores</strong>: Construct estimating equations insensitive to nuisance parameter errors</li>
+  <li><strong>Cross-fitting</strong>: Avoid overfitting bias by predicting on held-out folds</li>
+</ol>
+
+<p>Together, these allow using any ML method for nuisance estimation while obtaining $\sqrt{n}$-consistent, asymptotically normal treatment effect estimates.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="partial-linear-model">Partial Linear Model</h3>
+
+<p>\(Y = D\theta_0 + g_0(X) + \epsilon\)
+\(D = m_0(X) + V\)</p>
+
+<p>where $\theta_0$ is the causal parameter of interest, $g_0$ and $m_0$ are nuisance functions.</p>
+
+<h3 id="naive-approach-fails">Naive Approach Fails</h3>
+
+<p>If we estimate $\hat{g}, \hat{m}$ on full sample and plug in:
+\(\hat{\theta} = \frac{\sum_i (D_i - \hat{m}(X_i))(Y_i - \hat{g}(X_i))}{\sum_i (D_i - \hat{m}(X_i))^2}\)</p>
+
+<p>Regularization bias from $\hat{g}, \hat{m}$ contaminates $\hat{\theta}$.</p>
+
+<h3 id="neyman-orthogonality">Neyman-Orthogonality</h3>
+
+<p>Construct moment condition:
+\(\psi(W; \theta, \eta) = (Y - D\theta - g(X))(D - m(X))\)</p>
+
+<p>where $\eta = (g, m)$ are nuisance parameters.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>This is <strong>orthogonal</strong>: $\partial_\eta \mathbb{E}[\psi]</td>
+      <td>_{\eta=\eta_0} = 0$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>First-order errors in nuisance estimation don’t affect $\hat{\theta}$.</p>
+
+<h3 id="cross-fitting">Cross-Fitting</h3>
+
+<p>Split data into K folds. For each fold:</p>
+<ol>
+  <li>Estimate nuisance parameters on OTHER folds</li>
+  <li>Compute scores on THIS fold</li>
+</ol>
+
+<p>This avoids overfitting bias by ensuring predictions are always out-of-sample.</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="dml-algorithm-partially-linear-model">DML Algorithm (Partially Linear Model)</h3>
+
+<ol>
+  <li>Split data into K folds</li>
+  <li>For each fold k:
+    <ul>
+      <li>Train $\hat{g}_{-k}$ predicting Y from X on folds $\neq k$</li>
+      <li>Train $\hat{m}_{-k}$ predicting D from X on folds $\neq k$</li>
+      <li>Compute residuals on fold k:
+        <ul>
+          <li>$\tilde{Y}<em>i = Y_i - \hat{g}</em>{-k}(X_i)$</li>
+          <li>$\tilde{D}<em>i = D_i - \hat{m}</em>{-k}(X_i)$</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Pool residuals across folds</li>
+  <li>Regress $\tilde{Y}$ on $\tilde{D}$: $\hat{\theta} = (\tilde{D}’\tilde{D})^{-1}\tilde{D}’\tilde{Y}$</li>
+</ol>
+
+<h3 id="aipw-for-binary-treatment">AIPW for Binary Treatment</h3>
+
+<p>Augmented IPW combines propensity weighting and outcome regression:</p>
+
+<p>\(\hat{\theta} = \frac{1}{n}\sum_i \left[\hat{\mu}_1(X_i) - \hat{\mu}_0(X_i)\right]\)
+\(+ \frac{1}{n}\sum_i \frac{D_i(Y_i - \hat{\mu}_1(X_i))}{\hat{e}(X_i)}\)
+\(- \frac{1}{n}\sum_i \frac{(1-D_i)(Y_i - \hat{\mu}_0(X_i))}{1-\hat{e}(X_i)}\)</p>
+
+<p>Doubly robust: consistent if either propensity or outcome model is correct.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="n">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_predict</span><span class="p">,</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="n">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span><span class="p">,</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoCV</span>
+<span class="kn">import</span> <span class="n">statsmodels.api</span> <span class="k">as</span> <span class="n">sm</span>
+
+<span class="c1"># Simulate high-dimensional confounding
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">50</span>  <span class="c1"># 50 potential confounders
+</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+<span class="c1"># Only first 10 confounders matter
+</span><span class="n">true_confounders</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1"># Treatment depends on confounders
+</span><span class="n">propensity</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">true_confounders</span> <span class="o">@</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">propensity</span><span class="p">)</span>
+
+<span class="c1"># Outcome depends on treatment AND confounders
+</span><span class="n">g0</span> <span class="o">=</span> <span class="n">true_confounders</span> <span class="o">@</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">theta_true</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># True treatment effect
+</span><span class="n">Y</span> <span class="o">=</span> <span class="n">theta_true</span> <span class="o">*</span> <span class="n">D</span> <span class="o">+</span> <span class="n">g0</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="c1"># Naive OLS (biased, doesn't include confounders)
+</span><span class="n">naive</span> <span class="o">=</span> <span class="n">sm</span><span class="p">.</span><span class="nc">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">sm</span><span class="p">.</span><span class="nf">add_constant</span><span class="p">(</span><span class="n">D</span><span class="p">)).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Naive OLS: </span><span class="si">{</span><span class="n">naive</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (true: </span><span class="si">{</span><span class="n">theta_true</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Double Machine Learning
+</span><span class="k">def</span> <span class="nf">double_ml</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">kf</span> <span class="o">=</span> <span class="nc">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">n_folds</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># Residualize using cross-fitting
+</span>    <span class="n">Y_resid</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">D_resid</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">test_idx</span> <span class="ow">in</span> <span class="n">kf</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+        <span class="c1"># Fit outcome model (Y ~ X)
+</span>        <span class="n">g_model</span> <span class="o">=</span> <span class="nc">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+        <span class="n">g_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">])</span>
+        <span class="n">Y_resid</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">g_model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">test_idx</span><span class="p">])</span>
+
+        <span class="c1"># Fit treatment model (D ~ X)
+</span>        <span class="n">m_model</span> <span class="o">=</span> <span class="nc">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+        <span class="n">m_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span> <span class="n">D</span><span class="p">[</span><span class="n">train_idx</span><span class="p">])</span>
+        <span class="n">D_resid</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">m_model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">test_idx</span><span class="p">])</span>
+
+    <span class="c1"># Final stage: regress Y_resid on D_resid
+</span>    <span class="n">theta_hat</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">D_resid</span> <span class="o">*</span> <span class="n">Y_resid</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">D_resid</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Standard error
+</span>    <span class="n">n</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y_resid</span> <span class="o">-</span> <span class="n">theta_hat</span> <span class="o">*</span> <span class="n">D_resid</span><span class="p">)</span> <span class="o">*</span> <span class="n">D_resid</span>
+    <span class="n">var_theta</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">psi</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">D_resid</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">var_theta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">theta_hat</span><span class="p">,</span> <span class="n">se</span>
+
+<span class="n">theta_dml</span><span class="p">,</span> <span class="n">se_dml</span> <span class="o">=</span> <span class="nf">double_ml</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">Double ML: </span><span class="si">{</span><span class="n">theta_dml</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (SE: </span><span class="si">{</span><span class="n">se_dml</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">95% CI: [</span><span class="si">{</span><span class="n">theta_dml</span> <span class="o">-</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">se_dml</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">, </span><span class="si">{</span><span class="n">theta_dml</span> <span class="o">+</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">se_dml</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">]</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Using DoubleML library (more robust)
+</span><span class="kn">from</span> <span class="n">doubleml</span> <span class="kn">import</span> <span class="n">DoubleMLData</span><span class="p">,</span> <span class="n">DoubleMLPLR</span>
+<span class="kn">from</span> <span class="n">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="sh">'</span><span class="s">X</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="sh">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+<span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span>
+<span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">D</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span>
+
+<span class="n">dml_data</span> <span class="o">=</span> <span class="nc">DoubleMLData</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">y_col</span><span class="o">=</span><span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">,</span> <span class="n">d_cols</span><span class="o">=</span><span class="sh">'</span><span class="s">D</span><span class="sh">'</span><span class="p">,</span>
+                         <span class="n">x_cols</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="sh">'</span><span class="s">X</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="sh">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+
+<span class="n">ml_g</span> <span class="o">=</span> <span class="nc">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">ml_m</span> <span class="o">=</span> <span class="nc">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">dml_plr</span> <span class="o">=</span> <span class="nc">DoubleMLPLR</span><span class="p">(</span><span class="n">dml_data</span><span class="p">,</span> <span class="n">ml_g</span><span class="p">,</span> <span class="n">ml_m</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">dml_plr</span><span class="p">.</span><span class="nf">fit</span><span class="p">()</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">DoubleML library: </span><span class="si">{</span><span class="n">dml_plr</span><span class="p">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s"> (SE: </span><span class="si">{</span><span class="n">dml_plr</span><span class="p">.</span><span class="n">se</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Not enough folds</strong>: With K=2, high variance. Use K=5 or more.</p>
+  </li>
+  <li>
+    <p><strong>Poor ML performance</strong>: If nuisance models predict poorly, variance inflates. Check prediction quality.</p>
+  </li>
+  <li>
+    <p><strong>Positivity violations</strong>: Extreme propensity scores cause issues. Trim or use overlap weights.</p>
+  </li>
+  <li>
+    <p><strong>Model selection</strong>: Use cross-validation to select ML hyperparameters, but on the training folds (nested CV).</p>
+  </li>
+  <li>
+    <p><strong>Confidence intervals</strong>: Use influence function-based standard errors, not bootstrap (which may be invalid).</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Tech</strong>: Feature impact with many user covariates</li>
+  <li><strong>Economics</strong>: Policy evaluation with high-dimensional controls</li>
+  <li><strong>Healthcare</strong>: Treatment effects with rich patient data</li>
+  <li><strong>Marketing</strong>: Campaign effects controlling for many customer attributes</li>
+  <li><strong>Finance</strong>: Credit policy evaluation with many risk factors</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="cate-estimation">CATE Estimation</h3>
+
+<p>Estimate heterogeneous treatment effects:
+\(\tau(x) = \mathbb{E}[Y(1) - Y(0) | X = x]\)</p>
+
+<p>Methods: Causal Forests, Meta-learners (T-learner, X-learner), DR-learner.</p>
+
+<h3 id="sensitivity-analysis">Sensitivity Analysis</h3>
+
+<p>Test robustness to unmeasured confounding:</p>
+<ul>
+  <li>Omitted variable bias bounds</li>
+  <li>Sensitivity parameters for exclusion restrictions</li>
+</ul>
+
+<h3 id="extensions-to-other-models">Extensions to Other Models</h3>
+
+<ul>
+  <li><strong>IV with DML</strong>: Use ML for first-stage and outcome models</li>
+  <li><strong>DiD with DML</strong>: Doubly robust difference-in-differences</li>
+  <li><strong>Panel data</strong>: Fixed effects + DML for time-varying confounders</li>
+</ul>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>High-Dimensional?</th>
+      <th>Valid Inference?</th>
+      <th>Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OLS</td>
+      <td>No</td>
+      <td>Yes</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Lasso</td>
+      <td>Yes</td>
+      <td>No*</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Propensity Score</td>
+      <td>Limited</td>
+      <td>Yes</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Double ML</td>
+      <td><strong>Yes</strong></td>
+      <td><strong>Yes</strong></td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Targeted ML (TMLE)</td>
+      <td><strong>Yes</strong></td>
+      <td><strong>Yes</strong></td>
+      <td>High</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>*Post-selection inference methods exist but are complex.</p>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Double Machine Learning enables valid causal inference with ML-estimated nuisance parameters. Key takeaways:</p>
+
+<ul>
+  <li>Orthogonalization makes estimates insensitive to nuisance model errors</li>
+  <li>Cross-fitting prevents overfitting bias</li>
+  <li>Use any ML method for predictions; DML ensures valid inference</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Chernozhukov et al., “Double/Debiased Machine Learning for Treatment and Causal Parameters” (2018)</li>
+  <li>DoubleML Python/R package documentation</li>
+  <li>Kennedy, “Semiparametric Doubly Robust Targeted Minimum Loss-Based Estimation”</li>
+  <li>Athey &amp; Wager, “Estimating Treatment Effects with Causal Forests”</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 6 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/instrumental-variables/">Previous: Instrumental Variables: Finding Causal Needles in Confounded Haystacks</a></span>
+      <span><a href="/posts/observational-data-challenges/">Next: The Confounding Problem: Navigating Bias in Observational Studies</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#double-ml" class="page__taxonomy-item p-category" rel="tag">double-ml</a><span class="sep">, </span>
+    
+      <a href="/tags/#econometrics" class="page__taxonomy-item p-category" rel="tag">econometrics</a><span class="sep">, </span>
+    
+      <a href="/tags/#machine-learning" class="page__taxonomy-item p-category" rel="tag">machine-learning</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2020-08-01T00:00:00-07:00">August 1, 2020</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/instrumental-variables/" class="pagination--pager" title="Instrumental Variables: Finding Causal Needles in Confounded Haystacks
+">Previous</a>
+    
+    
+      <a href="/posts/observational-data-challenges/" class="pagination--pager" title="The Confounding Problem: Navigating Bias in Observational Studies
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

@@ -1,0 +1,1064 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="“Randomized Controlled Trials are the gold standard of causal inference, but in the real world, the standard is often impossible to meet. That’s where design comes in.”">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments">
+<meta property="og:url" content="http://localhost:4000/posts/ab-testing-designs/">
+
+
+  <meta property="og:description" content="“Randomized Controlled Trials are the gold standard of causal inference, but in the real world, the standard is often impossible to meet. That’s where design comes in.”">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-09-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/ab-testing-designs/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments">
+    
+    <meta itemprop="description" content="  “Randomized Controlled Trials are the gold standard of causal inference, but in the real world, the standard is often impossible to meet. That’s where design comes in.”">
+    
+    
+    <meta itemprop="datePublished" content="2024-09-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/ab-testing-designs/" class="u-url" itemprop="url">Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#experimentation" data-tag="experimentation">
+  experimentation
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ab-testing" data-tag="ab-testing">
+  ab-testing
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#marketplace-design" data-tag="marketplace-design">
+  marketplace-design
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 4 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/ab-testing-statistics/">Previous: A/B Testing at Scale: Statistical Methods for Trustworthy Experiments</a></span>
+      <span><a href="/posts/randomized-control-trials-in-marketing/">Next: Randomized Control Trials in Marketing: Measuring True Incrementality</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p><em>“Randomized Controlled Trials are the gold standard of causal inference, but in the real world, the standard is often impossible to meet. That’s where design comes in.”</em></p>
+</blockquote>
+
+<p>Standard A/B testing—randomizing users to treatment and control buckets—is the bread and butter of data science. But what happens when you can’t randomize users? What if your product is a two-sided marketplace like Uber or Airbnb? What if network effects bleed treatment into control?</p>
+
+<p>This post dives beyond the basics into <strong>advanced experimental designs</strong> required for complex ecosystems: Cluster Randomization, Switchback Testing, and Crossover Designs.</p>
+
+<blockquote>
+  <p><strong>Related reading</strong>: This builds on statistical foundations from <a href="/posts/ab-testing-statistics/">A/B Testing Statistics</a> and sets the stage for causal inference discussed in <a href="/posts/instrumental-variables/">Instrumental Variables</a>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="chapter-i-the-limits-of-user-level-randomization">Chapter I: The Limits of User-Level Randomization</h2>
+
+<h3 id="the-sutva-violation">The SUTVA Violation</h3>
+<p>The Stable Unit Treatment Value Assumption (SUTVA) states that one user’s treatment assignment should not affect another user’s outcome.</p>
+
+<p>In social networks or marketplaces, this breaks:</p>
+<ul>
+  <li><strong>Network Effects</strong>: If I get a new chat feature, my friends (in control) are affected because I message them more.</li>
+  <li><strong>Marketplace Interference</strong>: If I give 50% of drivers a bonus, they work more, lowering prices/wait times for <em>everyone</em> (including control group riders).</li>
+</ul>
+
+<h3 id="the-consequence">The Consequence</h3>
+<p>When SUTVA is violated, standard A/B tests yield <strong>biased estimates</strong> of the Average Treatment Effect (ATE). You might measure a lift that disappears at full launch, or miss a negative spillover effect entirely.</p>
+
+<hr />
+
+<h2 id="chapter-ii-cluster-randomization">Chapter II: Cluster Randomization</h2>
+
+<p>When individual randomization leaks interference, randomize groups (clusters) instead.</p>
+
+<h3 id="the-design">The Design</h3>
+<p>Instead of randomizing users, we randomize:</p>
+<ul>
+  <li><strong>Geographies</strong>: City A gets features, City B doesn’t.</li>
+  <li><strong>Communities</strong>: Subreddit A gets a moderation tool, Subreddit B doesn’t.</li>
+  <li><strong>Classrooms/Schools</strong>: For EdTech products.</li>
+</ul>
+
+<h3 id="the-math-inflation-factor">The Math: Inflation Factor</h3>
+<p>Clustering treats a group of $N$ users as a single unit, drastically reducing effective sample size. The variance inflation is given by the <strong>Design Effect</strong>:</p>
+
+\[DE = 1 + (m-1)\rho\]
+
+<p>Where:</p>
+<ul>
+  <li>$m$: Average cluster size</li>
+  <li>$\rho$: Intra-class correlation (ICC)</li>
+</ul>
+
+<p>The effective sample size becomes:
+\(N_{eff} = \frac{N}{1 + (m-1)\rho}\)</p>
+
+<p>Even a small ICC ($0.01$) with large clusters ($m=1000$) increases variance by $11x$, requiring $11x$ more data.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">calculate_design_effect</span><span class="p">(</span><span class="n">cluster_size</span><span class="p">,</span> <span class="n">icc</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Calculates inflation variance due to clustering.</span><span class="sh">"""</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">cluster_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">icc</span>
+
+<span class="c1"># Example: School-based randomization
+</span><span class="n">m</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># students per school
+</span><span class="n">rho</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># students in same school are similar
+</span><span class="n">de</span> <span class="o">=</span> <span class="nf">calculate_design_effect</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Variance Inflation: </span><span class="si">{</span><span class="n">de</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">x</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1"># Variance Inflation: 25.95x
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="chapter-iii-switchback-time-split-testing">Chapter III: Switchback (Time-Split) Testing</h2>
+
+<p>For marketplaces (Uber/Lyft/DoorDash), geographical randomization is too coarse (few cities) and user randomization leaks supply/demand effects. Only <strong>Time</strong> remains.</p>
+
+<h3 id="the-design-1">The Design</h3>
+<p>Switch between Treatment and Control periodically within the same geography.</p>
+<ul>
+  <li><strong>Window</strong>: 160 min Treatment -&gt; 160 min Control -&gt; Repeat.</li>
+  <li><strong>Randomization</strong>: Randomize the sequence (e.g., T-C-C-T-C-T).</li>
+</ul>
+
+<h3 id="challenges">Challenges</h3>
+<ol>
+  <li><strong>Carryover Effects</strong>: Treatment effect lingers. If a driver bonus attracts more drivers at 2 PM (Treatment), they might stay online at 3 PM (Control), polluting the control window.
+    <ul>
+      <li><em>Solution</em>: <strong>Burn-out periods</strong>. Discard data from the first 15 mins after a switch.</li>
+    </ul>
+  </li>
+  <li><strong>Periodicity</strong>: Demand varies by hour.
+    <ul>
+      <li><em>Solution</em>: Stratified randomization to ensure equal T/C coverage across peak/off-peak times.</li>
+    </ul>
+  </li>
+</ol>
+
+<pre><code class="language-mermaid">gantt
+    title Switchback Design with Burn-in
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section City A
+    Treatment (A) :a1, 08:00, 2h
+    Burn-in       :crit, 10:00, 15m
+    Control (B)   :after a1, 2h
+    Burn-in       :crit, 12:15, 15m
+    Treatment (A) :after a1, 2h
+</code></pre>
+
+<hr />
+
+<h2 id="chapter-iv-crossover-designs">Chapter IV: Crossover Designs</h2>
+
+<p>In a Crossover design, each subject serves as their own control.</p>
+
+<h3 id="the-design-2">The Design</h3>
+<ul>
+  <li>Period 1: User A gets Treatment, User B gets Control.</li>
+  <li>Period 2: User A gets Control, User B gets Treatment.</li>
+</ul>
+
+<h3 id="the-estimator">The Estimator</h3>
+<p>We compare $\Delta_A = (Y_{A,T} - Y_{A,C})$ and $\Delta_B = (Y_{B,T} - Y_{B,C})$.</p>
+
+\[ATE = \frac{1}{2} E[(\bar{Y}_{T1} - \bar{Y}_{C1}) + (\bar{Y}_{T2} - \bar{Y}_{C2})]\]
+
+<p>This removes <strong>between-subject variance</strong>, massively increasing power.</p>
+
+<p><strong>Risk</strong>: As with Switchback, carryover effects are the enemy. Crossover is rare in high-velocity tech products but gold standard in medicine and low-frequency B2B tools.</p>
+
+<hr />
+
+<h2 id="chapter-v-variance-reduction-cuped">Chapter V: Variance Reduction (CUPED)</h2>
+
+<p>Regardless of design, high variance kills statistical power. <strong>CUPED</strong> (Controlled-Experiment Using Pre-Experiment Data) is the industry standard for variance reduction.</p>
+
+<h3 id="the-intuition">The Intuition</h3>
+<p>Users who buy a lot today probably bought a lot yesterday. We can use pre-experiment data (covariates) to predict the outcome and test on the <em>residuals</em>.</p>
+
+<h3 id="the-math">The Math</h3>
+<p>Instead of comparing means of metric $Y$, we compare:</p>
+
+\[Y'_{i} = Y_{i} - \theta (X_{i} - \bar{X})\]
+
+<p>Where $X_i$ is the pre-experiment value of the metric. The optimal $\theta$ is:</p>
+
+\[\theta = \frac{Cov(Y, X)}{Var(X)}\]
+
+<p>The variance of $Y’$ is reduced by:
+\(Var(Y') = Var(Y) (1 - \rho^2)\)
+where $\rho$ is the correlation between pre- and post-values. Even moderate correlation ($0.5$) reduces variance by $25\%$, equal to increasing sample size by $33\%$.</p>
+
+<h3 id="implementation">Implementation</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="k">def</span> <span class="nf">apply_cuped</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">metric_col</span><span class="p">,</span> <span class="n">pre_metric_col</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">
+    Applies CUPED transformation to reduce variance.
+
+    Args:
+        df: DataFrame containing experiment data
+        metric_col: The target metric (Y)
+        pre_metric_col: The pre-experiment value (X)
+
+    Returns:
+        Series with CUPED-adjusted metric
+    </span><span class="sh">"""</span>
+    <span class="n">covariance</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">cov</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">metric_col</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">pre_metric_col</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">var</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pre_metric_col</span><span class="p">])</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">covariance</span> <span class="o">/</span> <span class="n">variance</span>
+
+    <span class="n">mean_pre</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">pre_metric_col</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+
+    <span class="c1"># Y_cuped = Y - theta * (X - mean(X))
+</span>    <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">cuped_metric</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">metric_col</span><span class="p">]</span> <span class="o">-</span> <span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pre_metric_col</span><span class="p">]</span> <span class="o">-</span> <span class="n">mean_pre</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">cuped_metric</span><span class="sh">'</span><span class="p">]</span>
+
+<span class="c1"># Variance reduction demo
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">pre_clicks</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">lognormal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="c1"># Post is correlated with Pre
+</span><span class="n">clicks</span> <span class="o">=</span> <span class="n">pre_clicks</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span><span class="sh">'</span><span class="s">clicks</span><span class="sh">'</span><span class="p">:</span> <span class="n">clicks</span><span class="p">,</span> <span class="sh">'</span><span class="s">pre_clicks</span><span class="sh">'</span><span class="p">:</span> <span class="n">pre_clicks</span><span class="p">})</span>
+<span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">cuped</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="nf">apply_cuped</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="sh">'</span><span class="s">clicks</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">pre_clicks</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">std_original</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">clicks</span><span class="sh">'</span><span class="p">].</span><span class="nf">std</span><span class="p">()</span>
+<span class="n">std_cuped</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">cuped</span><span class="sh">'</span><span class="p">].</span><span class="nf">std</span><span class="p">()</span>
+<span class="n">reduction</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">std_cuped</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">std_original</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Variance reduction: </span><span class="si">{</span><span class="n">reduction</span><span class="si">:</span><span class="p">.</span><span class="mi">1</span><span class="o">%</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1"># Variance reduction: ~80-90% typically if correlation is high
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="chapter-vi-when-ab-testing-fails">Chapter VI: When A/B Testing Fails</h2>
+
+<p>Sometimes, no design works.</p>
+
+<ol>
+  <li><strong>Long-term effects</strong>: Short tests optimize for clicks (vanity) but kill retention (value).
+    <ul>
+      <li><em>Solution</em>: Holdout groups (1% of users held out for 6 months).</li>
+    </ul>
+  </li>
+  <li><strong>Novelty Effects</strong>: Users click because it’s new.
+    <ul>
+      <li><em>Solution</em>: Run test longer; look at “learning curve” of effect size.</li>
+    </ul>
+  </li>
+  <li><strong>Primacy Effects</strong>: Users hate change (initially).
+    <ul>
+      <li><em>Solution</em>: Ignore first week data.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="synthetic-control">Synthetic Control</h3>
+<p>When you launch a TV ad or a nationwide change, you have N=1 treated unit (the country).
+We build a <strong>Synthetic Control</strong>—a weighted combination of other countries/regions that mimics the treated unit’s pre-trend perfectly.</p>
+
+\[J(\mathbf{W}) = || \mathbf{X}_1 - \mathbf{X}_0 \mathbf{W} ||^2\]
+
+<p>Subject to $\sum w_i = 1$. The difference between the treated unit and the synthetic unit post-launch is the causal effect.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<p>Choosing the right design is often more important than the analysis itself.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Recommended Design</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Standard Product</td>
+      <td><strong>User-Randomized</strong> (A/B Test)</td>
+    </tr>
+    <tr>
+      <td>Social Feature</td>
+      <td><strong>Cluster Randomization</strong> (Graph Cluster)</td>
+    </tr>
+    <tr>
+      <td>Ride-Sharing / Delivery</td>
+      <td><strong>Switchback</strong> (Time-Split)</td>
+    </tr>
+    <tr>
+      <td>B2B / SaaS</td>
+      <td><strong>Crossover</strong> or <strong>Matched Pair</strong></td>
+    </tr>
+    <tr>
+      <td>High Variance Metric</td>
+      <td><strong>CUPED</strong> adjustment</td>
+    </tr>
+    <tr>
+      <td>Nationwide Launch</td>
+      <td><strong>Synthetic Control</strong> / <strong>Geo-Lift</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><em>“The best time to think about variance is before you start the experiment.”</em></p>
+</blockquote>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 4 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/ab-testing-statistics/">Previous: A/B Testing at Scale: Statistical Methods for Trustworthy Experiments</a></span>
+      <span><a href="/posts/randomized-control-trials-in-marketing/">Next: Randomized Control Trials in Marketing: Measuring True Incrementality</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#ab-testing" class="page__taxonomy-item p-category" rel="tag">ab-testing</a><span class="sep">, </span>
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#experimentation" class="page__taxonomy-item p-category" rel="tag">experimentation</a><span class="sep">, </span>
+    
+      <a href="/tags/#marketplace-design" class="page__taxonomy-item p-category" rel="tag">marketplace-design</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2024-09-01T00:00:00-07:00">September 1, 2024</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/ab-testing-statistics/" class="pagination--pager" title="A/B Testing at Scale: Statistical Methods for Trustworthy Experiments
+">Previous</a>
+    
+    
+      <a href="/posts/explainable-ml/" class="pagination--pager" title="Opening the Black Box: Explainability Methods for Modern ML
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

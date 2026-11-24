@@ -1,0 +1,1277 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>The Long Arc of Machine Intelligence: From Turing’s Vision to the Age of Large Language Models - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="“I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of machines thinking without expecting to be contradicted.” — Alan Turing, “Computing Machinery and Intelligence” (1950)">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="The Long Arc of Machine Intelligence: From Turing’s Vision to the Age of Large Language Models">
+<meta property="og:url" content="http://localhost:4000/posts/overview-of-artificial-intelligence/">
+
+
+  <meta property="og:description" content="“I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of machines thinking without expecting to be contradicted.” — Alan Turing, “Computing Machinery and Intelligence” (1950)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-01-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/overview-of-artificial-intelligence/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="The Long Arc of Machine Intelligence: From Turing’s Vision to the Age of Large Language Models">
+    
+    <meta itemprop="description" content="  “I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of machines thinking without expecting to be contradicted.”— Alan Turing, “Computing Machinery and Intelligence” (1950)">
+    
+    
+    <meta itemprop="datePublished" content="2017-01-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/overview-of-artificial-intelligence/" class="u-url" itemprop="url">The Long Arc of Machine Intelligence: From Turing’s Vision to the Age of Large Language Models
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          12 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ai-history" data-tag="ai-history">
+  ai-history
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#deep-learning" data-tag="deep-learning">
+  deep-learning
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#agi" data-tag="agi">
+  agi
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#machine-learning-fundamentals" data-tag="machine-learning-fundamentals">
+  machine-learning-fundamentals
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#transformers" data-tag="transformers">
+  transformers
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p><em>“I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of machines thinking without expecting to be contradicted.”</em>
+— <strong>Alan Turing</strong>, “Computing Machinery and Intelligence” (1950)</p>
+</blockquote>
+
+<p>Turing’s prediction, written in 1950, was precisely right—just a few decades off. By the 2020s, transformer-based systems generate fluent text, write code, and synthesize images with startling coherence. Machines, in ways that matter, think.</p>
+
+<blockquote>
+  <p><strong>Related reading</strong>: Strategic interaction underpins many AI milestones—see <a href="/posts/musings-on-game-theory/">The Art of Strategic Machines</a>.</p>
+</blockquote>
+
+<p>But what does it mean for a machine to think? Where did this capability come from? And where might it lead?</p>
+
+<p>This exploration traces AI’s journey from abstract logic machines to systems that seem genuinely intelligent—a story of breakthrough insights, crushing disappointments, and the slow accumulation of ideas that, together, changed everything.</p>
+
+<hr />
+
+<h2 id="chapter-i-the-dream-of-thinking-machines">Chapter I: The Dream of Thinking Machines</h2>
+
+<h3 id="turings-imitation-game">Turing’s Imitation Game</h3>
+
+<p>It began with a question: <em>Can machines think?</em></p>
+
+<p>In 1950, Alan Turing—mathematician, cryptographer, and architect of the first programmable computers—published “Computing Machinery and Intelligence” in the journal <em>Mind</em>. Rather than philosophizing about consciousness, Turing proposed a test: if a human interrogator, communicating via text, cannot reliably distinguish a machine from a person, we should consider the machine intelligent.</p>
+
+<p>The genius of Turing’s framing was its pragmatism. He wrote:</p>
+
+<blockquote>
+  <p><em>“The original question, ‘Can machines think?’ I believe to be too meaningless to deserve discussion. Instead, we should ask: can a machine behave intelligently?”</em></p>
+</blockquote>
+
+<p>This operational definition—intelligence as behavior—would define AI research for decades.</p>
+
+<h3 id="the-dartmouth-conference-ai-gets-its-name">The Dartmouth Conference: AI Gets Its Name</h3>
+
+<p>In the summer of 1956, ten researchers gathered at Dartmouth College in Hanover, New Hampshire. Their proposal stated an audacious thesis:</p>
+
+<blockquote>
+  <p><em>“Every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it.”</em></p>
+</blockquote>
+
+<p>Among the attendees: John McCarthy (who coined the term “artificial intelligence”), Marvin Minsky, Claude Shannon (inventor of information theory), and Herbert Simon (later a Nobel laureate). Over two months, they laid foundations that persist today: symbolic reasoning, game playing, natural language processing.</p>
+
+<p>The optimism was extraordinary. Simon predicted in 1958: “Within ten years, a computer will be world chess champion” (off by 40 years). McCarthy believed general AI was around the corner (still waiting). This exuberance would cost the field dearly.</p>
+
+<hr />
+
+<h2 id="chapter-ii-the-rise-and-fall-of-symbolic-ai">Chapter II: The Rise and Fall of Symbolic AI</h2>
+
+<h3 id="expert-systems-and-the-first-golden-age">Expert Systems and the First Golden Age</h3>
+
+<p>Through the 1960s and early 1970s, AI flourished. Early programs achieved remarkable feats:</p>
+
+<ul>
+  <li><strong>Logic Theorist</strong> (1956): Proved mathematical theorems from Principia Mathematica</li>
+  <li><strong>ELIZA</strong> (1966): Simulated conversation so convincingly that some users believed it understood them</li>
+  <li><strong>SHRDLU</strong> (1972): Manipulated blocks in a virtual world through natural language</li>
+</ul>
+
+<p>The dominant paradigm was <strong>symbolic AI</strong>: intelligence as logical reasoning over explicit representations. Knowledge was encoded as rules: <code class="language-plaintext highlighter-rouge">IF patient has fever AND cough THEN consider pneumonia</code>. Systems grew increasingly sophisticated: MYCIN diagnosed blood infections; DENDRAL identified chemical structures; XCON configured computer systems.</p>
+
+<p>By 1985, expert systems were a billion-dollar industry. The future seemed clear.</p>
+
+<h3 id="the-ai-winters">The AI Winters</h3>
+
+<p>Then came the cold.</p>
+
+<p><strong>The First AI Winter (1974-1980)</strong>: DARPA cut funding after researchers failed to deliver on ambitious promises. The Lighthill Report in the UK concluded that AI had achieved little of practical value. Neural network research, championed by Frank Rosenblatt’s Perceptron, was mathematically shown to have severe limitations (Minsky &amp; Papert, 1969).</p>
+
+<p><strong>The Second AI Winter (1987-1993)</strong>: The expert systems market collapsed. Rule-based systems proved brittle—they failed silently on novel problems, and maintaining thousands of interrelated rules became impossible. As Geoffrey Hinton later noted:</p>
+
+<blockquote>
+  <p><em>“A deep-learning system doesn’t have any explanatory power. But neither do expert systems, really—they just hide their lack of explanation behind symbols.”</em></p>
+</blockquote>
+
+<p>The lesson was harsh but essential: intelligence couldn’t be programmed rule by rule. Something was missing.</p>
+
+<h3 id="what-was-missing">What Was Missing</h3>
+
+<p>The symbolic AI dream assumed that intelligence could be captured in explicit, human-readable rules. But consider recognizing a face: you know your mother’s face instantly, yet you cannot articulate the rules that distinguish her from seven billion other humans.</p>
+
+<p>Much of intelligence, it turned out, is <strong>subsymbolic</strong>—patterns too subtle to verbalize, learned from experience rather than coded by engineers.</p>
+
+<p>This insight would eventually vindicate the neural network researchers who kept working through the winters.</p>
+
+<hr />
+
+<h2 id="chapter-iii-the-connectionist-revolution">Chapter III: The Connectionist Revolution</h2>
+
+<h3 id="neural-networks-return">Neural Networks Return</h3>
+
+<p>Through the 1980s and 1990s, a small community kept faith with neural networks. Key breakthroughs accumulated:</p>
+
+<p><strong>Backpropagation (1986)</strong>: Rumelhart, Hinton, and Williams demonstrated that multi-layer networks could learn complex mappings through gradient descent. The paper <em>“Learning Representations by Back-Propagating Errors”</em> would become one of the most cited in AI history.</p>
+
+<p><strong>Universal Approximation (1989, 1991)</strong>: Theorems by Cybenko and Hornik proved that neural networks with a single hidden layer could approximate any continuous function—a mathematical foundation for their power.</p>
+
+<p><strong>Convolutional Networks (1989)</strong>: Yann LeCun’s work on handwritten digit recognition at Bell Labs introduced convolutions for vision tasks, though hardware limitations prevented scaling.</p>
+
+<p>Yet progress was slow. Training deep networks was unstable; datasets were small; computers were weak. The field survived on faith.</p>
+
+<p>As Ilya Sutskever would later reflect:</p>
+
+<blockquote>
+  <p><em>“One doesn’t bet against deep learning. Somehow, every time you run into an obstacle, within six months or a year researchers find a way around it.”</em></p>
+</blockquote>
+
+<h3 id="the-imagenet-moment">The ImageNet Moment</h3>
+
+<p>Everything changed in September 2012.</p>
+
+<p>AlexNet—a deep convolutional neural network trained by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton—won the ImageNet competition with a top-5 error rate of 15.3%. The second-best entry achieved 26.2%. It wasn’t a marginal improvement; it was a demolition.</p>
+
+<p>The key ingredients:</p>
+<ul>
+  <li><strong>Depth</strong>: Eight layers, vastly deeper than previous networks</li>
+  <li><strong>GPUs</strong>: Training on NVIDIA graphics cards made computation feasible</li>
+  <li><strong>Data</strong>: ImageNet provided millions of labeled images</li>
+  <li><strong>Techniques</strong>: Dropout for regularization, ReLU activations for faster training</li>
+</ul>
+
+<p>The ImageNet moment established three principles that would drive the next decade:</p>
+<ol>
+  <li><strong>Scale matters</strong>: Bigger models, more data, more compute</li>
+  <li><strong>End-to-end learning</strong>: Let the network learn features automatically</li>
+  <li><strong>GPUs unlock deep learning</strong>: Hardware was a bottleneck, not algorithms</li>
+</ol>
+
+<hr />
+
+<h2 id="chapter-iv-the-mathematical-foundations">Chapter IV: The Mathematical Foundations</h2>
+
+<h3 id="learning-as-optimization">Learning as Optimization</h3>
+
+<p>At its heart, modern deep learning is optimization. We seek parameters $\theta$ that minimize a loss function over a dataset:</p>
+
+\[\theta^* = \arg\min_\theta \frac{1}{n} \sum_{i=1}^{n} L(f_\theta(x_i), y_i)\]
+
+<p>where $f_\theta$ is the neural network, $(x_i, y_i)$ are input-output pairs, and $L$ is a loss (cross-entropy for classification, MSE for regression).</p>
+
+<p><strong>Backpropagation</strong> makes this tractable by efficiently computing gradients via the chain rule:</p>
+
+\[\frac{\partial L}{\partial \theta} = \frac{\partial L}{\partial a_L} \cdot \frac{\partial a_L}{\partial a_{L-1}} \cdots \frac{\partial a_1}{\partial \theta}\]
+
+<p>Each partial derivative flows backward through layers, enabling optimization of networks with billions of parameters.</p>
+
+<h3 id="scaling-laws-the-empirical-science-of-deep-learning">Scaling Laws: The Empirical Science of Deep Learning</h3>
+
+<p>In 2020, OpenAI published a landmark paper revealing <strong>scaling laws</strong>: predictable relationships between model size, dataset size, compute, and performance:</p>
+
+\[L(N, D, C) = \left(\frac{N_c}{N}\right)^{\alpha_N} + \left(\frac{D_c}{D}\right)^{\alpha_D}\]
+
+<p>where $L$ is loss, $N$ is parameters, $D$ is data tokens, and $\alpha$ values are empirical exponents (~0.076 for parameters, ~0.095 for data).</p>
+
+<p>The implication was profound: <strong>performance improves predictably with scale</strong>. Double your compute budget, and loss decreases by a known amount. This turned AI research into something resembling engineering—you could plan investments with confidence.</p>
+
+<p>These laws also revealed that models should scale roughly proportionally—more parameters require more data, and vice versa.</p>
+
+<h3 id="emergence-when-more-is-different">Emergence: When More Is Different</h3>
+
+<p>Perhaps the most striking phenomenon in large language models is <strong>emergence</strong>: capabilities that appear suddenly at scale.</p>
+
+<ul>
+  <li>GPT-2 (1.5B parameters): Generates coherent paragraphs</li>
+  <li>GPT-3 (175B parameters): Performs few-shot learning, writes code</li>
+  <li>GPT-4 (estimated 1.8T parameters): Passes bar exams, reasons multi-step</li>
+</ul>
+
+<p>These capabilities weren’t explicitly trained; they emerged from the optimization process itself. As Yann LeCun observed:</p>
+
+<blockquote>
+  <p><em>“AI is going to bring a new renaissance for humanity, a new form of enlightenment, because AI is going to amplify everybody’s intelligence.”</em></p>
+</blockquote>
+
+<p>Yet emergence also creates risks—capabilities we don’t anticipate and can’t fully control.</p>
+
+<hr />
+
+<h2 id="chapter-v-the-transformer-era">Chapter V: The Transformer Era</h2>
+
+<h3 id="attention-is-all-you-need">Attention Is All You Need</h3>
+
+<p>In 2017, a team at Google published <em>“Attention Is All You Need”</em>, introducing the <strong>Transformer architecture</strong>. Unlike RNNs, which process sequences step by step, Transformers use <strong>self-attention</strong> to relate all positions simultaneously:</p>
+
+\[\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V\]
+
+<p>where queries ($Q$), keys ($K$), and values ($V$) are learned projections of input embeddings.</p>
+
+<p>The architecture enabled:</p>
+<ul>
+  <li><strong>Parallelization</strong>: All tokens processed simultaneously (unlike sequential RNNs)</li>
+  <li><strong>Long-range dependencies</strong>: Attention spans entire sequences</li>
+  <li><strong>Scalability</strong>: Simple to scale to billions of parameters</li>
+</ul>
+
+<pre><code class="language-mermaid">flowchart TB
+    subgraph Input["Input Embeddings"]
+        Tokens["Token Embeddings + Positional Encoding"]
+    end
+
+    subgraph Attention["Multi-Head Self-Attention"]
+        Q["Queries (Q)"]
+        K["Keys (K)"]
+        V["Values (V)"]
+        Attn["Attention Weights"]
+        Out["Weighted Values"]
+    end
+
+    subgraph FFN["Feed-Forward Network"]
+        FF1["Linear + ReLU"]
+        FF2["Linear"]
+    end
+
+    subgraph Output["Output"]
+        Final["Next Token Prediction"]
+    end
+
+    Tokens --&gt; Q &amp; K &amp; V
+    Q &amp; K --&gt; Attn
+    Attn --&gt; |"softmax(QK^T/√d)"| Out
+    V --&gt; Out
+    Out --&gt; FF1
+    FF1 --&gt; FF2
+    FF2 --&gt; Final
+
+    style Input fill:#e1f5fe
+    style Attention fill:#fff3e0
+    style FFN fill:#f3e5f5
+    style Output fill:#e8f5e9
+</code></pre>
+
+<h3 id="the-llm-explosion">The LLM Explosion</h3>
+
+<p>Building on Transformers, language models grew exponentially:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Year</th>
+      <th>Model</th>
+      <th>Parameters</th>
+      <th>Key Capability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2018</td>
+      <td>BERT</td>
+      <td>340M</td>
+      <td>Bidirectional pretraining</td>
+    </tr>
+    <tr>
+      <td>2020</td>
+      <td>GPT-3</td>
+      <td>175B</td>
+      <td>Few-shot learning</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>GPT-4</td>
+      <td>Not disclosed</td>
+      <td>Reasoning and multimodal variants</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Claude 3</td>
+      <td>Not disclosed</td>
+      <td>Long-context, safety-aligned</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Gemini 1.5</td>
+      <td>Not disclosed</td>
+      <td>Long-context, multimodal</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Llama 3</td>
+      <td>8B / 70B</td>
+      <td>Strong open-weight baselines</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Most modern pipelines follow a <strong>pretrain-then-adapt</strong> pattern: learn general language representations at scale, then specialize with task data and preference signals.</p>
+
+<h3 id="the-practitioners-view">The Practitioner’s View</h3>
+
+<p>For applied ML engineers, the LLM era changed everything:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">transformers</span> <span class="kn">import</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="kn">import</span> <span class="n">torch</span>
+
+<span class="c1"># Modern paradigm: few-shot prompting replaces feature engineering
+</span><span class="n">classifier</span> <span class="o">=</span> <span class="nf">pipeline</span><span class="p">(</span><span class="sh">"</span><span class="s">text-classification</span><span class="sh">"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">distilbert-base-uncased</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># 2000s approach: months of feature engineering
+# features = [
+#     extract_pos_tags(text),
+#     count_sentiment_words(text),
+#     compute_tf_idf(text),
+#     ...
+# ]
+# model = SVM().fit(features, labels)
+</span>
+<span class="c1"># 2020s approach: describe the task, provide examples
+</span><span class="n">summarizer</span> <span class="o">=</span> <span class="nf">pipeline</span><span class="p">(</span><span class="sh">"</span><span class="s">summarization</span><span class="sh">"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">facebook/bart-large-cnn</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="nf">summarizer</span><span class="p">(</span><span class="sh">"""</span><span class="s">
+    The ImageNet Large Scale Visual Recognition Challenge (ILSVRC)
+    uses a subset of ImageNet with roughly 1000 images in each of 1000
+    categories. In all, there are roughly 1.2 million training images,
+    50,000 validation images, and 150,000 testing images.
+</span><span class="sh">"""</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">summary_text</span><span class="sh">'</span><span class="p">])</span>
+<span class="c1"># Output: ImageNet uses 1.2 million training images across 1000 categories
+</span>
+
+<span class="k">class</span> <span class="nc">EmbeddingBasedClassifier</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">
+    Modern classification: compute embeddings, then simple classifier.
+
+    This approach often outperforms complex feature engineering.
+    </span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="sh">"</span><span class="s">sentence-transformers/all-MiniLM-L6-v2</span><span class="sh">"</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="p">.</span><span class="nf">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="p">.</span><span class="nf">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># Logistic regression, XGBoost, etc.
+</span>
+    <span class="k">def</span> <span class="nf">embed</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Convert texts to embeddings.</span><span class="sh">"""</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">tokenizer</span><span class="p">(</span>
+            <span class="n">texts</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">truncation</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">return_tensors</span><span class="o">=</span><span class="sh">"</span><span class="s">pt</span><span class="sh">"</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">model</span><span class="p">(</span><span class="o">**</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="c1"># Mean pooling over tokens
+</span>        <span class="k">return</span> <span class="n">outputs</span><span class="p">.</span><span class="n">last_hidden_state</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="nf">numpy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Fit classifier on embeddings.</span><span class="sh">"""</span>
+        <span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">embed</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="nc">LogisticRegression</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Predict using embeddings.</span><span class="sh">"""</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">embed</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">classifier</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="chapter-vi-the-road-to-agi">Chapter VI: The Road to AGI</h2>
+
+<h3 id="what-is-agi">What Is AGI?</h3>
+
+<p><strong>Artificial General Intelligence (AGI)</strong>—sometimes called “strong AI” or “human-level AI”—refers to systems that match human cognitive capabilities across virtually all domains. Unlike narrow AI (excellent at chess, mediocre at poetry), AGI would transfer knowledge freely between tasks.</p>
+
+<p>Definitions of AGI vary. Some emphasize economic capability, others scientific creativity, and others broad task generality. The lack of a universal yardstick is why benchmarks, eval suites, and red-teaming have become central to the field.</p>
+
+<h3 id="the-scaling-hypothesis">The Scaling Hypothesis</h3>
+
+<p>The dominant theory for reaching AGI is the <strong>scaling hypothesis</strong>: continue increasing parameters, data, and compute, and intelligence will emerge.</p>
+
+<p>Evidence in favor:</p>
+<ul>
+  <li>GPT-3’s few-shot learning (emergent, not explicitly trained)</li>
+  <li>Chain-of-thought reasoning in large models</li>
+  <li>Multimodal capabilities (vision + language) appearing with scale</li>
+</ul>
+
+<p>Skeptics argue:</p>
+<ul>
+  <li>Scaling may hit diminishing returns</li>
+  <li>Current architectures may lack essential components (world models, planning)</li>
+  <li>Emergence could be a metric artifact, not genuine capability</li>
+</ul>
+
+<p>Geoffrey Hinton captured the optimist’s view:</p>
+
+<blockquote>
+  <p><em>“I do believe deep learning is going to be able to do everything, but I do think there’s going to have to be quite a few conceptual breakthroughs.”</em></p>
+</blockquote>
+
+<h3 id="the-alignment-problem">The Alignment Problem</h3>
+
+<p>As systems approach human-level capability, <strong>alignment</strong> becomes critical: ensuring AI systems pursue intended goals.</p>
+
+<p>The challenge is subtle. A system optimizing for “maximize user engagement” might learn to recommend increasingly extreme content. An AI trained to “be helpful” might agree with harmful requests to seem agreeable.</p>
+
+<p>Current approaches:</p>
+<ul>
+  <li><strong>Preference alignment</strong>: Train models to better match human judgments</li>
+  <li><strong>Constitutional AI</strong> (Anthropic): Encode rules the AI must follow</li>
+  <li><strong>Interpretability</strong>: Understand <em>why</em> models make decisions</li>
+</ul>
+
+<p>Ilya Sutskever, before departing OpenAI, emphasized:</p>
+
+<blockquote>
+  <p><em>“It’s important for the goals of AI beings to be aligned with human goals. The rate of progress will become extremely fast, resulting in unimaginable things.”</em></p>
+</blockquote>
+
+<hr />
+
+<h2 id="chapter-vii-navigating-the-ai-era-as-a-practitioner">Chapter VII: Navigating the AI Era as a Practitioner</h2>
+
+<h3 id="the-new-technical-landscape">The New Technical Landscape</h3>
+
+<p>For ML engineers entering or navigating this landscape, fundamental truths have shifted:</p>
+
+<p><strong>Before LLMs (pre-2020)</strong>:</p>
+<ul>
+  <li>Success required feature engineering expertise</li>
+  <li>Models were trained from scratch for each task</li>
+  <li>Deployment was the hard part; training was relatively cheap</li>
+</ul>
+
+<p><strong>After LLMs (post-2020)</strong>:</p>
+<ul>
+  <li>Success requires prompt engineering and fine-tuning</li>
+  <li>Foundation models are adapted to tasks</li>
+  <li>Training is astronomically expensive; inference is the challenge</li>
+</ul>
+
+<h3 id="practical-wisdom-for-the-practitioner">Practical Wisdom for the Practitioner</h3>
+
+<ol>
+  <li>
+    <p><strong>Start with baselines</strong>: Before fine-tuning a billion-parameter model, try prompting GPT-4. Before prompting, try a simple embedding + classifier.</p>
+  </li>
+  <li>
+    <p><strong>Understand what’s memorized vs. generalized</strong>: LLMs have seen trillions of tokens; your “novel” task may be a retrieval exercise.</p>
+  </li>
+  <li>
+    <p><strong>Monitor for drift and failures</strong>: AI systems fail silently. Track output distributions, flag low-confidence predictions, build human-in-the-loop workflows.</p>
+  </li>
+  <li>
+    <p><strong>Take safety seriously</strong>: As Anthropic’s researchers note, even “helpful” AI can cause harm. Think adversarially about how your system could be misused.</p>
+  </li>
+  <li>
+    <p><strong>Stay humble about capabilities</strong>: Current LLMs don’t truly “understand” or “reason” in human senses—they predict tokens. Extraordinary benefits coexist with surprising failure modes.</p>
+  </li>
+</ol>
+
+<h3 id="the-bigger-picture">The Bigger Picture</h3>
+
+<p>We stand at an inflection point. AI systems now write code, pass professional exams, and generate plausible scientific hypotheses. The next decade will likely bring:</p>
+
+<ul>
+  <li><strong>Multimodal generality</strong>: Systems that see, hear, and act</li>
+  <li><strong>Agentic AI</strong>: Systems that pursue goals over extended time horizons</li>
+  <li><strong>Scientific acceleration</strong>: AI-driven discovery in biology, chemistry, physics</li>
+</ul>
+
+<p>Yann LeCun offers a grounding perspective:</p>
+
+<blockquote>
+  <p><em>“Before we reach human-level AI, we will have to reach cat-level AI and dog-level AI.”</em></p>
+</blockquote>
+
+<p>We’re perhaps at the level of a very well-read parrot with no common sense. The journey continues.</p>
+
+<hr />
+
+<h2 id="references-and-further-exploration">References and Further Exploration</h2>
+
+<h3 id="foundational-works">Foundational Works</h3>
+<ul>
+  <li>Turing, “Computing Machinery and Intelligence” (1950) — <a href="https://academic.oup.com/mind/article/LIX/236/433/986238">The founding document</a></li>
+  <li>Russell &amp; Norvig, <em>AI: A Modern Approach</em> (4th ed., 2020) — The standard textbook</li>
+  <li>Mitchell, <em>Artificial Intelligence: A Guide for Thinking Humans</em> — Accessible overview</li>
+</ul>
+
+<h3 id="key-papers">Key Papers</h3>
+<ul>
+  <li>Rumelhart et al., “Learning Representations by Back-Propagating Errors” (1986)</li>
+  <li>Krizhevsky et al., “ImageNet Classification with Deep CNNs” (2012) — AlexNet paper</li>
+  <li>Vaswani et al., “Attention Is All You Need” (2017) — <a href="https://arxiv.org/abs/1706.03762">Transformer architecture</a></li>
+  <li>Devlin et al., “BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding” (2018) — <a href="https://aclanthology.org/N19-1423/">NAACL/ACL Anthology</a></li>
+  <li>Brown et al., “Language Models are Few-Shot Learners” (2020) — <a href="https://arxiv.org/abs/2005.14165">GPT-3</a></li>
+  <li>Kaplan et al., “Scaling Laws for Neural Language Models” (2020) — <a href="https://arxiv.org/abs/2001.08361">OpenAI scaling laws</a></li>
+  <li>OpenAI, “GPT-4 Technical Report” (2023) — <a href="https://arxiv.org/abs/2303.08774">arXiv</a></li>
+  <li>Anthropic, “Claude 3” (2024) — <a href="https://www.anthropic.com/news/claude-3-family">System Card</a></li>
+  <li>Google DeepMind, “Gemini 1.5” (2024) — <a href="https://blog.google/technology/ai/google-gemini-1-5/">Technical report</a></li>
+  <li>Meta AI, “Llama 3 Model Card” (2024) — <a href="https://raw.githubusercontent.com/meta-llama/llama3/main/MODEL_CARD.md">Model details</a></li>
+</ul>
+
+<h3 id="on-agi-and-alignment">On AGI and Alignment</h3>
+<ul>
+  <li>Bostrom, <em>Superintelligence</em> — Philosophical treatment of AGI risks</li>
+  <li>Anthropic, “Constitutional AI” (2022) — <a href="https://arxiv.org/abs/2212.08073">Alignment techniques</a></li>
+  <li>DeepMind, “Levels of AGI” (2023) — Proposed capability taxonomy</li>
+</ul>
+
+<h3 id="historical-accounts">Historical Accounts</h3>
+<ul>
+  <li>Crevier, <em>AI: The Tumultuous History of the Search for Artificial Intelligence</em></li>
+  <li>The 1956 Dartmouth Proposal (available online)</li>
+</ul>
+
+<hr />
+
+<p><em>Alan Turing asked whether machines could think. Seventy-five years later, we’re still grappling with the question, even as machines write poetry, prove theorems, and beat world champions. Perhaps the answer was never yes or no, but “in what sense, and to what degree?” The arc of machine intelligence is long—and it bends toward the strange, the powerful, and the profoundly uncertain.</em></p>
+
+        
+        
+
+
+
+
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#agi" class="page__taxonomy-item p-category" rel="tag">agi</a><span class="sep">, </span>
+    
+      <a href="/tags/#ai-history" class="page__taxonomy-item p-category" rel="tag">ai-history</a><span class="sep">, </span>
+    
+      <a href="/tags/#deep-learning" class="page__taxonomy-item p-category" rel="tag">deep-learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#machine-learning-fundamentals" class="page__taxonomy-item p-category" rel="tag">machine-learning-fundamentals</a><span class="sep">, </span>
+    
+      <a href="/tags/#transformers" class="page__taxonomy-item p-category" rel="tag">transformers</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2017-01-01T00:00:00-08:00">January 1, 2017</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/musings-on-game-theory/" class="pagination--pager" title="The Art of Strategic Machines: A Journey Through Game Theory in Modern AI
+">Previous</a>
+    
+    
+      <a href="/posts/information-retrieval-key-concepts/" class="pagination--pager" title="The Quest for Relevance: A Journey Through Information Retrieval from Library Cards to Neural Search
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

@@ -1,0 +1,1041 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Causal Discovery: Algorithms for Learning Causal Structure from Data - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Can we discover causal relationships from data alone? Causal discovery algorithms attempt to learn the causal graph structure—which variables cause which—from observational or experimental data. This is among the most ambitious goals in machine learning.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Causal Discovery: Algorithms for Learning Causal Structure from Data">
+<meta property="og:url" content="http://localhost:4000/posts/causal-discovery/">
+
+
+  <meta property="og:description" content="Can we discover causal relationships from data alone? Causal discovery algorithms attempt to learn the causal graph structure—which variables cause which—from observational or experimental data. This is among the most ambitious goals in machine learning.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2026-05-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/causal-discovery/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Causal Discovery: Algorithms for Learning Causal Structure from Data">
+    
+    <meta itemprop="description" content="Can we discover causal relationships from data alone? Causal discovery algorithms attempt to learn the causal graph structure—which variables cause which—from observational or experimental data. This is among the most ambitious goals in machine learning.">
+    
+    
+    <meta itemprop="datePublished" content="2026-05-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/causal-discovery/" class="u-url" itemprop="url">Causal Discovery: Algorithms for Learning Causal Structure from Data
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-discovery" data-tag="causal-discovery">
+  causal-discovery
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#structure-learning" data-tag="structure-learning">
+  structure-learning
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#graphical-models" data-tag="graphical-models">
+  graphical-models
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 8 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/observational-data-challenges/">Previous: The Confounding Problem: Navigating Bias in Observational Studies</a></span>
+      <span></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Can we discover causal relationships from data alone? Causal discovery algorithms attempt to learn the causal graph structure—which variables cause which—from observational or experimental data. This is among the most ambitious goals in machine learning.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Most causal inference assumes a known causal graph. But where does the graph come from? Domain experts provide structure, but this doesn’t scale: we can’t manually specify relationships among thousands of variables.</p>
+
+<p>Causal discovery attempts to learn the graph from data. While impossible in complete generality (correlation doesn’t imply causation), under certain assumptions, we can make progress.</p>
+
+<h2 id="the-goal">The Goal</h2>
+
+<p>Learn a Directed Acyclic Graph (DAG) $G$ where:</p>
+<ul>
+  <li>Nodes are observed variables</li>
+  <li>Edges represent direct causal effects</li>
+  <li>$X \rightarrow Y$ means “X directly causes Y”</li>
+</ul>
+
+<p>From this graph, we can:</p>
+<ul>
+  <li>Identify confounders</li>
+  <li>Determine adjustment sets</li>
+  <li>Answer causal queries</li>
+</ul>
+
+<h2 id="key-assumptions">Key Assumptions</h2>
+
+<h3 id="causal-markov-condition">Causal Markov Condition</h3>
+
+<p>Every variable is independent of its non-descendants given its parents:
+\(X \perp \text{NonDesc}(X) | \text{Parents}(X)\)</p>
+
+<h3 id="faithfulness">Faithfulness</h3>
+
+<p>All and only the independencies in the data are entailed by the graph. (No “accidental” cancellations.)</p>
+
+<h3 id="causal-sufficiency">Causal Sufficiency</h3>
+
+<p>No unmeasured common causes. (Can be relaxed with some algorithms.)</p>
+
+<h2 id="algorithm-families">Algorithm Families</h2>
+
+<h3 id="constraint-based-pc-fci">Constraint-Based (PC, FCI)</h3>
+
+<p>Use conditional independence tests to learn skeleton, then orient edges.</p>
+
+<p><strong>PC Algorithm</strong>:</p>
+<ol>
+  <li>Start fully connected</li>
+  <li>Remove edge X—Y if independent given some subset</li>
+  <li>Orient v-structures: X → Z ← Y when X—Z—Y and X,Y not adjacent</li>
+  <li>Apply orientation rules</li>
+</ol>
+
+<h3 id="score-based-ges-cam">Score-Based (GES, CAM)</h3>
+
+<p>Search over DAG space, maximizing a score (BIC, BGe):
+\(\text{Score}(G) = \log P(D|G) - \text{complexity}(G)\)</p>
+
+<p><strong>GES (Greedy Equivalence Search)</strong>:</p>
+<ol>
+  <li>Forward phase: Add edges greedily</li>
+  <li>Backward phase: Remove edges greedily</li>
+</ol>
+
+<h3 id="functional-causal-models">Functional Causal Models</h3>
+
+<p>Assume specific functional form (linear, ANM), exploit asymmetries.</p>
+
+<p><strong>LiNGAM (Linear Non-Gaussian Acyclic Model)</strong>:
+\(X = BX + \epsilon\)</p>
+
+<p>Non-Gaussianity of errors enables causal direction identification.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="n">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+
+<span class="k">class</span> <span class="nc">PCAlgorithm</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Simplified PC algorithm for causal discovery</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+    <span class="k">def</span> <span class="nf">conditional_independence_test</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Test X ⊥ Y | Z using partial correlation</span><span class="sh">"""</span>
+        <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Marginal correlation
+</span>            <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="nf">pearsonr</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">Y</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span>
+
+        <span class="c1"># Partial correlation via residuals
+</span>        <span class="n">X_resid</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">_residualize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="nf">list</span><span class="p">(</span><span class="n">Z</span><span class="p">)])</span>
+        <span class="n">Y_resid</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">_residualize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">Y</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="nf">list</span><span class="p">(</span><span class="n">Z</span><span class="p">)])</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="nf">pearsonr</span><span class="p">(</span><span class="n">X_resid</span><span class="p">,</span> <span class="n">Y_resid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">alpha</span>
+
+    <span class="k">def</span> <span class="nf">_residualize</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Get residuals of y ~ X</span><span class="sh">"""</span>
+        <span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="nc">LinearRegression</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">learn_skeleton</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Learn undirected skeleton</span><span class="sh">"""</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+        <span class="n">adjacency</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="nf">set</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">v</span><span class="p">}</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span>
+        <span class="n">separating_sets</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nf">for </span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="ow">in</span> <span class="nf">list</span><span class="p">(</span><span class="nf">combinations</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">Y</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">adjacency</span><span class="p">[</span><span class="n">X</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Test conditioning sets of size 'depth'
+</span>                <span class="n">neighbors</span> <span class="o">=</span> <span class="n">adjacency</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">-</span> <span class="p">{</span><span class="n">Y</span><span class="p">}</span>
+                <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">depth</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">for</span> <span class="n">Z</span> <span class="ow">in</span> <span class="nf">combinations</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="nf">conditional_independence_test</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="nf">set</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="n">data</span><span class="p">):</span>
+                        <span class="c1"># Remove edge
+</span>                        <span class="n">adjacency</span><span class="p">[</span><span class="n">X</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                        <span class="n">adjacency</span><span class="p">[</span><span class="n">Y</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                        <span class="n">separating_sets</span><span class="p">[(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)]</span> <span class="o">=</span> <span class="nf">set</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+                        <span class="n">separating_sets</span><span class="p">[(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)]</span> <span class="o">=</span> <span class="nf">set</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+            <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">adjacency</span><span class="p">,</span> <span class="n">separating_sets</span>
+
+    <span class="k">def</span> <span class="nf">orient_edges</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">adjacency</span><span class="p">,</span> <span class="n">separating_sets</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Orient v-structures and apply rules</span><span class="sh">"""</span>
+        <span class="n">directed</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="p">{</span><span class="sh">'</span><span class="s">parents</span><span class="sh">'</span><span class="p">:</span> <span class="nf">set</span><span class="p">(),</span> <span class="sh">'</span><span class="s">children</span><span class="sh">'</span><span class="p">:</span> <span class="nf">set</span><span class="p">()}</span>
+                   <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span>
+        <span class="n">undirected</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="nf">set</span><span class="p">(</span><span class="n">adjacency</span><span class="p">[</span><span class="n">v</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span>
+
+        <span class="c1"># Find v-structures: X → Z ← Y where X,Y not adjacent
+</span>        <span class="k">for</span> <span class="n">Z</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">undirected</span><span class="p">[</span><span class="n">Z</span><span class="p">])</span>
+            <span class="nf">for </span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="ow">in</span> <span class="nf">combinations</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">Y</span> <span class="ow">in</span> <span class="n">adjacency</span><span class="p">[</span><span class="n">X</span><span class="p">]:</span>  <span class="c1"># X and Y adjacent
+</span>                    <span class="k">continue</span>
+
+                <span class="n">sep_set</span> <span class="o">=</span> <span class="n">separating_sets</span><span class="p">.</span><span class="nf">get</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="nf">set</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">Z</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sep_set</span><span class="p">:</span>  <span class="c1"># Z is collider
+</span>                    <span class="c1"># Orient X → Z ← Y
+</span>                    <span class="n">directed</span><span class="p">[</span><span class="n">Z</span><span class="p">][</span><span class="sh">'</span><span class="s">parents</span><span class="sh">'</span><span class="p">].</span><span class="nf">add</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">directed</span><span class="p">[</span><span class="n">Z</span><span class="p">][</span><span class="sh">'</span><span class="s">parents</span><span class="sh">'</span><span class="p">].</span><span class="nf">add</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                    <span class="n">directed</span><span class="p">[</span><span class="n">X</span><span class="p">][</span><span class="sh">'</span><span class="s">children</span><span class="sh">'</span><span class="p">].</span><span class="nf">add</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+                    <span class="n">directed</span><span class="p">[</span><span class="n">Y</span><span class="p">][</span><span class="sh">'</span><span class="s">children</span><span class="sh">'</span><span class="p">].</span><span class="nf">add</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+                    <span class="n">undirected</span><span class="p">[</span><span class="n">Z</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">undirected</span><span class="p">[</span><span class="n">Z</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                    <span class="n">undirected</span><span class="p">[</span><span class="n">X</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+                    <span class="n">undirected</span><span class="p">[</span><span class="n">Y</span><span class="p">].</span><span class="nf">discard</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">directed</span><span class="p">,</span> <span class="n">undirected</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Full PC algorithm</span><span class="sh">"""</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="c1"># Step 1: Learn skeleton
+</span>        <span class="n">adjacency</span><span class="p">,</span> <span class="n">sep_sets</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">learn_skeleton</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+
+        <span class="c1"># Step 2: Orient edges
+</span>        <span class="n">directed</span><span class="p">,</span> <span class="n">undirected</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">orient_edges</span><span class="p">(</span><span class="n">adjacency</span><span class="p">,</span> <span class="n">sep_sets</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">'</span><span class="s">directed</span><span class="sh">'</span><span class="p">:</span> <span class="n">directed</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">undirected</span><span class="sh">'</span><span class="p">:</span> <span class="n">undirected</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">adjacency</span><span class="sh">'</span><span class="p">:</span> <span class="n">adjacency</span>
+        <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">generate_linear_scm_data</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Generate data from known linear SCM</span><span class="sh">"""</span>
+    <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># True graph: X → Y → Z, X → Z
+</span>    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>  <span class="c1"># Independent
+</span>
+    <span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="sh">'</span><span class="s">Z</span><span class="sh">'</span><span class="p">:</span> <span class="n">Z</span><span class="p">,</span> <span class="sh">'</span><span class="s">W</span><span class="sh">'</span><span class="p">:</span> <span class="n">W</span><span class="p">})</span>
+
+
+<span class="c1"># Example
+</span><span class="n">data</span> <span class="o">=</span> <span class="nf">generate_linear_scm_data</span><span class="p">()</span>
+<span class="n">pc</span> <span class="o">=</span> <span class="nc">PCAlgorithm</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pc</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Learned structure:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Directed edges:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="sh">'</span><span class="s">directed</span><span class="sh">'</span><span class="p">].</span><span class="nf">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="sh">'</span><span class="s">parents</span><span class="sh">'</span><span class="p">]:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s"> → </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">Undirected edges:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">neighbors</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="sh">'</span><span class="s">undirected</span><span class="sh">'</span><span class="p">].</span><span class="nf">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>  <span class="c1"># Print each edge once
+</span>            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s"> — </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="equivalence-classes">Equivalence Classes</h2>
+
+<p>Many DAGs encode the same conditional independencies:</p>
+
+<p><strong>Markov Equivalence Class</strong>: DAGs with same skeleton and v-structures.</p>
+
+<p>We can only learn up to the equivalence class from observational data. Interventional data can break ties.</p>
+
+<h2 id="challenges">Challenges</h2>
+
+<h3 id="finite-sample">Finite Sample</h3>
+
+<p>Independence tests can fail with limited data. Use regularization, bootstrap.</p>
+
+<h3 id="scaling">Scaling</h3>
+
+<p>$O(n^k)$ for conditioning set size $k$. Modern variants use local search.</p>
+
+<h3 id="latent-confounders">Latent Confounders</h3>
+
+<p>Violate causal sufficiency. FCI algorithm handles this but recovers less structure.</p>
+
+<h3 id="nonlinear-relationships">Nonlinear Relationships</h3>
+
+<p>Linear methods miss nonlinear dependencies. Kernel-based, neural approaches exist.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Causal discovery attempts to learn causal structure from data. Key takeaways:</p>
+
+<ul>
+  <li>Constraint-based methods use independence tests</li>
+  <li>Score-based methods search DAG space</li>
+  <li>Can only learn up to equivalence class from observational data</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Spirtes, Glymour &amp; Scheines, <em>Causation, Prediction, and Search</em></li>
+  <li>Peters, Janzing &amp; Schölkopf, <em>Elements of Causal Inference</em></li>
+  <li>Causal Discovery Toolbox (CDT) Python library</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 8 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/observational-data-challenges/">Previous: The Confounding Problem: Navigating Bias in Observational Studies</a></span>
+      <span></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-discovery" class="page__taxonomy-item p-category" rel="tag">causal-discovery</a><span class="sep">, </span>
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#graphical-models" class="page__taxonomy-item p-category" rel="tag">graphical-models</a><span class="sep">, </span>
+    
+      <a href="/tags/#structure-learning" class="page__taxonomy-item p-category" rel="tag">structure-learning</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2026-05-01T00:00:00-07:00">May 1, 2026</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/agentic-ai/" class="pagination--pager" title="Agentic AI: Building Autonomous Systems That Reason and Act
+">Previous</a>
+    
+    
+      <a href="/posts/ml-platform-engineering/" class="pagination--pager" title="ML Platform Engineering: Building the Infrastructure for ML at Scale
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

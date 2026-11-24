@@ -1,0 +1,1115 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Learning to Rank: From Pointwise to Listwise Neural Ranking Models - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Learning to Rank (LTR) trains machine learning models to order items by relevance. From search engines to recommendation systems, ranking is fundamental to information access. This primer covers pointwise, pairwise, and listwise approaches, along with modern neural ranking architectures.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Learning to Rank: From Pointwise to Listwise Neural Ranking Models">
+<meta property="og:url" content="http://localhost:4000/posts/learning-to-rank/">
+
+
+  <meta property="og:description" content="Learning to Rank (LTR) trains machine learning models to order items by relevance. From search engines to recommendation systems, ranking is fundamental to information access. This primer covers pointwise, pairwise, and listwise approaches, along with modern neural ranking architectures.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-05-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/learning-to-rank/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Learning to Rank: From Pointwise to Listwise Neural Ranking Models">
+    
+    <meta itemprop="description" content="Learning to Rank (LTR) trains machine learning models to order items by relevance. From search engines to recommendation systems, ranking is fundamental to information access. This primer covers pointwise, pairwise, and listwise approaches, along with modern neural ranking architectures.">
+    
+    
+    <meta itemprop="datePublished" content="2021-05-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/learning-to-rank/" class="u-url" itemprop="url">Learning to Rank: From Pointwise to Listwise Neural Ranking Models
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#learning-to-rank" data-tag="learning-to-rank">
+  learning-to-rank
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#search" data-tag="search">
+  search
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#neural-ranking" data-tag="neural-ranking">
+  neural-ranking
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#information-retrieval" data-tag="information-retrieval">
+  information-retrieval
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 5 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/matrix-factorization-basics/">Previous: Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond</a></span>
+      <span><a href="/posts/tree-based-ranking/">Next: Decision Trees That Rank: GBRT and Lambda Gradients for Search</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Learning to Rank (LTR) trains machine learning models to order items by relevance. From search engines to recommendation systems, ranking is fundamental to information access. This primer covers pointwise, pairwise, and listwise approaches, along with modern neural ranking architectures.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Ranking is everywhere: search results, product listings, news feeds, ad auctions. Unlike classification or regression, the goal isn’t a single prediction—it’s the relative ordering of items. A good ranker puts relevant items at the top, where users actually look.</p>
+
+<p>LTR bridges IR and ML: use ML techniques optimized for ranking metrics like NDCG, MAP, and MRR. Understanding LTR is essential for anyone building search or recommendation systems.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>Ranking vs. classification/regression</strong>:</p>
+<ul>
+  <li>Classification: Predict category</li>
+  <li>Regression: Predict value</li>
+  <li>Ranking: Predict relative order</li>
+</ul>
+
+<p><strong>Training data</strong>: Query-document pairs with relevance labels (often graded: 0-4 relevance).</p>
+
+<p><strong>Three approaches</strong>:</p>
+<ul>
+  <li><strong>Pointwise</strong>: Treat as regression/classification on individual items</li>
+  <li><strong>Pairwise</strong>: Learn to order pairs correctly</li>
+  <li><strong>Listwise</strong>: Optimize ranking of entire lists</li>
+</ul>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="ranking-metrics">Ranking Metrics</h3>
+
+<p><strong>NDCG (Normalized Discounted Cumulative Gain)</strong>:
+\(\text{DCG}_k = \sum_{i=1}^k \frac{2^{rel_i} - 1}{\log_2(i+1)}\)
+\(\text{NDCG}_k = \frac{\text{DCG}_k}{\text{IDCG}_k}\)</p>
+
+<p>Higher relevance at higher ranks → higher NDCG.</p>
+
+<p><strong>MAP (Mean Average Precision)</strong>:
+\(\text{AP} = \frac{\sum_{k=1}^n P(k) \cdot \text{rel}(k)}{|\text{relevant docs}|}\)</p>
+
+<p><strong>MRR (Mean Reciprocal Rank)</strong>:
+\(\text{MRR} = \frac{1}{|Q|}\sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}\)</p>
+
+<h3 id="pointwise-loss">Pointwise Loss</h3>
+
+<p>Treat as regression on relevance scores:
+\(\mathcal{L}_{\text{pointwise}} = \sum_{q,d} (y_{qd} - f(q, d))^2\)</p>
+
+<h3 id="pairwise-loss">Pairwise Loss</h3>
+
+<p>Compare document pairs—should rank more relevant higher:
+\(\mathcal{L}_{\text{pairwise}} = \sum_{y_i &gt; y_j} \max(0, f(q, d_j) - f(q, d_i) + \epsilon)\)</p>
+
+<h3 id="listwise-loss">Listwise Loss</h3>
+
+<p>Optimize ranking directly. ListNet uses cross-entropy on permutation probabilities.</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="ranknet-pairwise">RankNet (Pairwise)</h3>
+
+<p>Learn probability that $d_i$ should rank above $d_j$:
+\(P_{ij} = \frac{1}{1 + e^{-\sigma(s_i - s_j)}}\)</p>
+
+<p>Minimize cross-entropy:
+\(\mathcal{L} = -\bar{P}_{ij}\log P_{ij} - (1-\bar{P}_{ij})\log(1-P_{ij})\)</p>
+
+<h3 id="lambdarank">LambdaRank</h3>
+
+<p>Weight pairs by their impact on NDCG:
+\(|\Delta\text{NDCG}_{ij}|\)</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Lambda gradient: $\lambda_{ij} =</td>
+      <td>\Delta\text{NDCG}_{ij}</td>
+      <td>\cdot \frac{-\sigma}{1 + e^{\sigma(s_i - s_j)}}$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This directly optimizes NDCG despite its non-differentiability.</p>
+
+<h3 id="lambdamart">LambdaMART</h3>
+
+<p>Combines LambdaRank with gradient boosting (MART). State-of-the-art for traditional LTR. Used in Bing, Yahoo, and many industrial systems.</p>
+
+<h3 id="neural-ranking-models">Neural Ranking Models</h3>
+
+<p><strong>Cross-Encoder</strong>: Joint query-document encoding with BERT:
+\(\text{score} = \text{MLP}(\text{BERT}([q; d]))\)</p>
+
+<p>Accurate but expensive (can’t precompute document representations).</p>
+
+<p><strong>Bi-Encoder (Two-Tower)</strong>: Separate encoders:
+\(\text{score} = \text{sim}(E_q(q), E_d(d))\)</p>
+
+<p>Efficient (precompute document embeddings) but less accurate.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">class</span> <span class="nc">RankNetLoss</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Pairwise ranking loss</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">relevance</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        scores: (batch, n_docs) - predicted scores
+        relevance: (batch, n_docs) - relevance labels
+        </span><span class="sh">"""</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_docs</span> <span class="o">=</span> <span class="n">scores</span><span class="p">.</span><span class="n">shape</span>
+
+        <span class="c1"># Create all pairs
+</span>        <span class="n">scores_i</span> <span class="o">=</span> <span class="n">scores</span><span class="p">.</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># (batch, n_docs, 1)
+</span>        <span class="n">scores_j</span> <span class="o">=</span> <span class="n">scores</span><span class="p">.</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (batch, 1, n_docs)
+</span>        <span class="n">rel_i</span> <span class="o">=</span> <span class="n">relevance</span><span class="p">.</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">rel_j</span> <span class="o">=</span> <span class="n">relevance</span><span class="p">.</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Mask: only pairs where i should rank above j
+</span>        <span class="n">valid_pairs</span> <span class="o">=</span> <span class="p">(</span><span class="n">rel_i</span> <span class="o">&gt;</span> <span class="n">rel_j</span><span class="p">).</span><span class="nf">float</span><span class="p">()</span>
+
+        <span class="c1"># Probability that i ranks above j
+</span>        <span class="n">s_diff</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="n">scores_i</span> <span class="o">-</span> <span class="n">scores_j</span><span class="p">)</span>
+        <span class="n">P_ij</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">s_diff</span><span class="p">)</span>
+
+        <span class="c1"># Binary cross-entropy loss
+</span>        <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">valid_pairs</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">P_ij</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span><span class="p">.</span><span class="nf">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">valid_pairs</span><span class="p">.</span><span class="nf">sum</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">LambdaRankLoss</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">LambdaRank: weight pairs by NDCG impact</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+    <span class="k">def</span> <span class="nf">_dcg</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">relevance</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">relevance</span><span class="p">.</span><span class="n">device</span><span class="p">).</span><span class="nf">float</span><span class="p">()</span>
+        <span class="n">discounts</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log2</span><span class="p">(</span><span class="n">positions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">gains</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">relevance</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">discounts</span>
+        <span class="k">return</span> <span class="n">gains</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ndcg_delta</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">relevance</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">idcg</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Compute |Delta NDCG| for swapping positions i and j</span><span class="sh">"""</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">relevance</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pos_i</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">relevance</span><span class="p">.</span><span class="n">device</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">pos_j</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">relevance</span><span class="p">.</span><span class="n">device</span><span class="p">)[</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="n">discount_i</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log2</span><span class="p">(</span><span class="n">pos_i</span><span class="p">.</span><span class="nf">float</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">discount_j</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log2</span><span class="p">(</span><span class="n">pos_j</span><span class="p">.</span><span class="nf">float</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">gain_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">relevance</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">gain_j</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">relevance</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">abs</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">gain_i</span> <span class="o">-</span> <span class="n">gain_j</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">discount_i</span> <span class="o">-</span> <span class="n">discount_j</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">idcg</span><span class="p">.</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">delta</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">relevance</span><span class="p">):</span>
+        <span class="c1"># Simplified version - full implementation more complex
+</span>        <span class="k">return</span> <span class="nc">RankNetLoss</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">sigma</span><span class="p">)(</span><span class="n">scores</span><span class="p">,</span> <span class="n">relevance</span><span class="p">)</span>
+
+<span class="c1"># Simple ranking model
+</span><span class="k">class</span> <span class="nc">RankingModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">net</span><span class="p">(</span><span class="n">x</span><span class="p">).</span><span class="nf">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Evaluation
+</span><span class="k">def</span> <span class="nf">compute_ndcg</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">relevance</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Compute NDCG@k</span><span class="sh">"""</span>
+    <span class="c1"># Sort by predicted scores
+</span>    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">argsort</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">sorted_relevance</span> <span class="o">=</span> <span class="n">relevance</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span>
+
+    <span class="c1"># DCG
+</span>    <span class="n">positions</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">).</span><span class="nf">float</span><span class="p">()</span>
+    <span class="n">discounts</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">log2</span><span class="p">(</span><span class="n">positions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">dcg</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">sorted_relevance</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">discounts</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+
+    <span class="c1"># Ideal DCG
+</span>    <span class="n">ideal_sorted</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="n">relevance</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">idcg</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">ideal_sorted</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">discounts</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+
+    <span class="nf">return </span><span class="p">(</span><span class="n">dcg</span> <span class="o">/</span> <span class="n">idcg</span><span class="p">).</span><span class="nf">item</span><span class="p">()</span> <span class="k">if</span> <span class="n">idcg</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Position bias in training data</strong>: Users click higher items. Use inverse propensity weighting or unbiased LTR.</p>
+  </li>
+  <li>
+    <p><strong>Feature normalization</strong>: Features at different scales. Normalize per-query when possible.</p>
+  </li>
+  <li>
+    <p><strong>List size variation</strong>: Queries have different numbers of results. Handle variable-length lists properly.</p>
+  </li>
+  <li>
+    <p><strong>Metric mismatch</strong>: Optimize metric you care about. NDCG weights top positions more than MAP.</p>
+  </li>
+  <li>
+    <p><strong>Evaluation leakage</strong>: Don’t overfit to offline metrics. A/B test online.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Web search</strong>: Google, Bing search ranking</li>
+  <li><strong>E-commerce</strong>: Product search and browse</li>
+  <li><strong>Recommendations</strong>: Ranking candidate items</li>
+  <li><strong>Advertising</strong>: Ad slot allocation</li>
+  <li><strong>Question answering</strong>: Passage ranking for RAG</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="pre-trained-transformers-for-ranking">Pre-trained Transformers for Ranking</h3>
+
+<p>Fine-tune BERT for ranking:</p>
+<ul>
+  <li>MonoBERT: Cross-encoder reranking</li>
+  <li>ColBERT: Efficient late interaction</li>
+  <li>SPLADE: Learned sparse representations</li>
+</ul>
+
+<h3 id="unbiased-learning-to-rank">Unbiased Learning to Rank</h3>
+
+<p>Address position bias in click data:</p>
+<ul>
+  <li>Inverse Propensity Scoring (IPS)</li>
+  <li>Dual Learning Algorithm</li>
+  <li>Regression EM</li>
+</ul>
+
+<h3 id="multi-objective-ranking">Multi-Objective Ranking</h3>
+
+<p>Balance relevance, diversity, freshness, revenue:
+\(\text{score} = \alpha \cdot \text{relevance} + \beta \cdot \text{diversity} + \gamma \cdot \text{revenue}\)</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Approach</th>
+      <th>Pros</th>
+      <th>Cons</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pointwise</td>
+      <td>Regression</td>
+      <td>Simple</td>
+      <td>Ignores relative order</td>
+    </tr>
+    <tr>
+      <td>Pairwise</td>
+      <td>Compare pairs</td>
+      <td>Captures preference</td>
+      <td>O(n²) pairs</td>
+    </tr>
+    <tr>
+      <td>Listwise</td>
+      <td>Optimize list</td>
+      <td>Direct metric opt</td>
+      <td>Complex implementation</td>
+    </tr>
+    <tr>
+      <td>LambdaMART</td>
+      <td>Gradient boosting + lambda</td>
+      <td>SOTA for features</td>
+      <td>Not end-to-end</td>
+    </tr>
+    <tr>
+      <td>Neural Cross-Encoder</td>
+      <td>BERT-based</td>
+      <td>Best quality</td>
+      <td>Slow at scale</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Learning to Rank optimizes ML models for ranking metrics. Key takeaways:</p>
+
+<ul>
+  <li>Pairwise and listwise approaches outperform pointwise</li>
+  <li>LambdaMART remains competitive with neural methods on feature-rich data</li>
+  <li>Neural rankers excel with raw text but are expensive</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Burges, “From RankNet to LambdaRank to LambdaMART” (2010)</li>
+  <li>Nogueira &amp; Cho, “Passage Re-ranking with BERT” (2019)</li>
+  <li>Liu, <em>Learning to Rank for Information Retrieval</em> (book)</li>
+  <li>Ai et al., “Unbiased Learning to Rank” (2018)</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ranking & Retrieval · 5 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/matrix-factorization-basics/">Previous: Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond</a></span>
+      <span><a href="/posts/tree-based-ranking/">Next: Decision Trees That Rank: GBRT and Lambda Gradients for Search</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#information-retrieval" class="page__taxonomy-item p-category" rel="tag">information-retrieval</a><span class="sep">, </span>
+    
+      <a href="/tags/#learning-to-rank" class="page__taxonomy-item p-category" rel="tag">learning-to-rank</a><span class="sep">, </span>
+    
+      <a href="/tags/#neural-ranking" class="page__taxonomy-item p-category" rel="tag">neural-ranking</a><span class="sep">, </span>
+    
+      <a href="/tags/#search" class="page__taxonomy-item p-category" rel="tag">search</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-05-01T00:00:00-07:00">May 1, 2021</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/personalization-at-scale/" class="pagination--pager" title="Hyper-Personalization: ML Systems That Learn Individual Preferences
+">Previous</a>
+    
+    
+      <a href="/posts/simplifying-ml-systems/" class="pagination--pager" title="Simplicity in Scale: Designing ML Systems That Actually Work in Production
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

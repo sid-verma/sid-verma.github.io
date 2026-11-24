@@ -1,0 +1,3192 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>All Posts - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Deep dives into machine learning, causal inference, ad tech, and AI systems.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="All Posts">
+<meta property="og:url" content="http://localhost:4000/posts/">
+
+
+  <meta property="og:description" content="Deep dives into machine learning, causal inference, ad tech, and AI systems.">
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--posts">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      
+
+
+
+<div id="main" role="main">
+  <div class="archive">
+    
+      <h1 id="page-title" class="page__title">All Posts</h1>
+    
+    
+
+
+<ul class="taxonomy__index">
+  
+  
+    <li>
+      <a href="#2026">
+        <strong>2026</strong> <span class="taxonomy__count">5</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2025">
+        <strong>2025</strong> <span class="taxonomy__count">12</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2024">
+        <strong>2024</strong> <span class="taxonomy__count">7</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2023">
+        <strong>2023</strong> <span class="taxonomy__count">2</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2022">
+        <strong>2022</strong> <span class="taxonomy__count">3</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2021">
+        <strong>2021</strong> <span class="taxonomy__count">3</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2020">
+        <strong>2020</strong> <span class="taxonomy__count">4</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2019">
+        <strong>2019</strong> <span class="taxonomy__count">4</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2018">
+        <strong>2018</strong> <span class="taxonomy__count">4</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2017">
+        <strong>2017</strong> <span class="taxonomy__count">5</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2016">
+        <strong>2016</strong> <span class="taxonomy__count">1</span>
+      </a>
+    </li>
+  
+</ul>
+
+
+
+
+  <section id="2026" class="taxonomy__section">
+    <h2 class="archive__subtitle">2026</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="future-of-ai" data-tags="future-of-ai,trends,predictions,artificial-intelligence" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/future-of-ai/">The Next Decade of AI: Trends, Challenges, and Opportunities</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2026-11-01T00:00:00-07:00">Nov 1, 2026</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">A decade of deep learning has transformed what’s possible. LLMs write code, diffusion models create art, and AI systems increasingly assist in scie...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#future-of-ai" data-tag="future-of-ai">
+  future-of-ai
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#trends" data-tag="trends">
+  trends
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#predictions" data-tag="predictions">
+  predictions
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="ml-platform-engineering" data-tags="mlops,platform,infrastructure,machine-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/ml-platform-engineering/">ML Platform Engineering: Building the Infrastructure for ML at Scale</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2026-08-01T00:00:00-07:00">Aug 1, 2026</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Behind every successful ML system is platform infrastructure: feature stores, training pipelines, model registries, and serving systems. ML platfor...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#mlops" data-tag="mlops">
+  mlops
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#platform" data-tag="platform">
+  platform
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#infrastructure" data-tag="infrastructure">
+  infrastructure
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="causal-discovery" data-tags="causal-discovery,causal-inference,structure-learning,graphical-models" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/causal-discovery/">Causal Discovery: Algorithms for Learning Causal Structure from Data</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2026-05-01T00:00:00-07:00">May 1, 2026</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Can we discover causal relationships from data alone? Causal discovery algorithms attempt to learn the causal graph structure—which variables cause...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-discovery" data-tag="causal-discovery">
+  causal-discovery
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#structure-learning" data-tag="structure-learning">
+  structure-learning
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="agentic-ai" data-tags="agentic-ai,autonomous-agents,llms,reasoning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/agentic-ai/">Agentic AI: Building Autonomous Systems That Reason and Act</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2026-02-01T00:00:00-08:00">Feb 1, 2026</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">In 2023, an AI agent autonomously completed a software engineering task that would have taken a human hours—writing code, running tests, fixing bug...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agentic-ai" data-tag="agentic-ai">
+  agentic-ai
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#autonomous-agents" data-tag="autonomous-agents">
+  autonomous-agents
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="agentic-ai-resources" data-tags="agentic-ai,llm,resources,agents" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="2 minute read">2<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/agentic-ai-resources/">Agentic AI Resources: A 2026 Learning Path</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2026-01-01T00:00:00-08:00">Jan 1, 2026</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“The best way to predict the future is to invent it. The second best way is to read the papers of those who are inventing it.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agentic-ai" data-tag="agentic-ai">
+  agentic-ai
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llm" data-tag="llm">
+  llm
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#resources" data-tag="resources">
+  resources
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2025" class="taxonomy__section">
+    <h2 class="archive__subtitle">2025</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="funnel-tradeoffs-in-advertising" data-tags="ad-tech,funnel-optimization,measurement,incrementality" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="2 minute read">2<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/funnel-tradeoffs-in-advertising/">Funnel Tradeoffs in Advertising: Optimizing Awareness, Conversion, and Retention</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-12-01T00:00:00-08:00">Dec 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Performance marketing harvests existing demand. Brand marketing creates future demand. If you only harvest, you will starve.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#funnel-optimization" data-tag="funnel-optimization">
+  funnel-optimization
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#measurement" data-tag="measurement">
+  measurement
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="deep-research-agents" data-tags="agentic-ai,llm,research-agents,rag" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="2 minute read">2<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/deep-research-agents/">Deep Research Agents: Automating Literature Review and Synthesis</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-12-01T00:00:00-08:00">Dec 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“An LLM knows what it was trained on. A Research Agent knows what was published 5 minutes ago.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agentic-ai" data-tag="agentic-ai">
+  agentic-ai
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llm" data-tag="llm">
+  llm
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#research-agents" data-tag="research-agents">
+  research-agents
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="the-era-of-ai-agents" data-tags="agentic-ai,llm,agents,systems" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="2 minute read">2<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/the-era-of-ai-agents/">The Era of AI Agents: From Chatbots to Systems That Act</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-11-01T00:00:00-07:00">Nov 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“The future of AI isn’t just generating text; it’s doing work.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agentic-ai" data-tag="agentic-ai">
+  agentic-ai
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llm" data-tag="llm">
+  llm
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agents" data-tag="agents">
+  agents
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="rag-retrieval-augmented-generation" data-tags="rag,retrieval-augmented-generation,llms,information-retrieval" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/rag-retrieval-augmented-generation/">RAG: Retrieval-Augmented Generation for Grounded LLM Responses</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-11-01T00:00:00-07:00">Nov 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">In 2023, ChatGPT confidently told a user that the 2024 Olympics were canceled—because its training data cut off in 2021. LLMs are brilliant, but th...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#rag" data-tag="rag">
+  rag
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#retrieval-augmented-generation" data-tag="retrieval-augmented-generation">
+  retrieval-augmented-generation
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="ad-tech-metrics-explained" data-tags="ad-tech,metrics,incrementality,measurement" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/ad-tech-metrics-explained/">Ad Tech Metrics Explained: CTR, CVR, ROAS, and Incrementality</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-10-01T00:00:00-07:00">Oct 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“In God we trust. All others must bring data.” — W. Edwards Deming “In Ad Tech we trust. All others must understand conversion lag.” — Anonymous</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#metrics" data-tag="metrics">
+  metrics
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="online-bid-optimization" data-tags="ad-tech,bid-optimization,auctions,reinforcement-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/online-bid-optimization/">Online Bid Optimization: Real-Time Control for Advertising Markets</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-08-01T00:00:00-07:00">Aug 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“A budget is not just a constraint; it’s a signal. It tells you that opportunity is scarce, and therefore, you must be picky.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#bid-optimization" data-tag="bid-optimization">
+  bid-optimization
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#auctions" data-tag="auctions">
+  auctions
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="neural-ranking-models" data-tags="neural-ranking,bert,colbert,information-retrieval" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/neural-ranking-models/">Neural Ranking Models: Cross-Encoders, Bi-Encoders, and Late Interaction</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-08-01T00:00:00-07:00">Aug 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Neural ranking models have revolutionized search by capturing semantic relationships between queries and documents. From cross-encoders to efficien...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#neural-ranking" data-tag="neural-ranking">
+  neural-ranking
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#bert" data-tag="bert">
+  bert
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#colbert" data-tag="colbert">
+  colbert
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="deep-dive-into-ad-systems" data-tags="ad-tech,ranking,auctions,systems" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/deep-dive-into-ad-systems/">Deep Dive into Ad Systems: Retrieval, Ranking, and Auctions</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-06-01T00:00:00-07:00">Jun 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“In the milliseconds it takes your page to load, a global auction happens. Millions of advertisers compete for your attention, and one winner emerg...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ranking" data-tag="ranking">
+  ranking
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#auctions" data-tag="auctions">
+  auctions
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="model-evaluation" data-tags="model-evaluation,metrics,mlops,machine-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/model-evaluation/">Beyond Accuracy: Comprehensive Model Evaluation for Production ML</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-05-01T00:00:00-07:00">May 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Accuracy alone doesn’t tell you if a model is production-ready. Class imbalance, calibration, fairness, latency, and robustness all matter. This pr...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#model-evaluation" data-tag="model-evaluation">
+  model-evaluation
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#metrics" data-tag="metrics">
+  metrics
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#mlops" data-tag="mlops">
+  mlops
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="incrementality-testing-at-scale" data-tags="ad-tech,incrementality,experimentation,measurement" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/incrementality-testing-at-scale/">Incrementality Testing at Scale: Building Always-On Measurement Platforms</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-05-01T00:00:00-07:00">May 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Attribution tells you who got the credit. Incrementality tells you who did the work.”</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#experimentation" data-tag="experimentation">
+  experimentation
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="semantic-search" data-tags="semantic-search,embeddings,dense-retrieval,nlp" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="6 minute read">6<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/semantic-search/">Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-02-01T00:00:00-08:00">Feb 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Semantic search understands meaning, not just keywords. When a user searches “tips for a job interview,” semantic search knows to return content ab...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#semantic-search" data-tag="semantic-search">
+  semantic-search
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#embeddings" data-tag="embeddings">
+  embeddings
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#dense-retrieval" data-tag="dense-retrieval">
+  dense-retrieval
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="randomized-control-trials-in-marketing" data-tags="ad-tech,incrementality,randomized-control-trials,causal-inference" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/randomized-control-trials-in-marketing/">Randomized Control Trials in Marketing: Measuring True Incrementality</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2025-01-01T00:00:00-08:00">Jan 1, 2025</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Half the money I spend on advertising is wasted; the trouble is I don’t know which half.” — John Wanamaker (19th Century Retailer)</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#randomized-control-trials" data-tag="randomized-control-trials">
+  randomized-control-trials
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2024" class="taxonomy__section">
+    <h2 class="archive__subtitle">2024</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="llms-in-production" data-tags="llms,large-language-models,prompting,nlp" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="7 minute read">7<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/llms-in-production/">LLMs in Production: From Prompting to Fine-Tuning at Scale</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-12-01T00:00:00-08:00">Dec 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Large Language Models have transformed NLP, enabling capabilities that seemed impossible just years ago. But deploying LLMs in production requires ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#llms" data-tag="llms">
+  llms
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#large-language-models" data-tag="large-language-models">
+  large-language-models
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#prompting" data-tag="prompting">
+  prompting
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="explainable-ml" data-tags="explainability,interpretability,shap,xai" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="3 minute read">3<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/explainable-ml/">Opening the Black Box: Explainability Methods for Modern ML</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-10-01T00:00:00-07:00">Oct 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">As ML models make high-stakes decisions, explaining why becomes essential. Explainability methods reveal what input features drive predictions, ena...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#explainability" data-tag="explainability">
+  explainability
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#interpretability" data-tag="interpretability">
+  interpretability
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#shap" data-tag="shap">
+  shap
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="ab-testing-designs" data-tags="experimentation,ab-testing,causal-inference,marketplace-design" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/ab-testing-designs/">Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-09-01T00:00:00-07:00">Sep 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Randomized Controlled Trials are the gold standard of causal inference, but in the real world, the standard is often impossible to meet. That’s wh...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#experimentation" data-tag="experimentation">
+  experimentation
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ab-testing" data-tag="ab-testing">
+  ab-testing
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="ab-testing-statistics" data-tags="ab-testing,experimentation,statistics,hypothesis-testing" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/ab-testing-statistics/">A/B Testing at Scale: Statistical Methods for Trustworthy Experiments</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-08-01T00:00:00-07:00">Aug 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">In 2012, Google ran over 7,000 A/B tests. By 2020, that number exceeded 100,000 per year. A/B testing is the backbone of data-driven decision makin...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ab-testing" data-tag="ab-testing">
+  ab-testing
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#experimentation" data-tag="experimentation">
+  experimentation
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#statistics" data-tag="statistics">
+  statistics
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="uplift-modeling" data-tags="uplift-modeling,cate,causal-ml,personalization" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/uplift-modeling/">Uplift Modeling: Predicting Who Will Respond to Treatment</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-06-01T00:00:00-07:00">Jun 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Not everyone responds to treatment the same way. Some customers buy regardless of promotions; others never will. Uplift modeling identifies who is ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#uplift-modeling" data-tag="uplift-modeling">
+  uplift-modeling
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#cate" data-tag="cate">
+  cate
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-ml" data-tag="causal-ml">
+  causal-ml
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="marketing-incrementality-measurement" data-tags="incrementality,causal-inference,marketing,measurement" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/marketing-incrementality-measurement/">Incrementality: Measuring What Marketing Actually Causes</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-03-01T00:00:00-08:00">Mar 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Most marketing measurement conflates correlation with causation. “Users who saw our ad converted at 5%!” But would they have converted anyway? Incr...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#marketing" data-tag="marketing">
+  marketing
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="evaluation-metrics-for-ranking" data-tags="evaluation-metrics,ranking,ndcg,information-retrieval" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/evaluation-metrics-for-ranking/">NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2024-01-01T00:00:00-08:00">Jan 1, 2024</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">In 2009, Microsoft researchers published a paper showing that improving NDCG@10 by just 0.01 could increase revenue by millions of dollars. Yet man...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#evaluation-metrics" data-tag="evaluation-metrics">
+  evaluation-metrics
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ranking" data-tag="ranking">
+  ranking
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ndcg" data-tag="ndcg">
+  ndcg
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2023" class="taxonomy__section">
+    <h2 class="archive__subtitle">2023</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="implicit-vs-explicit-feedback" data-tags="implicit-feedback,explicit-feedback,recommendations,user-signals" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/implicit-vs-explicit-feedback/">Clicks vs. Ratings: The Signal You Choose Shapes the Model You Build</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2023-08-01T00:00:00-07:00">Aug 1, 2023</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Should you train on clicks or ratings? Views or purchases? The choice between implicit and explicit feedback fundamentally shapes your model’s beha...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#implicit-feedback" data-tag="implicit-feedback">
+  implicit-feedback
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#explicit-feedback" data-tag="explicit-feedback">
+  explicit-feedback
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#recommendations" data-tag="recommendations">
+  recommendations
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="real-time-ranking-systems" data-tags="real-time-ml,systems,low-latency,ranking" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/real-time-ranking-systems/">Sub-Millisecond Decisions: Architecture of Real-Time Ranking Systems</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2023-03-01T00:00:00-08:00">Mar 1, 2023</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Real-time ranking systems serve billions of personalized decisions daily with millisecond latency constraints. From ad auctions to search results, ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#real-time-ml" data-tag="real-time-ml">
+  real-time-ml
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#systems" data-tag="systems">
+  systems
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#low-latency" data-tag="low-latency">
+  low-latency
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2022" class="taxonomy__section">
+    <h2 class="archive__subtitle">2022</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="contextual-bandits" data-tags="contextual-bandits,exploration-exploitation,reinforcement-learning,personalization" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/contextual-bandits/">Contextual Bandits: The Exploration-Exploitation Frontier for Personalization</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2022-10-01T00:00:00-07:00">Oct 1, 2022</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Contextual bandits solve the exploration-exploitation dilemma in personalization. Unlike A/B tests that commit to fixed treatments, bandits adapt a...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#contextual-bandits" data-tag="contextual-bandits">
+  contextual-bandits
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#exploration-exploitation" data-tag="exploration-exploitation">
+  exploration-exploitation
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#reinforcement-learning" data-tag="reinforcement-learning">
+  reinforcement-learning
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="multi-objective-optimization" data-tags="multi-objective,optimization,pareto,machine-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/multi-objective-optimization/">Pareto Optimal ML: Balancing Multiple Objectives in Machine Learning</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2022-06-01T00:00:00-07:00">Jun 1, 2022</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Real-world ML problems rarely have a single objective. Recommenders balance relevance and diversity. Ranking balances engagement and revenue. Model...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#multi-objective" data-tag="multi-objective">
+  multi-objective
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#optimization" data-tag="optimization">
+  optimization
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#pareto" data-tag="pareto">
+  pareto
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="tree-based-ranking" data-tags="tree-based-ranking,lambdamart,learning-to-rank,gradient-boosting" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/tree-based-ranking/">Decision Trees That Rank: GBRT and Lambda Gradients for Search</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2022-01-01T00:00:00-08:00">Jan 1, 2022</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Tree-based ranking models—especially LambdaMART—remain state-of-the-art for feature-rich ranking problems. They combine gradient boosting’s power w...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#tree-based-ranking" data-tag="tree-based-ranking">
+  tree-based-ranking
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#lambdamart" data-tag="lambdamart">
+  lambdamart
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#learning-to-rank" data-tag="learning-to-rank">
+  learning-to-rank
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2021" class="taxonomy__section">
+    <h2 class="archive__subtitle">2021</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="simplifying-ml-systems" data-tags="ml-systems,production-ml,mlops,engineering" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/simplifying-ml-systems/">Simplicity in Scale: Designing ML Systems That Actually Work in Production</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2021-09-01T00:00:00-07:00">Sep 1, 2021</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">The gap between ML research and production systems is vast. Complex models that shine in papers often fail in production. This primer covers princi...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ml-systems" data-tag="ml-systems">
+  ml-systems
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#production-ml" data-tag="production-ml">
+  production-ml
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#mlops" data-tag="mlops">
+  mlops
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="learning-to-rank" data-tags="learning-to-rank,search,neural-ranking,information-retrieval" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/learning-to-rank/">Learning to Rank: From Pointwise to Listwise Neural Ranking Models</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2021-05-01T00:00:00-07:00">May 1, 2021</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Learning to Rank (LTR) trains machine learning models to order items by relevance. From search engines to recommendation systems, ranking is fundam...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#learning-to-rank" data-tag="learning-to-rank">
+  learning-to-rank
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#search" data-tag="search">
+  search
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#neural-ranking" data-tag="neural-ranking">
+  neural-ranking
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="personalization-at-scale" data-tags="personalization,recommendations,user-modeling,machine-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/personalization-at-scale/">Hyper-Personalization: ML Systems That Learn Individual Preferences</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2021-02-01T00:00:00-08:00">Feb 1, 2021</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Personalization has evolved from simple segmentation to models that understand individual preferences in real-time. From Netflix recommendations to...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#personalization" data-tag="personalization">
+  personalization
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#recommendations" data-tag="recommendations">
+  recommendations
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#user-modeling" data-tag="user-modeling">
+  user-modeling
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2020" class="taxonomy__section">
+    <h2 class="archive__subtitle">2020</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="observational-data-challenges" data-tags="confounding,observational-data,causal-inference,bias" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/observational-data-challenges/">The Confounding Problem: Navigating Bias in Observational Studies</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2020-11-01T00:00:00-07:00">Nov 1, 2020</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Observational data is abundant but treacherous for causal inference. Confounders, selection bias, and measurement error can make correlations misle...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#confounding" data-tag="confounding">
+  confounding
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#observational-data" data-tag="observational-data">
+  observational-data
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="double-machine-learning" data-tags="double-ml,causal-inference,machine-learning,econometrics" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/double-machine-learning/">Double/Debiased ML: High-Dimensional Causal Inference with Modern Methods</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2020-08-01T00:00:00-07:00">Aug 1, 2020</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Double Machine Learning (DML) bridges the gap between flexible ML prediction and rigorous causal inference. By using ML for nuisance parameters whi...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#double-ml" data-tag="double-ml">
+  double-ml
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#machine-learning" data-tag="machine-learning">
+  machine-learning
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="instrumental-variables" data-tags="instrumental-variables,causal-inference,econometrics,endogeneity" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/instrumental-variables/">Instrumental Variables: Finding Causal Needles in Confounded Haystacks</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2020-05-01T00:00:00-07:00">May 1, 2020</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">When unmeasured confounders bias your estimates, instrumental variables (IV) offer a path to causal inference. By finding exogenous variation that ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#instrumental-variables" data-tag="instrumental-variables">
+  instrumental-variables
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#econometrics" data-tag="econometrics">
+  econometrics
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="lifetime-value-estimation" data-tags="lifetime-value,clv,customer-analytics,business-intelligence" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/lifetime-value-estimation/">Customer Lifetime Value: Predictive Models for Business Intelligence</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2020-01-01T00:00:00-08:00">Jan 1, 2020</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Netflix spends an average of $30-40 to acquire each subscriber. How do they know that’s profitable? They predict Customer Lifetime Value (LTV)—the ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#lifetime-value" data-tag="lifetime-value">
+  lifetime-value
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#clv" data-tag="clv">
+  clv
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#customer-analytics" data-tag="customer-analytics">
+  customer-analytics
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2019" class="taxonomy__section">
+    <h2 class="archive__subtitle">2019</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="propensity-score-matching" data-tags="propensity-score,matching,causal-inference,observational-studies" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/propensity-score-matching/">Propensity Score Matching: Creating Randomized Trials from Observational Data</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2019-10-01T00:00:00-07:00">Oct 1, 2019</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">When randomized experiments aren’t possible, propensity score methods create pseudo-randomization from observational data. By balancing treated and...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#propensity-score" data-tag="propensity-score">
+  propensity-score
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#matching" data-tag="matching">
+  matching
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="difference-in-differences" data-tags="difference-in-differences,causal-inference,quasi-experiments,econometrics" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/difference-in-differences/">Difference-in-Differences: The Gold Standard for Natural Experiments</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2019-07-01T00:00:00-07:00">Jul 1, 2019</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Difference-in-Differences (DiD) is the workhorse method for evaluating policies, interventions, and product changes when true experiments aren’t fe...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#difference-in-differences" data-tag="difference-in-differences">
+  difference-in-differences
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#quasi-experiments" data-tag="quasi-experiments">
+  quasi-experiments
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="introduction-to-econometrics" data-tags="econometrics,causal-inference,regression,statistics" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/introduction-to-econometrics/">Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2019-04-01T00:00:00-07:00">Apr 1, 2019</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Econometrics bridges economic theory, statistics, and data to estimate causal relationships. For ML engineers transitioning to causal inference, ec...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#econometrics" data-tag="econometrics">
+  econometrics
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#regression" data-tag="regression">
+  regression
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="joining-amazon-causal-inference" data-tags="causal-inference,observational-data,confounding,business-analytics" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/joining-amazon-causal-inference/">Causality in Industry: Why Correlation Isn't Enough for Business Decisions</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2019-02-01T00:00:00-08:00">Feb 1, 2019</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Correlation doesn’t imply causation—but business decisions require causal understanding. Will this promotion increase sales, or are sales increasin...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#observational-data" data-tag="observational-data">
+  observational-data
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#confounding" data-tag="confounding">
+  confounding
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2018" class="taxonomy__section">
+    <h2 class="archive__subtitle">2018</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="matrix-factorization-basics" data-tags="matrix-factorization,svd,recommendations,dimensionality-reduction" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="5 minute read">5<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/matrix-factorization-basics/">Uncovering Latent Factors: Matrix Factorization for Recommendations and Beyond</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2018-11-01T00:00:00-07:00">Nov 1, 2018</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Matrix factorization revolutionized recommender systems and earned fame through the Netflix Prize. By decomposing user-item matrices into latent fa...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#matrix-factorization" data-tag="matrix-factorization">
+  matrix-factorization
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#svd" data-tag="svd">
+  svd
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#recommendations" data-tag="recommendations">
+  recommendations
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="evolution-of-information-retrieval" data-tags="information-retrieval,search,neural-ir,bert" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="4 minute read">4<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/evolution-of-information-retrieval/">From Boolean to BERT: The Evolution of Search and Information Retrieval</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2018-08-01T00:00:00-07:00">Aug 1, 2018</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Information retrieval has evolved dramatically from Boolean keyword matching to neural semantic understanding. This evolution mirrors broader AI pr...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#information-retrieval" data-tag="information-retrieval">
+  information-retrieval
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#search" data-tag="search">
+  search
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#neural-ir" data-tag="neural-ir">
+  neural-ir
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="deep-learning-vs-classical-ml" data-tags="deep-learning,classical-ml,neural-networks,model-selection" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="6 minute read">6<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/deep-learning-vs-classical-ml/">When Deep Learning Wins (And When It Doesn't): A Practitioner's Guide</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2018-05-01T00:00:00-07:00">May 1, 2018</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">Deep learning has achieved remarkable success in vision, language, and speech—but it’s not always the right choice. Understanding when to use neura...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#deep-learning" data-tag="deep-learning">
+  deep-learning
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#classical-ml" data-tag="classical-ml">
+  classical-ml
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#neural-networks" data-tag="neural-networks">
+  neural-networks
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="gradient-boosting-machines" data-tags="gradient-boosting,xgboost,lightgbm,catboost,ensemble-methods" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="10 minute read">10<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/gradient-boosting-machines/">The Gradient Boosting Dynasty: From Friedman's Algorithm to XGBoost, LightGBM, and Beyond</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2018-02-01T00:00:00-08:00">Feb 1, 2018</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Boosting is based on a simple strategic principle: use a committee of weak prediction rules to produce a powerful predictor.” — Jerome Friedman, i...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#gradient-boosting" data-tag="gradient-boosting">
+  gradient-boosting
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#xgboost" data-tag="xgboost">
+  xgboost
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#lightgbm" data-tag="lightgbm">
+  lightgbm
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2017" class="taxonomy__section">
+    <h2 class="archive__subtitle">2017</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="introduction-to-recommender-systems" data-tags="recommender-systems,collaborative-filtering,personalization,matrix-factorization,neural-ranking" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="10 minute read">10<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/introduction-to-recommender-systems/">The Art of Personalization: A Journey Through Recommender Systems from Netflix Prize to Neural Retrieval</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2017-11-01T00:00:00-07:00">Nov 1, 2017</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“We’re not competing with sleep. We’re competing with HBO, Amazon, Hulu, and everything else out there.” — Reed Hastings, Netflix CEO</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#recommender-systems" data-tag="recommender-systems">
+  recommender-systems
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#collaborative-filtering" data-tag="collaborative-filtering">
+  collaborative-filtering
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#personalization" data-tag="personalization">
+  personalization
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="statistical-learning-theory" data-tags="statistical-learning,theory,vc-dimension,generalization,pac-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="10 minute read">10<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/statistical-learning-theory/">Why Machines Generalize: A Journey Through the Mathematics of Learning</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2017-08-01T00:00:00-07:00">Aug 1, 2017</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Nothing is more practical than a good theory.” — Vladimir Vapnik, co-creator of VC theory and Support Vector Machines</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#statistical-learning" data-tag="statistical-learning">
+  statistical-learning
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#theory" data-tag="theory">
+  theory
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#vc-dimension" data-tag="vc-dimension">
+  vc-dimension
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="classical-machine-learning-algorithms" data-tags="classical-ml,algorithms,scikit-learn,supervised-learning,gradient-boosting" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="10 minute read">10<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/classical-machine-learning-algorithms/">The Workhorse Algorithms: A Practitioner's Journey Through Classical Machine Learning</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2017-05-01T00:00:00-07:00">May 1, 2017</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“There are two cultures in the use of statistical modeling to reach conclusions from data. One assumes that the data are generated by a given stoch...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#classical-ml" data-tag="classical-ml">
+  classical-ml
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#algorithms" data-tag="algorithms">
+  algorithms
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#scikit-learn" data-tag="scikit-learn">
+  scikit-learn
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="information-retrieval-key-concepts" data-tags="information-retrieval,search,nlp,text-processing,neural-search" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="15 minute read">15<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/information-retrieval-key-concepts/">The Quest for Relevance: A Journey Through Information Retrieval from Library Cards to Neural Search</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2017-02-01T00:00:00-08:00">Feb 1, 2017</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“The problem of storing and retrieving information is not new. It is as old as civilization itself.” — Gerard Salton, pioneer of information retrieval</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#information-retrieval" data-tag="information-retrieval">
+  information-retrieval
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#search" data-tag="search">
+  search
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#nlp" data-tag="nlp">
+  nlp
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="overview-of-artificial-intelligence" data-tags="ai-history,deep-learning,agi,machine-learning-fundamentals,transformers" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="12 minute read">12<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/overview-of-artificial-intelligence/">The Long Arc of Machine Intelligence: From Turing's Vision to the Age of Large Language Models</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2017-01-01T00:00:00-08:00">Jan 1, 2017</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“I believe that at the end of the century the use of words and general educated opinion will have altered so much that one will be able to speak of...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#ai-history" data-tag="ai-history">
+  ai-history
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#deep-learning" data-tag="deep-learning">
+  deep-learning
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#agi" data-tag="agi">
+  agi
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+  <section id="2016" class="taxonomy__section">
+    <h2 class="archive__subtitle">2016</h2>
+    <div class="lw-post-list">
+      
+        
+
+
+
+<article class="lw-post-row" data-post-slug="musings-on-game-theory" data-tags="game-theory,nash-equilibrium,minimax,ai-algorithms,adversarial-learning" data-lw-post-row>
+  <div class="lw-post-row__reading-time" aria-label="15 minute read">15<span>min read</span></div>
+  <div class="lw-post-row__body">
+    <h2 class="lw-post-row__title">
+      <a href="/posts/musings-on-game-theory/">The Art of Strategic Machines: A Journey Through Game Theory in Modern AI</a>
+    </h2>
+    <div class="lw-post-row__meta">
+      Sid Verma · <time datetime="2016-12-01T00:00:00-08:00">Dec 1, 2016</time>
+    </div>
+    
+      <p class="lw-post-row__excerpt">“Real life consists of bluffing, of little tactics of deception, of asking yourself what is the other man going to think I mean to do. And that is ...</p>
+    
+    
+      <div class="lw-tag-row">
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#game-theory" data-tag="game-theory">
+  game-theory
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#nash-equilibrium" data-tag="nash-equilibrium">
+  nash-equilibrium
+</a>
+
+        
+          
+
+
+<a class="lw-tag-chip" href="/tags/#minimax" data-tag="minimax">
+  minimax
+</a>
+
+        
+      </div>
+    
+  </div>
+</article>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+  </section>
+
+
+  </div>
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

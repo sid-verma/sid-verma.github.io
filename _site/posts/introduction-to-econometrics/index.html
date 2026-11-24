@@ -1,0 +1,1066 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Econometrics bridges economic theory, statistics, and data to estimate causal relationships. For ML engineers transitioning to causal inference, econometric methods provide battle-tested techniques for extracting causal insights from observational data. This primer covers essential concepts every data scientist should know.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning">
+<meta property="og:url" content="http://localhost:4000/posts/introduction-to-econometrics/">
+
+
+  <meta property="og:description" content="Econometrics bridges economic theory, statistics, and data to estimate causal relationships. For ML engineers transitioning to causal inference, econometric methods provide battle-tested techniques for extracting causal insights from observational data. This primer covers essential concepts every data scientist should know.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-04-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/introduction-to-econometrics/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning">
+    
+    <meta itemprop="description" content="Econometrics bridges economic theory, statistics, and data to estimate causal relationships. For ML engineers transitioning to causal inference, econometric methods provide battle-tested techniques for extracting causal insights from observational data. This primer covers essential concepts every data scientist should know.">
+    
+    
+    <meta itemprop="datePublished" content="2019-04-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/introduction-to-econometrics/" class="u-url" itemprop="url">Econometrics for ML Engineers: Bridging Statistics and Causal Reasoning
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#econometrics" data-tag="econometrics">
+  econometrics
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#regression" data-tag="regression">
+  regression
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#statistics" data-tag="statistics">
+  statistics
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 2 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/joining-amazon-causal-inference/">Previous: Causality in Industry: Why Correlation Isn't Enough for Business Decisions</a></span>
+      <span><a href="/posts/difference-in-differences/">Next: Difference-in-Differences: The Gold Standard for Natural Experiments</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Econometrics bridges economic theory, statistics, and data to estimate causal relationships. For ML engineers transitioning to causal inference, econometric methods provide battle-tested techniques for extracting causal insights from observational data. This primer covers essential concepts every data scientist should know.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>While ML focuses on prediction, econometrics obsesses over causation. Econometricians have decades of experience answering questions like: Does minimum wage reduce employment? Does education increase earnings? Do marketing campaigns generate incremental revenue?</p>
+
+<p>These methods are directly applicable to industry problems. Tech companies increasingly hire economists for causal analysis, and ML engineers who understand econometric thinking have a significant advantage in product analytics and strategic decision-making.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>Econometrics vs. ML</strong>: ML minimizes prediction error on held-out data. Econometrics cares about coefficient interpretation—specifically, what happens when you intervene to change X.</p>
+
+<p><strong>Endogeneity</strong>: The core problem in econometrics. X is endogenous if $\text{Cov}(X, \epsilon) \neq 0$. Sources include:</p>
+<ul>
+  <li>Omitted variable bias (confounding)</li>
+  <li>Measurement error</li>
+  <li>Simultaneity (X affects Y AND Y affects X)</li>
+  <li>Selection bias</li>
+</ul>
+
+<p><strong>Identification</strong>: Can we isolate the causal effect from the data? Identification strategies exploit natural experiments, instruments, or structural assumptions.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="the-linear-regression-model">The Linear Regression Model</h3>
+
+\[Y_i = \beta_0 + \beta_1 X_i + \beta_2 Z_i + \epsilon_i\]
+
+<p>OLS estimates: $\hat{\beta} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$</p>
+
+<h3 id="ols-assumptions-for-causal-interpretation">OLS Assumptions for Causal Interpretation</h3>
+
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Linearity</strong>: $E[Y</td>
+          <td>X]$ is linear in parameters</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><strong>Random sampling</strong>: Observations are i.i.d.</li>
+  <li><strong>No perfect multicollinearity</strong>: $(\mathbf{X}^T\mathbf{X})$ is invertible</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Zero conditional mean</strong>: $E[\epsilon</td>
+          <td>X] = 0$ ← Critical for causality</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Homoskedasticity</strong>: $\text{Var}(\epsilon</td>
+          <td>X) = \sigma^2$ (for standard errors)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ol>
+
+<p>When (4) fails, $\hat{\beta}$ is biased and inconsistent.</p>
+
+<h3 id="standard-errors-and-inference">Standard Errors and Inference</h3>
+
+<p>Standard errors measure coefficient uncertainty:
+\(\text{SE}(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2 (\mathbf{X}^T\mathbf{X})^{-1}_{jj}}\)</p>
+
+<p><strong>Robust (heteroskedasticity-consistent) standard errors</strong> don’t assume homoskedasticity:
+\(\text{HC SE} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\text{diag}(\hat{e}_i^2)\mathbf{X}(\mathbf{X}^T\mathbf{X})^{-1}\)</p>
+
+<p><strong>Clustered standard errors</strong> account for within-group correlation (e.g., by user, by store).</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="omitted-variable-bias">Omitted Variable Bias</h3>
+
+<p>If we omit variable $Z$ that’s correlated with $X$ and affects $Y$:</p>
+
+\[\hat{\beta}_1 = \beta_1 + \beta_2 \gamma\]
+
+<p>where $\gamma = \frac{\text{Cov}(X, Z)}{\text{Var}(X)}$</p>
+
+<p>Bias direction: sign($\beta_2$) × sign($\gamma$)</p>
+
+<h3 id="instrumental-variables-iv">Instrumental Variables (IV)</h3>
+
+<p>Find instrument $Z$ that:</p>
+<ol>
+  <li>Affects $X$ (relevance): $\text{Cov}(Z, X) \neq 0$</li>
+  <li>Doesn’t directly affect $Y$ (exclusion): $\text{Cov}(Z, \epsilon) = 0$</li>
+</ol>
+
+<p>Two-Stage Least Squares (2SLS):</p>
+<ol>
+  <li>Stage 1: Regress $X$ on $Z$, get fitted values $\hat{X}$</li>
+  <li>Stage 2: Regress $Y$ on $\hat{X}$</li>
+</ol>
+
+<h3 id="fixed-effects">Fixed Effects</h3>
+
+<p>Panel data with unit-specific unobserved heterogeneity:
+\(Y_{it} = \alpha_i + \beta X_{it} + \epsilon_{it}\)</p>
+
+<p>De-mean to remove fixed effects:
+\(Y_{it} - \bar{Y}_i = \beta(X_{it} - \bar{X}_i) + (\epsilon_{it} - \bar{\epsilon}_i)\)</p>
+
+<p>Controls for all time-invariant confounders.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">statsmodels.api</span> <span class="k">as</span> <span class="n">sm</span>
+<span class="kn">import</span> <span class="n">statsmodels.formula.api</span> <span class="k">as</span> <span class="n">smf</span>
+<span class="kn">from</span> <span class="n">linearmodels.panel</span> <span class="kn">import</span> <span class="n">PanelOLS</span>
+<span class="kn">from</span> <span class="n">linearmodels.iv</span> <span class="kn">import</span> <span class="n">IV2SLS</span>
+
+<span class="c1"># Simulated panel data
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">n_units</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>
+<span class="n">n_obs</span> <span class="o">=</span> <span class="n">n_units</span> <span class="o">*</span> <span class="n">n_time</span>
+
+<span class="c1"># Unit fixed effects (unobserved)
+</span><span class="n">unit_effects</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">repeat</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_units</span><span class="p">),</span> <span class="n">n_time</span><span class="p">)</span>
+
+<span class="c1"># Treatment correlated with unit effects
+</span><span class="n">X</span> <span class="o">=</span> <span class="n">unit_effects</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_obs</span><span class="p">)</span>
+
+<span class="c1"># Outcome
+</span><span class="n">Y</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">unit_effects</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_obs</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span>
+    <span class="sh">'</span><span class="s">unit</span><span class="sh">'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nf">repeat</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="n">n_units</span><span class="p">),</span> <span class="n">n_time</span><span class="p">),</span>
+    <span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="nf">tile</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="n">n_time</span><span class="p">),</span> <span class="n">n_units</span><span class="p">),</span>
+    <span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span>
+    <span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">:</span> <span class="n">Y</span>
+<span class="p">})</span>
+
+<span class="c1"># Naive OLS (biased due to omitted unit effects)
+</span><span class="n">ols</span> <span class="o">=</span> <span class="n">smf</span><span class="p">.</span><span class="nf">ols</span><span class="p">(</span><span class="sh">'</span><span class="s">Y ~ X</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">).</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Naive OLS coefficient: </span><span class="si">{</span><span class="n">ols</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s"> (true: 2.0)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># OLS with robust standard errors
+</span><span class="n">ols_robust</span> <span class="o">=</span> <span class="n">smf</span><span class="p">.</span><span class="nf">ols</span><span class="p">(</span><span class="sh">'</span><span class="s">Y ~ X</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">).</span><span class="nf">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="sh">'</span><span class="s">HC3</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Naive OLS with robust SE: </span><span class="si">{</span><span class="n">ols</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s"> (</span><span class="si">{</span><span class="n">ols_robust</span><span class="p">.</span><span class="n">bse</span><span class="p">[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s">)</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Fixed Effects estimation
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nf">set_index</span><span class="p">([</span><span class="sh">'</span><span class="s">unit</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">fe_model</span> <span class="o">=</span> <span class="n">PanelOLS</span><span class="p">.</span><span class="nf">from_formula</span><span class="p">(</span><span class="sh">'</span><span class="s">Y ~ X + EntityEffects</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<span class="n">fe_result</span> <span class="o">=</span> <span class="n">fe_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Fixed Effects coefficient: </span><span class="si">{</span><span class="n">fe_result</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Instrumental Variables example
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Instrument
+</span><span class="n">X</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">Z</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># First stage
+</span><span class="n">Y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># True effect
+</span>
+<span class="n">iv_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span><span class="sh">'</span><span class="s">Y</span><span class="sh">'</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="sh">'</span><span class="s">Z</span><span class="sh">'</span><span class="p">:</span> <span class="n">Z</span><span class="p">,</span> <span class="sh">'</span><span class="s">const</span><span class="sh">'</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
+<span class="c1"># 2SLS
+</span><span class="n">iv_model</span> <span class="o">=</span> <span class="n">IV2SLS</span><span class="p">.</span><span class="nf">from_formula</span><span class="p">(</span><span class="sh">'</span><span class="s">Y ~ 1 + [X ~ Z]</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">iv_df</span><span class="p">)</span>
+<span class="n">iv_result</span> <span class="o">=</span> <span class="n">iv_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">2SLS coefficient: </span><span class="si">{</span><span class="n">iv_result</span><span class="p">.</span><span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">X</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">First stage F-stat: </span><span class="si">{</span><span class="n">iv_result</span><span class="p">.</span><span class="n">first_stage</span><span class="p">.</span><span class="n">diagnostics</span><span class="p">[</span><span class="sh">'</span><span class="s">f.stat</span><span class="sh">'</span><span class="p">].</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">1</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Weak instruments</strong>: First-stage F-statistic should be &gt; 10. Weak instruments cause bias.</p>
+  </li>
+  <li>
+    <p><strong>Overcontrolling</strong>: Including a descendant of treatment (mediator) or a collider as control biases estimates.</p>
+  </li>
+  <li>
+    <p><strong>Clustering errors</strong>: Cluster at the level of treatment variation. Multi-way clustering when multiple sources of correlation.</p>
+  </li>
+  <li>
+    <p><strong>Multiple testing</strong>: Report all specifications, not just significant ones. Pre-register hypotheses.</p>
+  </li>
+  <li>
+    <p><strong>External validity</strong>: Effect estimated on one population may not generalize.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<ul>
+  <li><strong>Marketing ROI</strong>: IV using regional advertising cost variation</li>
+  <li><strong>Product features</strong>: Fixed effects across users over time</li>
+  <li><strong>Pricing strategy</strong>: Regression discontinuity at price thresholds</li>
+  <li><strong>Policy evaluation</strong>: Difference-in-differences around policy changes</li>
+  <li><strong>Labor economics</strong>: Returns to education using twins studies</li>
+</ul>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="generalized-method-of-moments-gmm">Generalized Method of Moments (GMM)</h3>
+
+<p>Unifies many estimators. Finds parameters satisfying moment conditions:
+\(\mathbb{E}[g(Y, X, \theta_0)] = 0\)</p>
+
+<h3 id="maximum-likelihood-estimation">Maximum Likelihood Estimation</h3>
+
+<p>For models where OLS doesn’t apply (discrete outcomes, censored data):
+\(\hat{\theta} = \arg\max_\theta \sum_i \log f(Y_i | X_i, \theta)\)</p>
+
+<h3 id="quantile-regression">Quantile Regression</h3>
+
+<p>Estimate effects at different points of the outcome distribution, not just the mean:
+\(\min_\beta \sum_i \rho_\tau(Y_i - X_i\beta)\)</p>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Key Assumption</th>
+      <th>Use Case</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OLS</td>
+      <td>Zero conditional mean</td>
+      <td>Controlled experiments</td>
+    </tr>
+    <tr>
+      <td>IV</td>
+      <td>Valid instrument</td>
+      <td>Endogeneity from confounding</td>
+    </tr>
+    <tr>
+      <td>Fixed Effects</td>
+      <td>Time-invariant confounders</td>
+      <td>Panel data</td>
+    </tr>
+    <tr>
+      <td>Diff-in-Diff</td>
+      <td>Parallel trends</td>
+      <td>Pre-post intervention</td>
+    </tr>
+    <tr>
+      <td>RDD</td>
+      <td>Continuity at cutoff</td>
+      <td>Threshold-based assignment</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Econometrics provides rigorous tools for causal inference from observational data. Key takeaways:</p>
+
+<ul>
+  <li>OLS estimates are causal only under strong assumptions</li>
+  <li>Endogeneity (confounding) requires identification strategies</li>
+  <li>Fixed effects, IV, and DiD are workhorses of causal econometrics</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Angrist &amp; Pischke, <em>Mostly Harmless Econometrics</em></li>
+  <li>Wooldridge, <em>Econometric Analysis of Cross Section and Panel Data</em></li>
+  <li>Cunningham, <em>Causal Inference: The Mixtape</em> (free online)</li>
+  <li>Stock &amp; Watson, <em>Introduction to Econometrics</em></li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Causal Inference · 2 / 8
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/joining-amazon-causal-inference/">Previous: Causality in Industry: Why Correlation Isn't Enough for Business Decisions</a></span>
+      <span><a href="/posts/difference-in-differences/">Next: Difference-in-Differences: The Gold Standard for Natural Experiments</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#econometrics" class="page__taxonomy-item p-category" rel="tag">econometrics</a><span class="sep">, </span>
+    
+      <a href="/tags/#regression" class="page__taxonomy-item p-category" rel="tag">regression</a><span class="sep">, </span>
+    
+      <a href="/tags/#statistics" class="page__taxonomy-item p-category" rel="tag">statistics</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2019-04-01T00:00:00-07:00">April 1, 2019</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/joining-amazon-causal-inference/" class="pagination--pager" title="Causality in Industry: Why Correlation Isn’t Enough for Business Decisions
+">Previous</a>
+    
+    
+      <a href="/posts/difference-in-differences/" class="pagination--pager" title="Difference-in-Differences: The Gold Standard for Natural Experiments
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

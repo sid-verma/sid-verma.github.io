@@ -1,0 +1,1076 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Incrementality: Measuring What Marketing Actually Causes - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Most marketing measurement conflates correlation with causation. “Users who saw our ad converted at 5%!” But would they have converted anyway? Incrementality measurement isolates what marketing actually causes—separating true lift from baseline behavior among people who would have been reached.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Incrementality: Measuring What Marketing Actually Causes">
+<meta property="og:url" content="http://localhost:4000/posts/marketing-incrementality-measurement/">
+
+
+  <meta property="og:description" content="Most marketing measurement conflates correlation with causation. “Users who saw our ad converted at 5%!” But would they have converted anyway? Incrementality measurement isolates what marketing actually causes—separating true lift from baseline behavior among people who would have been reached.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2024-03-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/marketing-incrementality-measurement/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Incrementality: Measuring What Marketing Actually Causes">
+    
+    <meta itemprop="description" content="Most marketing measurement conflates correlation with causation. “Users who saw our ad converted at 5%!” But would they have converted anyway? Incrementality measurement isolates what marketing actually causes—separating true lift from baseline behavior among people who would have been reached.">
+    
+    
+    <meta itemprop="datePublished" content="2024-03-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/marketing-incrementality-measurement/" class="u-url" itemprop="url">Incrementality: Measuring What Marketing Actually Causes
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#marketing" data-tag="marketing">
+  marketing
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#measurement" data-tag="measurement">
+  measurement
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 1 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/uplift-modeling/">Next: Uplift Modeling: Predicting Who Will Respond to Treatment</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Most marketing measurement conflates correlation with causation. “Users who saw our ad converted at 5%!” But would they have converted anyway? Incrementality measurement isolates what marketing actually causes—separating true lift from baseline behavior among people who would have been reached.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>Marketing attribution traditionally credits channels for conversions: last-click, first-click, multi-touch. But attribution tells you <em>which</em> ad was associated with a conversion, not <em>whether</em> the ad caused it. A user might have searched your brand name, seen an ad, and bought—but would have bought regardless.</p>
+
+<p>Incrementality gets at causation: what’s the additional lift from marketing above what would have happened anyway? This is the only number that matters for budget allocation.</p>
+
+<h2 id="key-concepts">Key Concepts</h2>
+
+<h3 id="incrementality-vs-attribution">Incrementality vs. Attribution</h3>
+
+<p><strong>Attribution</strong>: Which touchpoints preceded a conversion?</p>
+<ul>
+  <li>Counts touches on converting users</li>
+  <li>Doesn’t answer “would they have converted anyway?”</li>
+</ul>
+
+<p><strong>Incrementality</strong>: Did marketing cause additional conversions?</p>
+<ul>
+  <li>Compares to counterfactual (no marketing)</li>
+  <li>Answers the causal question</li>
+</ul>
+
+<h3 id="the-baseline-problem">The Baseline Problem</h3>
+
+<p>Many people who convert after seeing an ad would have converted anyway:</p>
+<ul>
+  <li>Brand searchers who see search ads</li>
+  <li>Loyal customers who receive promotions</li>
+  <li>Users in-market who encounter display ads</li>
+</ul>
+
+<p>Without incrementality, you can’t separate caused conversions from baseline.</p>
+
+<h2 id="measurement-approaches">Measurement Approaches</h2>
+
+<h3 id="randomized-controlled-trials-rcts">Randomized Controlled Trials (RCTs)</h3>
+
+<p>Gold standard: randomly assign treatment and control.</p>
+
+<p><strong>Holdout test</strong>:</p>
+<ul>
+  <li>90% receive marketing</li>
+  <li>10% receive nothing</li>
+  <li>Compare conversion rates</li>
+</ul>
+
+<p><strong>Ghost ads</strong>:</p>
+<ul>
+  <li>Control sees placeholder/competitor ad</li>
+  <li>Accounts for ad exposure opportunity</li>
+</ul>
+
+<h3 id="geo-experiments">Geo Experiments</h3>
+
+<p>When user-level randomization isn’t possible:</p>
+<ul>
+  <li>Randomly assign regions to treatment/control</li>
+  <li>Compare outcomes across regions</li>
+  <li>Synthetic control for counterfactuals</li>
+</ul>
+
+<h3 id="matched-market-tests">Matched Market Tests</h3>
+
+<p>Compare similar markets with different treatments:</p>
+<ul>
+  <li>Match on historical behavior, demographics</li>
+  <li>Apply treatment to some, not others</li>
+  <li>Difference-in-differences analysis</li>
+</ul>
+
+<h2 id="mathematical-framework">Mathematical Framework</h2>
+
+<h3 id="treatment-effect">Treatment Effect</h3>
+
+\[\text{Incrementality} = E[Y(1)] - E[Y(0)]\]
+
+<p>where $Y(1)$ is outcome with marketing, $Y(0)$ is outcome without.</p>
+
+<h3 id="lift-calculation">Lift Calculation</h3>
+
+\[\text{Lift} = \frac{\text{Treatment Rate} - \text{Control Rate}}{\text{Control Rate}}\]
+
+\[\text{Incremental Conversions} = (\text{Treatment Rate} - \text{Control Rate}) \times N_{treated}\]
+
+<h3 id="cost-per-incremental-conversion">Cost Per Incremental Conversion</h3>
+
+\[\text{iCPA} = \frac{\text{Marketing Spend}}{\text{Incremental Conversions}}\]
+
+<p>This is the true cost of acquiring a customer—often much higher than attributed CPA.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="k">class</span> <span class="nc">IncrementalityTest</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Framework for measuring marketing incrementality</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">treatment_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">treatment_rate</span> <span class="o">=</span> <span class="n">treatment_rate</span>
+
+    <span class="k">def</span> <span class="nf">run_user_level_test</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                             <span class="n">duration_days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">14</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        Run randomized holdout test
+
+        users: DataFrame with user_id, features
+        Returns: test assignment and results
+        </span><span class="sh">"""</span>
+        <span class="n">n_users</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+
+        <span class="c1"># Random assignment
+</span>        <span class="n">users</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">random</span><span class="p">(</span><span class="n">n_users</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">self</span><span class="p">.</span><span class="n">treatment_rate</span>
+
+        <span class="c1"># In production: assign and wait for conversions
+</span>        <span class="c1"># Here: simulate outcomes
+</span>        <span class="n">users</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">_simulate_conversions</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">analyze_results</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_simulate_conversions</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">users</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Simulate conversion outcomes (for demonstration)</span><span class="sh">"""</span>
+        <span class="c1"># Baseline conversion probability
+</span>        <span class="n">baseline_prob</span> <span class="o">=</span> <span class="mf">0.02</span>
+        <span class="c1"># True treatment effect
+</span>        <span class="n">true_lift</span> <span class="o">=</span> <span class="mf">0.003</span>
+
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">baseline_prob</span> <span class="o">+</span> <span class="n">users</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">*</span> <span class="n">true_lift</span>
+        <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">probs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">analyze_results</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Calculate incrementality from test results</span><span class="sh">"""</span>
+        <span class="n">treatment</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]]</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]]</span>
+
+        <span class="c1"># Conversion rates
+</span>        <span class="n">treatment_rate</span> <span class="o">=</span> <span class="n">treatment</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="n">control_rate</span> <span class="o">=</span> <span class="n">control</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+
+        <span class="c1"># Lift
+</span>        <span class="n">absolute_lift</span> <span class="o">=</span> <span class="n">treatment_rate</span> <span class="o">-</span> <span class="n">control_rate</span>
+        <span class="n">relative_lift</span> <span class="o">=</span> <span class="n">absolute_lift</span> <span class="o">/</span> <span class="n">control_rate</span> <span class="k">if</span> <span class="n">control_rate</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="c1"># Statistical significance
+</span>        <span class="n">contingency</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">treatment</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">(),</span> <span class="nf">len</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span> <span class="o">-</span> <span class="n">treatment</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()],</span>
+            <span class="p">[</span><span class="n">control</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">(),</span> <span class="nf">len</span><span class="p">(</span><span class="n">control</span><span class="p">)</span> <span class="o">-</span> <span class="n">control</span><span class="p">[</span><span class="sh">'</span><span class="s">converted</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()]</span>
+        <span class="p">])</span>
+        <span class="n">chi2</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="p">.</span><span class="nf">chi2_contingency</span><span class="p">(</span><span class="n">contingency</span><span class="p">)</span>
+
+        <span class="c1"># Confidence interval (using normal approximation)
+</span>        <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span>
+            <span class="n">treatment_rate</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">treatment_rate</span><span class="p">)</span> <span class="o">/</span> <span class="nf">len</span><span class="p">(</span><span class="n">treatment</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">control_rate</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">control_rate</span><span class="p">)</span> <span class="o">/</span> <span class="nf">len</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">ci_lower</span> <span class="o">=</span> <span class="n">absolute_lift</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">se</span>
+        <span class="n">ci_upper</span> <span class="o">=</span> <span class="n">absolute_lift</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">se</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">'</span><span class="s">treatment_rate</span><span class="sh">'</span><span class="p">:</span> <span class="n">treatment_rate</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">control_rate</span><span class="sh">'</span><span class="p">:</span> <span class="n">control_rate</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">absolute_lift</span><span class="sh">'</span><span class="p">:</span> <span class="n">absolute_lift</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">relative_lift</span><span class="sh">'</span><span class="p">:</span> <span class="n">relative_lift</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">p_value</span><span class="sh">'</span><span class="p">:</span> <span class="n">p_value</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">ci_95</span><span class="sh">'</span><span class="p">:</span> <span class="p">(</span><span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span><span class="p">),</span>
+            <span class="sh">'</span><span class="s">incremental_conversions</span><span class="sh">'</span><span class="p">:</span> <span class="n">absolute_lift</span> <span class="o">*</span> <span class="nf">len</span><span class="p">(</span><span class="n">treatment</span><span class="p">),</span>
+            <span class="sh">'</span><span class="s">is_significant</span><span class="sh">'</span><span class="p">:</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.05</span>
+        <span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">GeoExperiment</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Geo-level incrementality testing</span><span class="sh">"""</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">geos</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">n_treatment</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        geos: DataFrame with geo_id, population, historical_conversions
+        n_treatment: number of geos to receive treatment
+        </span><span class="sh">"""</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">geos</span> <span class="o">=</span> <span class="n">geos</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">n_treatment</span> <span class="o">=</span> <span class="n">n_treatment</span>
+
+    <span class="k">def</span> <span class="nf">stratified_randomization</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Assign geos to treatment/control with stratification</span><span class="sh">"""</span>
+        <span class="c1"># Sort by size for balanced assignment
+</span>        <span class="n">sorted_geos</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">geos</span><span class="p">.</span><span class="nf">sort_values</span><span class="p">(</span><span class="sh">'</span><span class="s">population</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="c1"># Pair matching: adjacent geos, one treatment, one control
+</span>        <span class="n">treatment_geos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">sorted_geos</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">treatment_geos</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">sorted_geos</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="sh">'</span><span class="s">geo_id</span><span class="sh">'</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">treatment_geos</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">sorted_geos</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="sh">'</span><span class="s">geo_id</span><span class="sh">'</span><span class="p">])</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">geos</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">geos</span><span class="p">[</span><span class="sh">'</span><span class="s">geo_id</span><span class="sh">'</span><span class="p">].</span><span class="nf">isin</span><span class="p">(</span><span class="n">treatment_geos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">geos</span>
+
+    <span class="k">def</span> <span class="nf">analyze_with_did</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pre_period</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                         <span class="n">post_period</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">Difference-in-differences analysis</span><span class="sh">"""</span>
+        <span class="c1"># Merge pre and post
+</span>        <span class="n">pre_period</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">pre</span><span class="sh">'</span>
+        <span class="n">post_period</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">post</span><span class="sh">'</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">concat</span><span class="p">([</span><span class="n">pre_period</span><span class="p">,</span> <span class="n">post_period</span><span class="p">])</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">geos</span><span class="p">[[</span><span class="sh">'</span><span class="s">geo_id</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="sh">'</span><span class="s">geo_id</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="c1"># DiD estimate
+</span>        <span class="n">treatment_pre</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="sh">'</span><span class="s">pre</span><span class="sh">'</span><span class="p">)][</span><span class="sh">'</span><span class="s">conversions</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="n">treatment_post</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="sh">'</span><span class="s">post</span><span class="sh">'</span><span class="p">)][</span><span class="sh">'</span><span class="s">conversions</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="n">control_pre</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="o">~</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="sh">'</span><span class="s">pre</span><span class="sh">'</span><span class="p">)][</span><span class="sh">'</span><span class="s">conversions</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="n">control_post</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span><span class="o">~</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment</span><span class="sh">'</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">period</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="sh">'</span><span class="s">post</span><span class="sh">'</span><span class="p">)][</span><span class="sh">'</span><span class="s">conversions</span><span class="sh">'</span><span class="p">].</span><span class="nf">mean</span><span class="p">()</span>
+
+        <span class="n">did_estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">treatment_post</span> <span class="o">-</span> <span class="n">treatment_pre</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">control_post</span> <span class="o">-</span> <span class="n">control_pre</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">'</span><span class="s">did_estimate</span><span class="sh">'</span><span class="p">:</span> <span class="n">did_estimate</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">treatment_change</span><span class="sh">'</span><span class="p">:</span> <span class="n">treatment_post</span> <span class="o">-</span> <span class="n">treatment_pre</span><span class="p">,</span>
+            <span class="sh">'</span><span class="s">control_change</span><span class="sh">'</span><span class="p">:</span> <span class="n">control_post</span> <span class="o">-</span> <span class="n">control_pre</span>
+        <span class="p">}</span>
+
+
+<span class="c1"># Example usage
+</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># User-level test
+</span><span class="n">test</span> <span class="o">=</span> <span class="nc">IncrementalityTest</span><span class="p">(</span><span class="n">treatment_rate</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">users</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">({</span><span class="sh">'</span><span class="s">user_id</span><span class="sh">'</span><span class="p">:</span> <span class="nf">range</span><span class="p">(</span><span class="mi">100000</span><span class="p">)})</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="nf">run_user_level_test</span><span class="p">(</span><span class="n">users</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Incrementality Test Results:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Treatment rate: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">treatment_rate</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Control rate: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">control_rate</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Absolute lift: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">absolute_lift</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Relative lift: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">relative_lift</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">1</span><span class="o">%</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  P-value: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">p_value</span><span class="sh">'</span><span class="p">]</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Significant: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="sh">'</span><span class="s">is_significant</span><span class="sh">'</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="common-challenges">Common Challenges</h2>
+
+<ol>
+  <li>
+    <p><strong>Contamination</strong>: Control users exposed to treatment through other channels.</p>
+  </li>
+  <li>
+    <p><strong>Sample size</strong>: Detecting small lifts requires large tests. Plan power analysis.</p>
+  </li>
+  <li>
+    <p><strong>Holdout cost</strong>: Withholding marketing from 10% means 10% less reach.</p>
+  </li>
+  <li>
+    <p><strong>External validity</strong>: Test conditions may not match normal operations.</p>
+  </li>
+  <li>
+    <p><strong>Cannibalization</strong>: Marketing lifts one channel but reduces another.</p>
+  </li>
+</ol>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<ul>
+  <li><strong>Regular testing</strong>: Run incrementality tests periodically, not just once</li>
+  <li><strong>Multiple channels</strong>: Test each channel separately—incrementality varies</li>
+  <li><strong>Power analysis</strong>: Size tests properly to detect realistic effects</li>
+  <li><strong>Long enough</strong>: Allow full conversion windows to capture delayed effects</li>
+  <li><strong>Document assumptions</strong>: Be explicit about what you’re measuring</li>
+</ul>
+
+<h2 id="summary">Summary</h2>
+
+<p>Incrementality is the true measure of marketing effectiveness. Key takeaways:</p>
+
+<ul>
+  <li>Attribution ≠ Causation; incrementality measures causal lift</li>
+  <li>RCTs are gold standard; geo experiments when user-level not possible</li>
+  <li>True iCPA usually much higher than attributed CPA</li>
+</ul>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Google’s “Marketing Incrementality” whitepaper</li>
+  <li>Facebook’s “Conversion Lift” documentation</li>
+  <li>Lewis &amp; Rao, “The Unfavorable Economics of Measuring the Returns to Advertising”</li>
+</ul>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 1 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span></span>
+      <span><a href="/posts/uplift-modeling/">Next: Uplift Modeling: Predicting Who Will Respond to Treatment</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#incrementality" class="page__taxonomy-item p-category" rel="tag">incrementality</a><span class="sep">, </span>
+    
+      <a href="/tags/#marketing" class="page__taxonomy-item p-category" rel="tag">marketing</a><span class="sep">, </span>
+    
+      <a href="/tags/#measurement" class="page__taxonomy-item p-category" rel="tag">measurement</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2024-03-01T00:00:00-08:00">March 1, 2024</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/evaluation-metrics-for-ranking/" class="pagination--pager" title="NDCG, MAP, and MRR: A Deep Dive into Ranking Evaluation Metrics
+">Previous</a>
+    
+    
+      <a href="/posts/uplift-modeling/" class="pagination--pager" title="Uplift Modeling: Predicting Who Will Respond to Treatment
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

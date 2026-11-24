@@ -1,0 +1,1165 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>When Deep Learning Wins (And When It Doesn’t): A Practitioner’s Guide - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="Deep learning has achieved remarkable success in vision, language, and speech—but it’s not always the right choice. Understanding when to use neural networks versus classical ML methods is crucial for efficient, effective ML engineering. This guide provides practical decision frameworks based on data characteristics and constraints.">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="When Deep Learning Wins (And When It Doesn’t): A Practitioner’s Guide">
+<meta property="og:url" content="http://localhost:4000/posts/deep-learning-vs-classical-ml/">
+
+
+  <meta property="og:description" content="Deep learning has achieved remarkable success in vision, language, and speech—but it’s not always the right choice. Understanding when to use neural networks versus classical ML methods is crucial for efficient, effective ML engineering. This guide provides practical decision frameworks based on data characteristics and constraints.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-05-01T00:00:00-07:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/deep-learning-vs-classical-ml/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="When Deep Learning Wins (And When It Doesn’t): A Practitioner’s Guide">
+    
+    <meta itemprop="description" content="Deep learning has achieved remarkable success in vision, language, and speech—but it’s not always the right choice. Understanding when to use neural networks versus classical ML methods is crucial for efficient, effective ML engineering. This guide provides practical decision frameworks based on data characteristics and constraints.">
+    
+    
+    <meta itemprop="datePublished" content="2018-05-01T00:00:00-07:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/deep-learning-vs-classical-ml/" class="u-url" itemprop="url">When Deep Learning Wins (And When It Doesn’t): A Practitioner’s Guide
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#deep-learning" data-tag="deep-learning">
+  deep-learning
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#classical-ml" data-tag="classical-ml">
+  classical-ml
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#neural-networks" data-tag="neural-networks">
+  neural-networks
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#model-selection" data-tag="model-selection">
+  model-selection
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <p>Deep learning has achieved remarkable success in vision, language, and speech—but it’s not always the right choice. Understanding when to use neural networks versus classical ML methods is crucial for efficient, effective ML engineering. This guide provides practical decision frameworks based on data characteristics and constraints.</p>
+
+<h2 id="introduction-and-motivation">Introduction and Motivation</h2>
+
+<p>On one project, our team spent weeks wiring up a deep model for a tabular prediction task: tuning architectures, scheduling GPUs, fighting exploding gradients. A baseline engineer trained a gradient boosting model in an afternoon and quietly beat us on every metric.</p>
+
+<p>That experience wasn’t unique. In many real-world systems, especially on structured data, <strong>the right answer is still "trees and linear models"</strong>, not a giant neural network. Deep learning is a superpower for the right problems—rich unstructured inputs, transfer learning, multimodal signals—but a liability when misapplied.</p>
+
+<p>This post is an opinionated guide to when deep learning actually wins, and when you should <strong>default to classical ML</strong>. The goal is to help you ship faster, with simpler systems, by matching the tool to the problem instead of chasing hype.</p>
+
+<h2 id="intuition-and-core-concepts">Intuition and Core Concepts</h2>
+
+<p><strong>Classical ML</strong> algorithms (linear models, trees, SVMs) require:</p>
+<ul>
+  <li>Feature engineering (human-designed representations)</li>
+  <li>Work well with structured, tabular data</li>
+  <li>Scale well to millions of examples</li>
+  <li>Provide interpretability and fast inference</li>
+</ul>
+
+<p><strong>Deep Learning</strong> excels when:</p>
+<ul>
+  <li>Raw data has spatial/temporal/sequential structure</li>
+  <li>Features are hard to engineer (images, text, audio)</li>
+  <li>Massive labeled datasets are available</li>
+  <li>Compute resources are abundant</li>
+</ul>
+
+<p>The key distinction: <strong>classical ML requires good features; deep learning learns features</strong>.</p>
+
+<h2 id="mathematical-foundations">Mathematical Foundations</h2>
+
+<h3 id="representation-learning">Representation Learning</h3>
+
+<p>Deep networks learn hierarchical representations:</p>
+
+\[h^{(l)} = \sigma(W^{(l)}h^{(l-1)} + b^{(l)})\]
+
+<p>Early layers learn low-level features (edges in images); later layers learn semantics (faces, objects).</p>
+
+<h3 id="universal-approximation">Universal Approximation</h3>
+
+<p>Neural networks can approximate any continuous function (given sufficient width). But approximation capacity ≠ learning capacity—generalization depends on data, optimization, and architecture.</p>
+
+<h3 id="inductive-bias">Inductive Bias</h3>
+
+<p>Every model encodes assumptions:</p>
+<ul>
+  <li><strong>Linear models</strong>: Target is linear combination of features</li>
+  <li><strong>Decision trees</strong>: Axis-aligned decision boundaries</li>
+  <li><strong>CNNs</strong>: Local spatial patterns, translation invariance</li>
+  <li><strong>Transformers</strong>: Attention over sequences</li>
+</ul>
+
+<p>Match inductive bias to problem structure.</p>
+
+<h2 id="key-algorithms-and-methods">Key Algorithms and Methods</h2>
+
+<h3 id="when-classical-ml-wins">When Classical ML Wins</h3>
+
+<p><strong>Tabular data</strong>: Gradient boosting (XGBoost, LightGBM) consistently beats neural networks in competitions and production. Why?</p>
+<ul>
+  <li>Tree splits naturally handle feature interactions</li>
+  <li>Robust to feature scale and missing values</li>
+  <li>Train faster, require less tuning</li>
+</ul>
+
+<p><strong>Small datasets</strong> (&lt;10,000 examples): Regularized linear models or small ensembles prevent overfitting. Deep networks need data to learn representations.</p>
+
+<p><strong>Interpretability required</strong>: Linear models, decision trees, and SHAP explanations beat neural network black boxes.</p>
+
+<h3 id="when-deep-learning-wins">When Deep Learning Wins</h3>
+
+<p><strong>Images</strong>: CNNs exploit spatial locality and translation invariance. ImageNet pre-training transfers across tasks.</p>
+
+<p><strong>Text</strong>: Transformers capture long-range dependencies. Pre-trained LLMs (GPT, BERT) enable few-shot learning.</p>
+
+<p><strong>Sequential data</strong>: RNNs/Transformers model temporal dynamics in time series, speech, video.</p>
+
+<p><strong>Multimodal</strong>: Combining vision + language + audio requires learned representations.</p>
+
+<h2 id="practical-implementation">Practical Implementation</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span> <span class="n">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="n">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
+<span class="kn">from</span> <span class="n">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">import</span> <span class="n">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="c1"># Generate synthetic tabular data
+</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">make_classification</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_informative</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">n_redundant</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="c1"># Classical ML: Gradient Boosting
+</span><span class="n">gb</span> <span class="o">=</span> <span class="nc">GradientBoostingClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">gb</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Gradient Boosting: </span><span class="si">{</span><span class="nf">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">gb</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Classical ML: Logistic Regression
+</span><span class="n">lr</span> <span class="o">=</span> <span class="nc">LogisticRegression</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">lr</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Logistic Regression: </span><span class="si">{</span><span class="nf">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Deep Learning: Simple MLP
+</span><span class="k">class</span> <span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">):</span>
+        <span class="nf">super</span><span class="p">().</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="nc">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="nf">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Train MLP
+</span><span class="n">model</span> <span class="o">=</span> <span class="nc">MLP</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="nc">Adam</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="nf">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="nc">BCELoss</span><span class="p">()</span>
+
+<span class="n">X_train_t</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">FloatTensor</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_train_t</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nc">FloatTensor</span><span class="p">(</span><span class="n">y_train</span><span class="p">).</span><span class="nf">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="nf">zero_grad</span><span class="p">()</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">X_train_t</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="nf">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y_train_t</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">.</span><span class="nf">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="nf">step</span><span class="p">()</span>
+
+<span class="n">model</span><span class="p">.</span><span class="nf">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="p">(</span><span class="nf">model</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nc">FloatTensor</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">).</span><span class="nf">numpy</span><span class="p">()</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">MLP: </span><span class="si">{</span><span class="nf">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Result: Gradient Boosting typically wins on tabular data!
+</span></code></pre></div></div>
+
+<h2 id="case-study-when-deep-learning-lost-to-gradient-boosting">Case Study: When Deep Learning Lost to Gradient Boosting</h2>
+
+<p>Consider a (lightly anonymized) churn prediction problem at a consumer subscription company:</p>
+
+<ul>
+  <li><strong>Data</strong>: ~200k users, 150 tabular features (billing history, product usage, geography, device)</li>
+  <li><strong>Label</strong>: Churned in the next 30 days (yes/no)</li>
+  <li><strong>Constraints</strong>: Daily retrains, sub-10ms online latency, need for basic feature-level explanations</li>
+</ul>
+
+<p>Two paths emerged:</p>
+
+<ul>
+  <li><strong>Path A (deep learning)</strong>:
+    <ul>
+      <li>Several weeks building an MLP with embeddings for categoricals</li>
+      <li>Required careful normalization, regularization, learning-rate tuning</li>
+      <li>Harder to debug when performance regressed</li>
+    </ul>
+  </li>
+  <li><strong>Path B (gradient boosting)</strong>:
+    <ul>
+      <li>A day to assemble a feature matrix and train XGBoost/LightGBM</li>
+      <li>Easy to iterate: change features, re-train, examine feature importances</li>
+      <li>Straightforward to deploy in existing scoring infra</li>
+    </ul>
+  </li>
+</ul>
+
+<p>When evaluated on a holdout set:</p>
+
+<ul>
+  <li>Gradient boosting outperformed the MLP on AUC and calibration</li>
+  <li>The tree model was <strong>10x faster</strong> at inference and <strong>trivial to ship</strong></li>
+  <li>Stakeholders could understand SHAP-style explanations for the tree model, but not the MLP</li>
+</ul>
+
+<p>The lesson was not "deep learning is bad"—it was that <strong>for medium-sized tabular problems with tight latency and interpretability requirements, starting with deep learning is usually a mistake</strong>. The right move was:</p>
+
+<ol>
+  <li>Ship a strong tree-based baseline</li>
+  <li>Explore neural nets only if there was a clear upside (e.g., richer behavioral sequences, text, or images to ingest)</li>
+</ol>
+
+<h2 id="common-pitfalls-and-best-practices">Common Pitfalls and Best Practices</h2>
+
+<ol>
+  <li>
+    <p><strong>Defaulting to deep learning</strong>: Start simple. Establish baselines with linear models and trees before trying neural networks.</p>
+  </li>
+  <li>
+    <p><strong>Underestimating feature engineering</strong>: On tabular data, good features + simple model often beats raw data + complex model.</p>
+  </li>
+  <li>
+    <p><strong>Ignoring transfer learning</strong>: For vision/NLP, pre-trained models (ResNet, BERT) beat training from scratch.</p>
+  </li>
+  <li>
+    <p><strong>Wrong architecture for domain</strong>: CNNs for tabular data rarely works. Match architecture to data structure.</p>
+  </li>
+  <li>
+    <p><strong>Insufficient regularization</strong>: Deep networks on small data need aggressive dropout, weight decay, early stopping.</p>
+  </li>
+</ol>
+
+<h2 id="real-world-applications">Real-World Applications</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Domain</th>
+      <th>Best Approach</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Credit scoring</td>
+      <td>Gradient boosting</td>
+      <td>Tabular, interpretability</td>
+    </tr>
+    <tr>
+      <td>Image classification</td>
+      <td>CNN + transfer learning</td>
+      <td>Spatial structure</td>
+    </tr>
+    <tr>
+      <td>Fraud detection</td>
+      <td>Gradient boosting</td>
+      <td>Tabular, fast inference</td>
+    </tr>
+    <tr>
+      <td>Machine translation</td>
+      <td>Transformers</td>
+      <td>Sequential, attention</td>
+    </tr>
+    <tr>
+      <td>Demand forecasting</td>
+      <td>Gradient boosting or DeepAR</td>
+      <td>Depends on data scale</td>
+    </tr>
+    <tr>
+      <td>Medical imaging</td>
+      <td>CNN + transfer learning</td>
+      <td>Visual patterns</td>
+    </tr>
+    <tr>
+      <td>Customer churn</td>
+      <td>Logistic regression</td>
+      <td>Interpretability</td>
+    </tr>
+    <tr>
+      <td>Speech recognition</td>
+      <td>Transformers + wav2vec</td>
+      <td>Audio sequences</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="advanced-topics-and-extensions">Advanced Topics and Extensions</h2>
+
+<h3 id="tabnet-and-deep-learning-for-tabular">TabNet and Deep Learning for Tabular</h3>
+
+<p>Recent work adapts deep learning for tabular data:</p>
+<ul>
+  <li><strong>TabNet</strong>: Attention-based feature selection</li>
+  <li><strong>NODE</strong>: Neural Oblivious Decision Ensembles</li>
+  <li><strong>FT-Transformer</strong>: Transformers for tabular</li>
+</ul>
+
+<p>Results: Competitive but rarely beat well-tuned gradient boosting.</p>
+
+<h3 id="neural-network--gradient-boosting-hybrids">Neural Network + Gradient Boosting Hybrids</h3>
+
+<p>Combine approaches:</p>
+<ul>
+  <li>Use neural networks to learn embeddings for categorical features</li>
+  <li>Feed embeddings into gradient boosting</li>
+  <li>Example: entity embeddings from Categorical Embeddings</li>
+</ul>
+
+<h3 id="automl">AutoML</h3>
+
+<p>Let algorithms choose:</p>
+<ul>
+  <li>AutoGluon, Auto-sklearn, H2O AutoML</li>
+  <li>Often ensemble neural networks + gradient boosting</li>
+</ul>
+
+<h2 id="comparison-with-related-methods">Comparison with Related Methods</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Classical ML</th>
+      <th>Deep Learning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data volume needed</td>
+      <td>Low (1K-100K)</td>
+      <td>High (100K+)</td>
+    </tr>
+    <tr>
+      <td>Training time</td>
+      <td>Minutes</td>
+      <td>Hours/Days</td>
+    </tr>
+    <tr>
+      <td>Inference speed</td>
+      <td>Fast</td>
+      <td>Slower</td>
+    </tr>
+    <tr>
+      <td>Interpretability</td>
+      <td>High</td>
+      <td>Low</td>
+    </tr>
+    <tr>
+      <td>Tabular data</td>
+      <td><strong>Winner</strong></td>
+      <td>Competitive</td>
+    </tr>
+    <tr>
+      <td>Images/Text/Audio</td>
+      <td>Limited</td>
+      <td><strong>Winner</strong></td>
+    </tr>
+    <tr>
+      <td>Feature engineering</td>
+      <td>Required</td>
+      <td>Optional</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="summary-and-further-reading">Summary and Further Reading</h2>
+
+<p>Choosing between deep learning and classical ML depends on data type, scale, and constraints. Key takeaways:</p>
+
+<ul>
+  <li><strong>Gradient boosting dominates tabular data</strong> under realistic constraints</li>
+  <li><strong>Deep learning wins</strong> when data has spatial/temporal structure and you can exploit transfer learning</li>
+  <li><strong>Start simple</strong>: add complexity only when a baseline is clearly insufficient</li>
+</ul>
+
+<h3 id="checklist-should-you-reach-for-deep-learning">Checklist: Should You Reach for Deep Learning?</h3>
+
+<p>Before defaulting to a neural network, ask:</p>
+
+<ol>
+  <li><strong>Data type</strong>
+    <ul>
+      <li>Is your primary signal images, text, audio, logs, or long sequences?</li>
+      <li>If it’s mostly tabular, why won’t gradient boosting suffice?</li>
+    </ul>
+  </li>
+  <li><strong>Data volume</strong>
+    <ul>
+      <li>Do you have enough labeled data to justify learning rich representations?</li>
+      <li>If you have &lt;10–50k labeled examples, can you leverage pre-training instead?</li>
+    </ul>
+  </li>
+  <li><strong>Constraints</strong>
+    <ul>
+      <li>Latency budget per request? (e.g., &lt;10ms vs 200ms+)</li>
+      <li>Training/inference cost constraints?</li>
+      <li>Do you need human-readable explanations?</li>
+    </ul>
+  </li>
+  <li><strong>Baselines</strong>
+    <ul>
+      <li>Have you trained at least:
+        <ul>
+          <li>A regularized linear model</li>
+          <li>A tree ensemble (XGBoost / LightGBM / CatBoost)?</li>
+        </ul>
+      </li>
+      <li>Are they clearly underperforming in a way that deep learning can plausibly fix?</li>
+    </ul>
+  </li>
+  <li><strong>Organizational readiness</strong>
+    <ul>
+      <li>Do you have infra for GPUs, monitoring, and experiment loops for complex models?</li>
+      <li>Are you okay with slower iteration cycles?</li>
+    </ul>
+  </li>
+</ol>
+
+<p>If you can’t answer "yes" to several of these, <strong>ship a strong classical ML baseline first</strong>, and treat deep learning as a follow-up experiment—not the starting point.</p>
+
+<p><strong>Further Reading</strong>:</p>
+<ul>
+  <li>Shwartz-Ziv &amp; Armon, “Tabular Data: Deep Learning is Not All You Need” (2022)</li>
+  <li>Grinsztajn et al., “Why do tree-based models still outperform deep learning on tabular data?” (NeurIPS 2022)</li>
+  <li>Gorishniy et al., “Revisiting Deep Learning Models for Tabular Data” (2021)</li>
+</ul>
+
+        
+        
+
+
+
+
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#classical-ml" class="page__taxonomy-item p-category" rel="tag">classical-ml</a><span class="sep">, </span>
+    
+      <a href="/tags/#deep-learning" class="page__taxonomy-item p-category" rel="tag">deep-learning</a><span class="sep">, </span>
+    
+      <a href="/tags/#model-selection" class="page__taxonomy-item p-category" rel="tag">model-selection</a><span class="sep">, </span>
+    
+      <a href="/tags/#neural-networks" class="page__taxonomy-item p-category" rel="tag">neural-networks</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2018-05-01T00:00:00-07:00">May 1, 2018</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/gradient-boosting-machines/" class="pagination--pager" title="The Gradient Boosting Dynasty: From Friedman’s Algorithm to XGBoost, LightGBM, and Beyond
+">Previous</a>
+    
+    
+      <a href="/posts/evolution-of-information-retrieval/" class="pagination--pager" title="From Boolean to BERT: The Evolution of Search and Information Retrieval
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>

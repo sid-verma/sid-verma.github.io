@@ -1,0 +1,1010 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+
+<head>
+  <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Randomized Control Trials in Marketing: Measuring True Incrementality - AI &amp; ML Engineering Blog</title>
+<meta name="description" content="“Half the money I spend on advertising is wasted; the trouble is I don’t know which half.” — John Wanamaker (19th Century Retailer)">
+
+
+  <meta name="author" content="Sid Verma">
+  
+  <meta property="article:author" content="Sid Verma">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="AI & ML Engineering Blog">
+<meta property="og:title" content="Randomized Control Trials in Marketing: Measuring True Incrementality">
+<meta property="og:url" content="http://localhost:4000/posts/randomized-control-trials-in-marketing/">
+
+
+  <meta property="og:description" content="“Half the money I spend on advertising is wasted; the trouble is I don’t know which half.” — John Wanamaker (19th Century Retailer)">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-01-01T00:00:00-08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/posts/randomized-control-trials-in-marketing/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sid Verma",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="AI & ML Engineering Blog Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+  <!-- start custom head snippets -->
+
+<!-- Google Fonts: LW-inspired serif content + sans UI + mono code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS custom properties for dark/light mode -->
+<style>
+    :root {
+        color-scheme: dark;
+        --bg-primary: #111111;
+        --bg-secondary: #1b1b1b;
+        --text-primary: #e6e6e6;
+        --text-secondary: #9e9e9e;
+        --accent: #ff9e67;
+        --accent-glow: rgba(255, 158, 103, 0.14);
+        --border: #424242;
+        --glass-bg: rgba(27, 27, 27, 0.78);
+        --glass-border: rgba(255, 158, 103, 0.16);
+        --lw-bg-hover: #27231f;
+        --lw-accent-soft: #32271f;
+    }
+
+    [data-theme="light"] {
+        color-scheme: light;
+        --bg-primary: #ffffff;
+        --bg-secondary: #fcfcfc;
+        --text-primary: #212121;
+        --text-secondary: #686868;
+        --accent: #835c2f;
+        --accent-glow: rgba(154, 110, 58, 0.12);
+        --border: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(154, 110, 58, 0.14);
+        --lw-bg-hover: #f3eee7;
+        --lw-accent-soft: #f1e8dc;
+    }
+
+    body {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .initial-content,
+    .page {
+        background-color: var(--bg-primary);
+    }
+
+    .sidebar,
+    .author__content,
+    .author__name,
+    .author__bio {
+        color: var(--text-primary);
+    }
+
+    .author__bio {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__content {
+        color: var(--text-primary);
+    }
+
+    .page__title,
+    .page__title a,
+    .archive__subtitle,
+    .archive__item-title a {
+        color: var(--text-primary) !important;
+    }
+
+    .archive__item-title a:hover {
+        color: var(--accent) !important;
+    }
+
+    .archive__item-excerpt {
+        color: var(--text-secondary) !important;
+    }
+
+    .page__meta,
+    .page__taxonomy-item {
+        color: var(--text-secondary);
+    }
+
+    .page__footer {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .page__footer-follow,
+    .page__footer-follow a {
+        color: var(--text-secondary);
+    }
+
+    /* Code blocks */
+    div.highlight,
+    pre,
+    code,
+    .highlight pre,
+    figure.highlight {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary);
+    }
+
+    code {
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Links */
+    .page__content a:not(.btn) {
+        color: var(--accent);
+    }
+
+    .page__content a:not(.btn):hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+    /* Notices */
+    .notice,
+    .notice--info,
+    .notice--primary,
+    .notice--warning,
+    .notice--success,
+    .notice--danger {
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+    }
+
+    /* TOC */
+    .toc .nav__title {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+    }
+
+    /* Search */
+    .search-content {
+        background-color: var(--bg-primary);
+    }
+
+    .search-content .search-input {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary);
+    }
+
+    /* Pagination */
+    .pagination a,
+    .pagination .current {
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        color: var(--accent);
+    }
+
+    /* Breadcrumbs, nav */
+    .breadcrumbs a {
+        color: var(--text-secondary);
+    }
+
+    .nav__title {
+        color: var(--text-primary);
+    }
+
+    /* Theme surfaces and text switch together to preserve contrast. Hover
+       feedback is animated by the individual component rules. */
+</style>
+
+<!-- Flash-free theme init -->
+<script>
+    (function () {
+        var preferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = preferred;
+        try {
+            var saved = localStorage.getItem('theme');
+            t = saved === 'dark' || saved === 'light' ? saved : preferred;
+        } catch (error) {}
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+</script>
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+<body
+  class="layout--single">
+  <nav class="skip-links">
+  <ul>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+  <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+  <header class="lw-header" role="banner">
+  <div class="lw-header__inner">
+    <button class="lw-icon-button lw-nav-toggle" type="button" aria-label="Open navigation" aria-controls="lw-left-nav" aria-expanded="false">
+      <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+    <a class="lw-header__brand" href="/">AI & ML Engineering Blog</a>
+    <span class="lw-header__subtitle">Deep dives into ML, causal inference & AI systems</span>
+    <div class="lw-header__actions">
+      <button class="lw-icon-button lw-search-toggle" type="button" aria-label="Open search" aria-controls="lw-search-overlay" aria-expanded="false">
+        <i class="fas fa-search" aria-hidden="true"></i>
+      </button>
+      <button id="theme-toggle" class="lw-icon-button" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">
+  <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+</button>
+<script>
+(function() {
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  if (!btn || !icon) return;
+  function writeStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {}
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current);
+
+  var preference = window.matchMedia('(prefers-color-scheme: dark)');
+  function followSystem(event) {
+    var stored;
+    try { stored = localStorage.getItem('theme'); } catch (error) {}
+    if (stored !== 'light' && stored !== 'dark') setTheme(event.matches ? 'dark' : 'light');
+  }
+  if (preference.addEventListener) preference.addEventListener('change', followSystem);
+
+  btn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var cur = html.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    writeStoredTheme(next);
+  });
+})();
+</script>
+
+    </div>
+  </div>
+</header>
+
+
+  <div class="lw-shell">
+    <nav id="lw-left-nav" class="lw-left-nav" aria-label="Primary navigation">
+  <section class="lw-left-nav__section">
+    
+      
+      
+      <a class="lw-left-nav__link" href="/">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link is-active" href="/posts/" aria-current="page">
+        <i class="fas fa-newspaper" aria-hidden="true"></i>
+        <span>All Posts</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/tags/">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        <span>Tags</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/sequences/">
+        <i class="fas fa-stream" aria-hidden="true"></i>
+        <span>Sequences</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/about/">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>About</span>
+      </a>
+    
+      
+      
+      <a class="lw-left-nav__link" href="/feed.xml">
+        <i class="fas fa-rss" aria-hidden="true"></i>
+        <span>RSS</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Featured Sequences</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/sequences/causal-inference/">Causal Inference</a></li>
+        
+          <li><a href="/sequences/ranking-retrieval/">Ranking & Retrieval</a></li>
+        
+          <li><a href="/sequences/ad-tech-measurement/">Ad Tech & Measurement</a></li>
+        
+          <li><a href="/sequences/agentic-ai/">Agentic AI</a></li>
+        
+      </ul>
+    </section>
+  
+    <section class="lw-left-nav__section">
+      <h2 class="lw-left-nav__title">Topics</h2>
+      <ul class="lw-left-nav__children">
+        
+          <li><a href="/tags/#causal-inference">causal-inference</a></li>
+        
+          <li><a href="/tags/#ranking">ranking</a></li>
+        
+          <li><a href="/tags/#ad-tech">ad-tech</a></li>
+        
+          <li><a href="/tags/#llm">llm</a></li>
+        
+      </ul>
+    </section>
+  
+</nav>
+
+    <div class="initial-content lw-main">
+      <div id="reading-progress" class="lw-reading-progress" aria-hidden="true"></div>
+
+
+
+
+
+
+<div id="main" role="main">
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <meta itemprop="headline" content="Randomized Control Trials in Marketing: Measuring True Incrementality">
+    
+    <meta itemprop="description" content="  “Half the money I spend on advertising is wasted; the trouble is I don’t know which half.”— John Wanamaker (19th Century Retailer)">
+    
+    
+    <meta itemprop="datePublished" content="2025-01-01T00:00:00-08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+      <header>
+        <h1 id="page-title" class="page__title p-name" itemprop="headline">
+          <a href="http://localhost:4000/posts/randomized-control-trials-in-marketing/" class="u-url" itemprop="url">Randomized Control Trials in Marketing: Measuring True Incrementality
+</a>
+        </h1>
+        
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          4 minute read
+        
+      </span>
+    
+  </p>
+
+
+        
+          <div class="lw-post-tags">
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#ad-tech" data-tag="ad-tech">
+  ad-tech
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#incrementality" data-tag="incrementality">
+  incrementality
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#randomized-control-trials" data-tag="randomized-control-trials">
+  randomized-control-trials
+</a>
+
+            
+              
+
+
+<a class="lw-tag-chip" href="/tags/#causal-inference" data-tag="causal-inference">
+  causal-inference
+</a>
+
+            
+          </div>
+        
+        <div class="lw-reader" data-reader>
+  <button class="lw-reader__button" type="button" data-reader-toggle aria-label="Read post aloud" title="Read post aloud">
+    <i class="fas fa-play" aria-hidden="true"></i>
+    <span data-reader-label>Listen</span>
+  </button>
+  <button class="lw-reader__icon" type="button" data-reader-stop aria-label="Stop reading" title="Stop reading" hidden>
+    <i class="fas fa-stop" aria-hidden="true"></i>
+  </button>
+  <label class="lw-reader__rate" title="Reading speed">
+    <span>Speed</span>
+    <input type="range" min="0.75" max="1.5" step="0.05" value="1" data-reader-rate aria-label="Reading speed">
+  </label>
+  <span class="lw-reader__status" data-reader-status aria-live="polite"></span>
+</div>
+
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 5 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/ab-testing-designs/">Previous: Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments</a></span>
+      <span><a href="/posts/incrementality-testing-at-scale/">Next: Incrementality Testing at Scale: Building Always-On Measurement Platforms</a></span>
+    </div>
+  </nav>
+
+
+      </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+        <blockquote>
+  <p><em>“Half the money I spend on advertising is wasted; the trouble is I don’t know which half.”</em>
+— <strong>John Wanamaker</strong> (19th Century Retailer)</p>
+</blockquote>
+
+<p>In digital advertising, this quote is optimistically outdated. With attribution models often claiming credit for users who would have converted anyway, it’s possible <em>nearly all</em> your ad spend is wasted.</p>
+
+<p>To separate <strong>correlation</strong> (user saw ad and bought) from <strong>causation</strong> (user bought <em>because</em> they saw ad), we need the rigor of clinical trials applied to advertising: The Marketing RCT.</p>
+
+<blockquote>
+  <p><strong>Related reading</strong>: This is the practical application of <a href="/posts/instrumental-variables/">Instrumental Variables</a> and <a href="/posts/double-machine-learning/">Double Machine Learning</a>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="chapter-i-the-fundamental-problem">Chapter I: The Fundamental Problem</h2>
+
+<p>Why can’t we just compare <code class="language-plaintext highlighter-rouge">Conversion Rate (Saw Ad)</code> vs <code class="language-plaintext highlighter-rouge">Conversion Rate (No Ad)</code>?</p>
+
+<p>Because of <strong>Selection Bias</strong>.
+Algorithms target people <em>likely to buy</em>.</p>
+<ul>
+  <li>Group A (Saw Ad): People who love shoes.</li>
+  <li>Group B (No Ad): People who hate shoes.</li>
+</ul>
+
+<p>If Group A buys more shoes, is it the ad, or did they just like shoes?</p>
+
+\[E[Y | T=1] - E[Y | T=0] = \underbrace{ATT}_{\text{True Effect}} + \underbrace{Bias}_{\text{Selection}}\]
+
+<p>To zero out the Bias, we must randomize.</p>
+
+<hr />
+
+<h2 id="chapter-ii-the-placebo-ad-psa-approach">Chapter II: The Placebo Ad (PSA) Approach</h2>
+
+<p>The “Classical” RCT approach:</p>
+<ol>
+  <li>Identify a target audience.</li>
+  <li>Randomize them 50/50.</li>
+  <li>Show <strong>Treatment Group</strong> the real ad (e.g., Nike).</li>
+  <li>Show <strong>Control Group</strong> a “Placebo” ad (e.g., Charity/Red Cross).</li>
+</ol>
+
+<p><strong>Pros</strong>: Perfect counterfactual. We know exactly who is in the control group (those who saw the charity ad).
+<strong>Cons</strong>:</p>
+<ul>
+  <li><strong>Cost</strong>: You pay for the charity impressions.</li>
+  <li><strong>Opportunity Cost</strong>: You waste inventory.</li>
+  <li><strong>AdAuction Bias</strong>: The charity ad might win different auctions than the Nike ad (lower bid), so the populations aren’t exactly comparable.</li>
+</ul>
+
+<hr />
+
+<h2 id="chapter-iii-ghost-ads">Chapter III: Ghost Ads</h2>
+
+<p>Google and Facebook solved the cost problem with <strong>Ghost Ads</strong>.</p>
+
+<h3 id="the-mechanism">The Mechanism</h3>
+<ol>
+  <li>The ad platform holds an auction.</li>
+  <li>If your ad wins, the platform flips a coin <em>before</em> showing the ad.
+    <ul>
+      <li><strong>Head (Treatment)</strong>: Show your ad. Tag user “Saw Ad”.</li>
+      <li><strong>Tails (Control)</strong>: Suppress your ad. Show the <em>next highest bidder’s</em> ad. <strong>Log a “Ghost Impression”</strong>.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Crucially, we now have a control group of users who <em>would have seen</em> your ad, but didn’t. And we didn’t pay for a charity ad.</p>
+
+<h3 id="the-analysis">The Analysis</h3>
+
+<p>We compare the conversion rates of the <strong>Exposed</strong> vs <strong>Ghost Exposed</strong>.</p>
+
+\[Lift = \frac{CVR_{T} - CVR_{C}}{CVR_{C}}\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">scipy.stats</span> <span class="k">as</span> <span class="n">stats</span>
+
+<span class="k">def</span> <span class="nf">analyze_ghost_experiment</span><span class="p">(</span><span class="n">treatment_conv</span><span class="p">,</span> <span class="n">treatment_n</span><span class="p">,</span> <span class="n">control_conv</span><span class="p">,</span> <span class="n">control_n</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">
+    Analyzes a Ghost Ad experiment.
+
+    Args:
+        treatment_conv: Number of conversions in treatment
+        treatment_n: Total ghost/actual impressions in treatment
+        control_conv: Number of conversions in control
+        control_n: Total ghost impressions in control
+    </span><span class="sh">"""</span>
+    <span class="n">p_t</span> <span class="o">=</span> <span class="n">treatment_conv</span> <span class="o">/</span> <span class="n">treatment_n</span>
+    <span class="n">p_c</span> <span class="o">=</span> <span class="n">control_conv</span> <span class="o">/</span> <span class="n">control_n</span>
+
+    <span class="n">lift</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_t</span> <span class="o">-</span> <span class="n">p_c</span><span class="p">)</span> <span class="o">/</span> <span class="n">p_c</span>
+
+    <span class="c1"># Z-test for proportions
+</span>    <span class="n">p_pooled</span> <span class="o">=</span> <span class="p">(</span><span class="n">treatment_conv</span> <span class="o">+</span> <span class="n">control_conv</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">treatment_n</span> <span class="o">+</span> <span class="n">control_n</span><span class="p">)</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">p_pooled</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_pooled</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">treatment_n</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="n">control_n</span><span class="p">))</span>
+    <span class="n">z_score</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_t</span> <span class="o">-</span> <span class="n">p_c</span><span class="p">)</span> <span class="o">/</span> <span class="n">se</span>
+    <span class="n">p_value</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="p">.</span><span class="n">norm</span><span class="p">.</span><span class="nf">cdf</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">z_score</span><span class="p">)))</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">lift</span><span class="p">,</span> <span class="n">p_value</span>
+
+<span class="c1"># Example
+# Treatment: 50,000 users saw ad, 500 converted (1%)
+# Control: 50,000 users logged ghost impression, 450 converted (0.9%)
+</span><span class="n">lift</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="nf">analyze_ghost_experiment</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">50000</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Incremental Lift: </span><span class="si">{</span><span class="n">lift</span><span class="si">:</span><span class="p">.</span><span class="mi">2</span><span class="o">%</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">P-value: </span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="c1"># Incremental Lift: 11.11%
+# P-value: 0.13 (Not significant!)
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="chapter-iv-intent-to-treat-itt">Chapter IV: Intent-to-Treat (ITT)</h2>
+
+<p>Sometimes we can’t track “Ghost Impressions”. For example, in email marketing, we can randomize the <em>list</em> but we can’t force people to open the email.</p>
+
+<p>We analyze based on assignment, not exposure.</p>
+
+<ul>
+  <li><strong>ITT Effect</strong>: Effect of <em>assigning</em> someone to the ad group.</li>
+  <li><strong>LATE (Local Average Treatment Effect)</strong>: Effect on those who actually saw it.</li>
+</ul>
+
+\[LATE = \frac{ITT}{\text{Compliance Rate}}\]
+
+<p>If valid assignment increased sales by $10 (ITT), but only $50\%$ of people opened the email (Compliance):
+\(LATE = \$10 / 0.5 = \$20\)
+Every <em>opened</em> email generated $20.</p>
+
+<hr />
+
+<h2 id="chapter-v-geo-experiments-geox">Chapter V: Geo-Experiments (GeoX)</h2>
+
+<p>When digital tracking fails (e.g., TV ads, privacy changes, cookies dying), we return to geography.</p>
+
+<h3 id="the-design">The Design</h3>
+<ol>
+  <li>Divide country into 100 markets (DMA - Designated Market Areas).</li>
+  <li>Build a <strong>Synthetic Control</strong> for your treatment regions.</li>
+  <li>Shut off ads in Control regions (“Dark/Holdout”).</li>
+  <li>Blast ads in Treatment regions.</li>
+</ol>
+
+<h3 id="time-based-regression-tbr">Time-Based Regression (TBR)</h3>
+<p>We predict what the revenue in Treatment regions <em>would have been</em> using the Control regions.</p>
+
+\[Y_{treat}(t) = \beta_0 + \beta_1 Y_{control}(t) + \epsilon\]
+
+<p>Train on pre-test period. Predict for test period. The difference is lift.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="n">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="k">class</span> <span class="nc">GeoLift</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">treat_geo</span><span class="p">,</span> <span class="n">control_geos</span><span class="p">,</span> <span class="n">date_col</span><span class="p">,</span> <span class="n">metric_col</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">treat</span> <span class="o">=</span> <span class="n">treat_geo</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">controls</span> <span class="o">=</span> <span class="n">control_geos</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="nc">LinearRegression</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">test_start_date</span><span class="p">):</span>
+        <span class="c1"># Pre-test data
+</span>        <span class="n">pre_data</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">date</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">test_start_date</span><span class="p">]</span>
+
+        <span class="n">X_pre</span> <span class="o">=</span> <span class="n">pre_data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">controls</span><span class="p">].</span><span class="nf">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="n">values</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_pre</span> <span class="o">=</span> <span class="n">pre_data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">treat</span><span class="p">].</span><span class="n">values</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">X_pre</span><span class="p">,</span> <span class="n">y_pre</span><span class="p">)</span>
+        <span class="n">r2</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">score</span><span class="p">(</span><span class="n">X_pre</span><span class="p">,</span> <span class="n">y_pre</span><span class="p">)</span>
+
+        <span class="c1"># Test period
+</span>        <span class="n">test_data</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="sh">'</span><span class="s">date</span><span class="sh">'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">test_start_date</span><span class="p">]</span>
+        <span class="n">X_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">controls</span><span class="p">].</span><span class="nf">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="n">values</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_actual</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">treat</span><span class="p">].</span><span class="n">values</span>
+
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+        <span class="n">incremental</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_actual</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+        <span class="n">lift</span> <span class="o">=</span> <span class="n">incremental</span> <span class="o">/</span> <span class="n">y_pred</span><span class="p">.</span><span class="nf">sum</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">lift</span><span class="p">,</span> <span class="n">r2</span>
+
+<span class="c1"># Note: In production, use Facebook's GeoLift R package or Google's CausalImpact
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="chapter-vi-the-hierarchy-of-evidence">Chapter VI: The Hierarchy of Evidence</h2>
+
+<p>Not all “lift” numbers are created equal.</p>
+
+<ol>
+  <li><strong>Ghost Ads / PSA RCTs</strong>: Gold standard. User-level precision.</li>
+  <li><strong>Geo-Experiments</strong>: Silver standard. Robust to cookie loss, but high variance.</li>
+  <li><strong>Observational Methods (matching)</strong>: Bronze. Good for directional checks.</li>
+  <li><strong>Last-Touch Attribution</strong>: Garbage. Ignores causality completely.</li>
+</ol>
+
+<h3 id="when-to-use-what">When to use what?</h3>
+<ul>
+  <li><strong>Retargeting</strong>: Must use RCT (Ghost Ads). Selection bias is huge here (retargeting users who just visited cart).</li>
+  <li><strong>Brand Awareness (TV/Youtube)</strong>: Geo-Experiments.</li>
+  <li><strong>Search Ads</strong>: Incrementality is usually low (cannibalization of organic SEO). Test via GeoX or Paid Search Holdouts.</li>
+</ul>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<p>In modern marketing, “Data-Driven” isn’t enough. You must be “Evidence-Based”.
+Data says the ad drove sales (correlation). Evidence says the ad <em>caused</em> sales (causality).</p>
+
+<p>Without RCTs, you are likely paying rent for customers you already own.</p>
+
+<blockquote>
+  <p><em>“If you cannot measure it, you cannot improve it.”</em> — Lord Kelvin
+<em>“If you measure it wrong, you will improve the wrong thing.”</em> — Modern Corollary</p>
+</blockquote>
+
+        
+        
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <nav class="lw-sequence-nav" aria-label="Sequence navigation">
+    <div class="lw-sequence-nav__label">
+      Ad Tech & Measurement · 5 / 10
+    </div>
+    <div class="lw-sequence-nav__links">
+      <span><a href="/posts/ab-testing-designs/">Previous: Advanced A/B Testing Designs: Clusters, Switchbacks, and Crossover Experiments</a></span>
+      <span><a href="/posts/incrementality-testing-at-scale/">Next: Incrementality Testing at Scale: Building Always-On Measurement Platforms</a></span>
+    </div>
+  </nav>
+
+
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#ad-tech" class="page__taxonomy-item p-category" rel="tag">ad-tech</a><span class="sep">, </span>
+    
+      <a href="/tags/#causal-inference" class="page__taxonomy-item p-category" rel="tag">causal-inference</a><span class="sep">, </span>
+    
+      <a href="/tags/#incrementality" class="page__taxonomy-item p-category" rel="tag">incrementality</a><span class="sep">, </span>
+    
+      <a href="/tags/#randomized-control-trials" class="page__taxonomy-item p-category" rel="tag">randomized-control-trials</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#artificial-intelligence" class="page__taxonomy-item p-category" rel="tag">Artificial Intelligence</a><span class="sep">, </span>
+    
+      <a href="/categories/#machine-learning" class="page__taxonomy-item p-category" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-01-01T00:00:00-08:00">January 1, 2025</time></p>
+
+      </footer>
+
+      
+  <nav class="pagination">
+    
+      <a href="/posts/llms-in-production/" class="pagination--pager" title="LLMs in Production: From Prompting to Fine-Tuning at Scale
+">Previous</a>
+    
+    
+      <a href="/posts/semantic-search/" class="pagination--pager" title="Semantic Search: Beyond Keywords with Dense Retrieval and Embeddings
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+</div>
+
+    </div>
+    <aside class="lw-right-rail" aria-label="Recent and pinned links">
+  <section class="lw-right-rail__block">
+    <h2 class="lw-right-rail__title">Recent</h2>
+    
+      <a class="lw-quick-take" href="/posts/future-of-ai/">
+        <span class="lw-quick-take__title">The Next Decade of AI: Trends, Challenges, and Opportunities</span>
+        <span class="lw-quick-take__meta">Nov 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/ml-platform-engineering/">
+        <span class="lw-quick-take__title">ML Platform Engineering: Building the Infrastructure for ML at Scale</span>
+        <span class="lw-quick-take__meta">Aug 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/causal-discovery/">
+        <span class="lw-quick-take__title">Causal Discovery: Algorithms for Learning Causal Structure from Data</span>
+        <span class="lw-quick-take__meta">May 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai/">
+        <span class="lw-quick-take__title">Agentic AI: Building Autonomous Systems That Reason and Act</span>
+        <span class="lw-quick-take__meta">Feb 1, 2026</span>
+      </a>
+    
+      <a class="lw-quick-take" href="/posts/agentic-ai-resources/">
+        <span class="lw-quick-take__title">Agentic AI Resources: A 2026 Learning Path</span>
+        <span class="lw-quick-take__meta">Jan 1, 2026</span>
+      </a>
+    
+  </section>
+  
+    <section class="lw-right-rail__block">
+      <h2 class="lw-right-rail__title">Pinned</h2>
+      
+        <a class="lw-quick-take" href="/sequences/causal-inference/">
+          <span class="lw-quick-take__title">Causal inference reading path</span>
+          <span class="lw-quick-take__meta">Start with econometrics, end with causal discovery</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/ranking-retrieval/">
+          <span class="lw-quick-take__title">Ranking systems path</span>
+          <span class="lw-quick-take__meta">Search, recommenders, LTR, metrics</span>
+        </a>
+      
+        <a class="lw-quick-take" href="/sequences/agentic-ai/">
+          <span class="lw-quick-take__title">Agentic AI path</span>
+          <span class="lw-quick-take__meta">RAG, agents, and production systems</span>
+        </a>
+      
+    </section>
+  
+</aside>
+
+  </div>
+
+  
+<div id="lw-search-overlay" class="lw-search-overlay" role="dialog" aria-modal="true" aria-label="Search" aria-hidden="true" inert>
+  <div class="lw-search-overlay__panel">
+    <div class="lw-search-overlay__top">
+      <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      <button class="lw-icon-button lw-search-close" type="button" aria-label="Close search">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="lw-search-status" data-search-status role="status" aria-live="polite">Search titles, topics, and article text.</p>
+  </div>
+</div>
+
+
+
+  <div id="footer" class="page__footer">
+    <footer>
+      <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+      <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Sid Verma. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+    </footer>
+  </div>
+
+  
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+  
+    <script src="/assets/js/custom.js"></script>
+  
+
+
+</body>
+
+</html>
