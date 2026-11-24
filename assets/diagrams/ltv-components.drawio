@@ -1,0 +1,89 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" version="21.0.0" etag="template" type="device">
+  <diagram name="LTV Components" id="ltv-components">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Customer Lifetime Value Components" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="150" y="20" width="527" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Formula Box -->
+        <mxCell id="formula" value="LTV = Σ (Margin × Retention^t) / (1 + Discount)^t" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;strokeWidth=2;fontSize=11;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="250" y="70" width="327" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- LTV Components Section -->
+        <mxCell id="ltv-title" value="LTV Components" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="frequency" value="Frequency&#xa;(How often?)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="100" y="180" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="monetary" value="Monetary&#xa;(How much?)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="100" y="260" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="retention" value="Retention&#xa;(How long?)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="100" y="340" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- RFM Analysis Section -->
+        <mxCell id="rfm-title" value="RFM Analysis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="527" y="140" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="recency" value="Recency Score&#xa;(1-5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="527" y="180" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rfm-frequency" value="Frequency Score&#xa;(1-5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="527" y="260" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rfm-monetary" value="Monetary Score&#xa;(1-5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;strokeWidth=2;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="527" y="340" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Customer Segment -->
+        <mxCell id="segment" value="Customer Segment&#xa;&#xa;e.g., 555 = Best Customer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;strokeWidth=2;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="313" y="440" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="arrow1" value="Quantify" style="endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;labelPosition=right" edge="1" parent="1" source="frequency" target="recency">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="300" y="210" as="sourcePoint" />
+            <mxPoint x="527" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2" edge="1" parent="1" source="rfm-frequency" target="segment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="627" y="320" as="sourcePoint" />
+            <mxPoint x="413" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2" edge="1" parent="1" source="rfm-monetary" target="segment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="627" y="400" as="sourcePoint" />
+            <mxPoint x="413" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow4" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2" edge="1" parent="1" source="recency" target="segment">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="627" y="240" as="sourcePoint" />
+            <mxPoint x="413" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
