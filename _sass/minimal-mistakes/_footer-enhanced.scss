@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Enhanced Footer with Gradient Border
+   ========================================================================== */
+
+.page__footer {
+    position: relative;
+    background: var(--bg-secondary, #161b22);
+
+    /* Animated gradient top border */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #58a6ff, #bc8cff, #f093fb, #58a6ff);
+        background-size: 200% 100%;
+        animation: gradientShift 4s ease infinite;
+    }
+
+    .page__footer-follow .social-icons a {
+        transition: transform 0.2s ease, color 0.2s ease;
+
+        &:hover {
+            transform: translateY(-3px);
+            color: var(--accent, #58a6ff);
+        }
+    }
+}
