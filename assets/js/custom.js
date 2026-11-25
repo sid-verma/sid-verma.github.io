@@ -261,7 +261,7 @@
   function applyFeedState() {
     var visibleCount = 0;
     rows.forEach(function (row) {
-      var rowTags = (row.getAttribute('data-tags') || '').split(/\s+/);
+      var rowTags = (row.getAttribute('data-tags') || '').split(/[\s,]+/);
       var matches = activeTag === 'all' || rowTags.indexOf(activeTag) !== -1;
       visibleCount += matches ? 1 : 0;
       row.classList.toggle('is-hidden', !matches || visibleCount > visibleLimit);
