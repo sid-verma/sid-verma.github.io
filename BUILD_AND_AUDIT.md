@@ -22,6 +22,14 @@ The audit checks:
 
 ## Delivery Policy
 
+- GitHub Pages must use **Settings → Pages → Source → GitHub Actions**. The
+  workflow in `.github/workflows/site.yml` builds using the locked Ruby gems,
+  including `jekyll-drawio`. The legacy branch-based Pages builder rejects
+  the custom `drawio` Liquid tag and cannot deploy this source tree.
+- Pull requests run the same build without deploying. Only `main` deploys.
+- Curated-data audit failures for unpublished posts must be resolved before
+  declaring the full content audit clean; a successful build alone is insufficient.
+
 - `assets/js/custom.js` is loaded through `_config.yml` `after_footer_scripts`.
 - `particles.js` is lazy-loaded by `assets/js/custom.js` only when a `#particles-js` container exists.
 - `_site/` is treated as generated deployment output in the current worktree; rebuild it after source changes if committed output is expected.
