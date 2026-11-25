@@ -176,7 +176,10 @@ class SiteAudit
     Find.find(site_dir) do |file|
       next unless file.end_with?(".html")
 
-      html = File.read(file)
+      # JavaScript templates may contain src/href strings that are not actual
+      # document links. Keep opening script tags (and their external src), but
+      # exclude raw-text contents from this static HTML link audit.
+      html = File.read(file).gsub(/(<script\b[^>]*>).*?<\/script\s*>/mi, '\1</script>')
       html.scan(/\s(?:href|src)=["']([^"']+)["']/i).flatten.each do |raw_url|
         audit_internal_url(file, raw_url)
       end

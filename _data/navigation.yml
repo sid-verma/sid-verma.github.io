@@ -5,6 +5,9 @@ main:
   - title: "All Posts"
     url: /posts/
     icon: "newspaper"
+  - title: "Random Deviations"
+    url: /random-deviations/
+    icon: "dice"
   - title: "Tags"
     url: /tags/
     icon: "tags"
