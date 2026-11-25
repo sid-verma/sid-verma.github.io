@@ -19,3 +19,16 @@ files are deliberately outside this component.
 The game is served at `/random-deviations/trivia/` and linked from the
 Random Deviations post at `/random-deviations/`. It has a standalone document
 to isolate full-screen game styles from the blog's CSS and navigation scripts.
+
+## Verification
+
+Run `node script/test-trivia.cjs` from the repository root with Playwright
+available through `NODE_PATH`. Set `QUIZ_CHROME` to a Chrome executable if the
+Playwright Chromium binary is unavailable. For an HTTP build, set `QUIZ_URL`
+to the nested game URL and `BLOG_URL` to the blog root. The latter also checks
+the sidebar → blog post → game links.
+
+The regression checks cover ten categories, five tiles per category, the
+question/safety/answer sequence, points, saved progress after reload, runtime
+errors, and document overflow at 320, 390, 768, and 1440 CSS pixels.
+They do not establish full screen-reader or cross-browser conformance.

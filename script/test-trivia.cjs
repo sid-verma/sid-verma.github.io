@@ -9,7 +9,14 @@ const {chromium} = require('playwright');
     const page = await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'});
     const errors=[];
     page.on('pageerror',error=>errors.push(error.message));
-    await page.goto(pathToFileURL(path.resolve(process.env.QUIZ_FILE || 'random-deviations/trivia/index.html')).href);
+    if(process.env.BLOG_URL) {
+      await page.goto(process.env.BLOG_URL);
+      await page.locator('#lw-left-nav').getByRole('link',{name:'Random Deviations',exact:true}).click();
+      await page.getByRole('heading',{name:'Random Deviations',exact:true}).waitFor();
+      await page.getByRole('link',{name:'Play the trivia game',exact:true}).click();
+      assert(page.url().endsWith('/random-deviations/trivia/'));
+    }
+    await page.goto(process.env.QUIZ_URL || pathToFileURL(path.resolve(process.env.QUIZ_FILE || 'random-deviations/trivia/index.html')).href);
     assert.equal(await page.locator('.category').count(),10);
     for(let i=0;i<10;i++) {
       await page.locator('.category').nth(i).click();
@@ -43,6 +50,6 @@ const {chromium} = require('playwright');
     await page.locator('.category').first().click();
     assert.equal(await page.locator('.tile.used').count(),1);
     assert.deepEqual(errors,[]);
-    console.log(JSON.stringify({layouts,errors,categories:10,tilesPerCategory:5,safetyReveal:true,scoring:true,persistence:true},null,2));
+    console.log(JSON.stringify({blogNavigation:!!process.env.BLOG_URL,layouts,errors,categories:10,tilesPerCategory:5,safetyReveal:true,scoring:true,persistence:true},null,2));
   } finally { await browser.close(); }
 })().catch(error=>{console.error(error);process.exit(1)});
