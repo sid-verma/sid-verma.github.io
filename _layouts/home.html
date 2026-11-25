@@ -5,7 +5,11 @@ layout: default
 <div id="main" role="main">
   <section class="archive lw-home">
     {{ content }}
-    {% include lw-home-bestof.html %}
+    <header class="lw-home-intro">
+      <h1>Latest writing</h1>
+      <p>Essays on machine learning, causal inference, and AI systems — plus a few detours.</p>
+      <a class="lw-home-intro__game" href="{{ '/random-deviations/' | relative_url }}">Random Deviations: play the trivia game <span aria-hidden="true">→</span></a>
+    </header>
 
     <div class="lw-feed__header" id="recent-posts">
       <h2 class="lw-feed__title">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h2>
@@ -18,7 +22,7 @@ layout: default
 
     <div class="lw-tag-filter" aria-label="Filter posts by tag">
       <button class="lw-tag-chip is-active" type="button" data-filter-tag="all" aria-pressed="true">all</button>
-      {% assign popular_tags = "causal-inference,ranking,ad-tech,llm,experimentation" | split: "," %}
+      {% assign popular_tags = "causal-inference,ranking,ad-tech,llm,experimentation,trivia" | split: "," %}
       {% for tag in popular_tags %}
         <button class="lw-tag-chip" type="button" data-filter-tag="{{ tag | slugify }}" aria-pressed="false">{{ tag }}</button>
       {% endfor %}
@@ -34,8 +38,8 @@ layout: default
     </div>
 
     <div class="lw-feed__more">
-      <button class="lw-load-more" type="button" data-lw-load-more hidden>Load more essays</button>
       <a class="lw-feed__archive" href="{{ '/posts/' | relative_url }}">Browse the full archive <span aria-hidden="true">→</span></a>
     </div>
+    {% include lw-home-bestof.html %}
   </section>
 </div>

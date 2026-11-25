@@ -243,19 +243,17 @@
 })();
 
 // ============================================================
-// 5. Homepage tag filter and load more
+// 5. Homepage tag filter (all published posts are visible by default)
 // ============================================================
 (function () {
   var feed = document.querySelector('[data-lw-post-list]');
   if (!feed) return;
   var rows = Array.prototype.slice.call(feed.querySelectorAll('[data-lw-post-row]'));
   var filters = Array.prototype.slice.call(document.querySelectorAll('[data-filter-tag]'));
-  var loadMore = document.querySelector('[data-lw-load-more]');
   var feedStatus = document.querySelector('[data-lw-feed-status]');
   var empty = document.querySelector('[data-lw-feed-empty]');
   if (!rows.length) return;
 
-  var visibleLimit = 12;
   var activeTag = 'all';
 
   function applyFeedState() {
@@ -264,20 +262,18 @@
       var rowTags = (row.getAttribute('data-tags') || '').split(/[\s,]+/);
       var matches = activeTag === 'all' || rowTags.indexOf(activeTag) !== -1;
       visibleCount += matches ? 1 : 0;
-      row.classList.toggle('is-hidden', !matches || visibleCount > visibleLimit);
-      row.hidden = !matches || visibleCount > visibleLimit;
+      row.classList.toggle('is-hidden', !matches);
+      row.hidden = !matches;
     });
-    if (loadMore) {
-      loadMore.hidden = visibleCount <= visibleLimit;
-    }
     if (empty) empty.hidden = visibleCount !== 0;
-    if (feedStatus) feedStatus.textContent = 'Showing ' + Math.min(visibleLimit, visibleCount) + ' of ' + visibleCount + (activeTag === 'all' ? ' posts.' : ' matching posts.');
+    if (feedStatus) feedStatus.textContent = activeTag === 'all'
+      ? 'All ' + visibleCount + ' posts, newest first.'
+      : visibleCount + ' matching posts. Choose “all” to see every post.';
   }
 
   filters.forEach(function (filter) {
     filter.addEventListener('click', function () {
       activeTag = filter.getAttribute('data-filter-tag');
-      visibleLimit = 12;
       filters.forEach(function (item) {
         item.classList.remove('is-active');
         item.setAttribute('aria-pressed', 'false');
@@ -287,13 +283,6 @@
       applyFeedState();
     });
   });
-
-  if (loadMore) {
-    loadMore.addEventListener('click', function () {
-      visibleLimit += 12;
-      applyFeedState();
-    });
-  }
 
   applyFeedState();
   filters.forEach(function (filter) {
