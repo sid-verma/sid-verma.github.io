@@ -9,7 +9,7 @@ All ten categories, boards, question/safety/answer screens, question
 pool, font, and visual assets are embedded in `index.html`. The team-rating
 editor, selection policy, reveal layout, and scoring are local companions:
 `host-ratings.js`, `host-ratings.css`, `balance.js`, `reveal.js`, `reveal.css`,
-and `scoring.js`. Keep these files, this document
+`scoring.js`, `scoreboard.js`, and `scoreboard.css`. Keep these files, this document
 and the font license with updates. Do not copy the release's `.nojekyll` into
 the blog root, because the blog needs Jekyll.
 
@@ -86,3 +86,10 @@ reverses the latest split transaction as a whole, including after backup/reload.
 validation, and atomic undo. `node script/test-trivia-reveal.cjs` checks the
 illustrated strips, reveal layout at five viewport sizes, fractional split
 awards, rejection of over-awards, draft preservation during resize, and reload.
+
+The scoreboard uses the category tiles’ bold Helvetica type. Names and scores
+fit to the available slot height and width after render, score changes, paging,
+and resize. Long names retain their full text in a tooltip if truncation is
+necessary; score digits remain visible. `node script/test-trivia-scoreboard.cjs`
+checks 25 screen-width/team-count combinations, including large and fractional
+scores and paging.
