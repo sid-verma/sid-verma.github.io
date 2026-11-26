@@ -1,0 +1,15 @@
+.answer-unified .screen-body{display:flex;flex-direction:column;gap:10px;overflow-y:auto;min-height:0}
+.reveal-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;flex:0 0 auto;min-height:180px;height:clamp(180px,37vh,380px)}
+.reveal-answer{display:flex;align-items:center;justify-content:center;padding:16px;min-width:0;overflow:auto;background:#f8f0d5;border:1px solid var(--line)}
+.reveal-answer .answer{font-size:clamp(22px,4vw,62px);font-weight:800;line-height:1.1;text-align:center;overflow-wrap:anywhere;max-width:100%;margin:auto}
+.reveal-image{min-width:0;min-height:0;border:1px solid var(--line);background:#fffef9;padding:8px;overflow:auto}
+.reveal-image .gallery{height:100%;min-height:0;display:flex;flex-direction:column;gap:4px}.reveal-image .imagebutton{flex:1;min-height:0;width:100%;padding:0}
+.reveal-image img{width:100%;height:100%;min-height:0;object-fit:contain}.reveal-image figcaption{font-size:11px;flex:none}.reveal-image .gallery-nav{flex:none;font-size:10px;flex-wrap:wrap}
+.reveal-image-empty{height:100%;display:grid;place-content:center;text-align:center;color:var(--muted);font-size:12px}
+.reveal-clues{flex:none;padding:10px 14px;background:#f1eddf;border:1px solid var(--line)}.reveal-clues h2{font-size:14px;margin-bottom:6px}.reveal-clues>p{font-size:13px;line-height:1.45}
+.reveal-clues .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 16px;margin-top:8px;overflow:visible}.reveal-clues .links li{font-size:12px}
+.reveal-award{flex:none;padding:10px;border:1px solid var(--line);background:#fffef9}.reveal-award-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.reveal-award-actions span,.award-history{font-size:12px}
+.split-team-inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:10px 0}.split-team-inputs input{min-height:36px}
+#award-split-panel{margin-top:10px}#award-split-panel[hidden]{display:none}#award-split-panel p{font-size:12px;margin:6px 0}#split-total{color:var(--ink);font-weight:600}.award-history{margin-top:6px}
+@media(max-width:600px){.reveal-pair{gap:6px;height:230px}.reveal-answer{padding:8px}.reveal-clues{padding:10px}.answer-unified .meta-actions button{font-size:10px;padding:5px}.reveal-image{padding:4px}}
+@media(max-height:500px){.reveal-pair{height:180px}.answer-unified .screen-body{overflow-y:auto}}

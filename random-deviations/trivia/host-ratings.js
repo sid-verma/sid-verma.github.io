@@ -22,10 +22,21 @@ function wireTeamRatings(){
 }
 function balanceSummary(){
   const report=state.balanceReport;
-  return `<section class="balance-summary"><h2>Balanced shuffle</h2><p>Save every team’s ratings, then draw 50 questions. Category counts can vary; each point level still has 10 questions. Categories with sharply uneven team strengths receive lower inverse weight.</p>${report?`<p>Last shuffle’s estimated opportunity spread: <strong>${(report.spread*100).toFixed(1)} percentage points</strong> (equal-category baseline: ${(report.baselineSpread*100).toFixed(1)}). Changing ratings takes effect on the next shuffle.</p>`:''}<p>Ratings estimate opportunity, not win probabilities. They cannot guarantee equal outcomes.</p><button type="button" id="balancedshuffle" class="primary">Shuffle Questions</button></section>`;
+  return `<section class="balance-summary"><h2>Balanced shuffle</h2><p>Each category starts with one question at 10, 20, 30, 40 and 50 points. Mean ratings below 5 cap the number of tiers at the rounded-up average (at least one). Further balancing can drop top tiers; it never duplicates a category/point slot.</p>${report?`<p>Last shuffle: ${esc(report.questions??total())} questions. Estimated opportunity spread: <strong>${(report.spread*100).toFixed(1)} percentage points</strong> (average-adjusted baseline: ${(report.baselineSpread*100).toFixed(1)}). New ratings apply on the next shuffle.</p>`:'' }<p>Ratings estimate opportunity, not win probabilities.</p><button type="button" id="balancedshuffle" class="primary">Shuffle Questions</button></section>`;
 }
 function renderBalancedBoard(category,main){
+  document.title=category.name;
   const names=['Warm-up','Find the link','Dig deeper','A twist','Deep cut'];
-  main.innerHTML=`<section class="board-screen"><div class="board-heading"><h1>${esc(category.name)}</h1><p>${category.questions.length} questions · balanced allocation</p></div><div class="balanced-grid">${[10,20,30,40,50].map((points,i)=>`<section class="balanced-tier"><h2>${points}<span>${names[i]}</span></h2>${category.questions.filter(q=>q.points===points).map((q,j)=>`<button class="tile ${state.used[q.id]?'used':''}" data-q="${esc(q.id)}" aria-label="${points} points, question ${j+1}${state.used[q.id]?', completed — review':''}"><strong>${points}</strong><span>${state.used[q.id]?'✅ Completed':'Question '+(j+1)}</span></button>`).join('')||'<p class="empty-tier">No questions this tier</p>'}</section>`).join('')}</div></section>`;
+  const panoramas=JSON.parse($('difficulty-art').textContent),panorama=panoramas[bank.indexOf(category)];
+  main.innerHTML=`<section class="board-screen"><div class="board-heading"><h1>${esc(category.name)}</h1></div><div class="board difficulty-board">${[10,20,30,40,50].map((points,i)=>{
+    const question=category.questions.find(q=>q.points===points),used=question&&state.used[question.id]===true;
+    return `<section class="tier-column"><div class="tier">${names[i]}</div>${question?`<button class="tile ${used?'used':''}" style="--strip:${i*25}%" data-q="${esc(question.id)}" aria-label="${points} points${used?', completed — review':', unanswered'}"><strong>${points}</strong>${used?'<span>✅ Completed</span>':''}</button>`:`<div class="tile-omitted" style="--strip:${i*25}%" aria-label="${points} points not selected"><span>Not selected</span></div>`}</section>`;
+  }).join('')}</div></section>`;
+  const board=main.querySelector('.difficulty-board'),screen=board.parentElement,style=getComputedStyle(board);
+  const labelHeight=parseFloat(style.getPropertyValue('--tier-height'))+parseFloat(style.getPropertyValue('--tier-gap'));
+  const available=screen.clientHeight-screen.querySelector('.board-heading').offsetHeight-parseFloat(getComputedStyle(screen).gap)-labelHeight;
+  const width=Math.max(10,Math.floor(Math.min(screen.clientWidth,available*2)/10)*10);
+  board.style.width=width+'px';board.style.height=(width/2+labelHeight)+'px';
+  board.style.setProperty('--point-font',Math.floor(width*.105)+'px');board.style.setProperty('--panorama',`url("${panorama}")`);
   main.querySelectorAll('[data-q]').forEach(button=>button.onclick=()=>go({screen:'question',cat:category.id,q:button.dataset.q,pane:'clue'}));
 }

@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const S=require('../random-deviations/trivia/scoring.js');
+const teams=[{id:'a',score:1.1},{id:'b',score:0}],question={id:'q1',points:10};
+const split=S.award(teams,[],question,1,{a:3.5,b:6.5},'batch1');
+assert.deepEqual(split.teams.map(t=>t.score),[4.6,6.5]);assert.equal(S.remaining(question,1,split.ledger),0);
+assert.throws(()=>S.award(split.teams,split.ledger,question,1,{a:.01},'batch2'));
+assert.deepEqual(S.undo(split.teams,split.ledger,'q1'),{teams,ledger:[]});
+const first=S.award(teams,[],question,1,{a:2.5},'first');
+const second=S.award(first.teams,first.ledger,question,1,{b:7.5},'second');
+assert.deepEqual(S.undo(second.teams,second.ledger,'q1'),first);
+for(const amount of [-1,NaN,Infinity,1.234,'2'])assert.throws(()=>S.award(teams,[],question,1,{a:amount},'bad'));
+assert.throws(()=>S.award(teams,[],question,1,{a:6,b:6},'over'));
+assert.throws(()=>S.award(teams,[],question,1,{a:0,b:0},'empty'));
+const tiny=S.award([{id:'a',score:.1}],[],question,1,{a:.2},'tiny');assert.equal(tiny.teams[0].score,.3);
+assert.deepEqual(teams,[{id:'a',score:1.1},{id:'b',score:0}]);
+assert.equal(S.remaining(question,.5,[]),5);
+console.log(JSON.stringify({splitAwards:true,fractions:true,budget:true,atomicUndo:true,invalidInputsRejected:true}));
