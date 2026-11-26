@@ -42,6 +42,7 @@ const {chromium} = require('playwright');
     await page.locator('#reveal').click();
     await page.locator('.answer-screen').waitFor();
     await page.locator('#award').click();
+    await page.locator('#applyaward').click();
     const scores=await page.locator('.team .score').allTextContents();
     assert(scores.some(score=>Number(score)>0));
     await page.locator('#complete').click();

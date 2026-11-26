@@ -7,8 +7,9 @@ a Git submodule: deployment needs no second checkout, build step, or repository.
 
 All ten categories, boards, question/safety/answer screens, question
 pool, font, and visual assets are embedded in `index.html`. The team-rating
-editor and balance policy are local companions: `host-ratings.js`,
-`host-ratings.css`, and `balance.js`. Keep these files, this document
+editor, selection policy, reveal layout, and scoring are local companions:
+`host-ratings.js`, `host-ratings.css`, `balance.js`, `reveal.js`, `reveal.css`,
+and `scoring.js`. Keep these files, this document
 and the font license with updates. Do not copy the release's `.nojekyll` into
 the blog root, because the blog needs Jekyll.
 
@@ -43,23 +44,45 @@ scores and questions but require rating confirmation before the next shuffle.
 Ratings travel with saved games and backups. Importing a replacement bank or
 restoring the starter bank requires a new rating review.
 
-Shuffle starts from one question per category and point tier (50 total).
+Shuffle starts from one question per category and point tier. For each category,
+the active tier cap is `clamp(ceil(mean team rating), 1, 5)`. Neutral ratings of
+5 and above keep all five tiers. A mean rating of 2 keeps only 10 and 20 points.
+The pool may contain alternative clues for a tier, but a board never contains
+more than one question per category/point pair.
+
 For category c, inverse weight is `1 / (1 + 3 * (maxRating - minRating) / 10)`.
-Candidate transfers and paired swaps preserve ten questions at each point
-tier, at least one per category, and the available pool capacity. A team's
-estimated opportunity is the sum of `points * rating / 10`, divided by total
-points. Selection minimizes the largest difference between teams, then variance,
-then deviation from inverse-weight category shares. The equal-category starting
-allocation remains the fallback: the estimated spread never increases.
+The selector can further trim only the highest remaining tier, never transfer
+slots or add duplicate tiers. It minimizes point-weighted estimated opportunity
+spread, then variance, then deviation from the inverse-weighted category shares.
+The average-adjusted starting board is the fallback, so further trimming never
+worsens that baseline spread. Total questions and total available points may
+decrease; there is no fixed 50-question requirement. New clues are preferred
+within each selected category/tier bucket.
 
-This bounded randomized local search is a heuristic, not a claim of a global
-optimum or calibrated answer probabilities. With equally rated teams, category
-allocation remains equal. With a team stronger everywhere, a residual gap may
-be unavoidable. The Host shows the applied spread and equal-category baseline.
-New clues are preferred within the selected category/tier buckets.
+This greedy search is a heuristic, not a claim of a global optimum or calibrated
+answer probabilities. With a team stronger everywhere, a residual gap can be
+unavoidable. The Host shows the resulting spread and average-adjusted baseline.
+Old version-2 boards are migrated to contiguous, unique tiers, preserving team
+scores and giving completed questions preference when removing duplicates.
 
-Run `node script/test-trivia-balance.cjs` for 150 seeded allocation trials plus
+Run `node script/test-trivia-balance.cjs` for 210 seeded allocation trials plus
 pool-capacity and validation cases. Run `node script/test-trivia-host.cjs` with
 the same Playwright environment as above and `QUIZ_URL` set to the built game
 to exercise slider/radar, team switching, setup gating, shuffling, boards and
 saved-game restoration in the browser.
+
+## Unified reveal and split points
+
+The answer always appears on the left, its image on the right, and clue
+connections in a banner beneath them. The content scrolls within the reveal
+page on smaller screens; no Answer/Image/Clues/Score tabs are used.
+
+Award points opens an inline field for every team. Award partial credit or
+split the question value across teams with up to two decimal places. Cumulative
+awards cannot exceed the question value times its scoring multiplier. Undo
+reverses the latest split transaction as a whole, including after backup/reload.
+
+`node script/test-trivia-scoring.cjs` tests decimal arithmetic, split limits,
+validation, and atomic undo. `node script/test-trivia-reveal.cjs` checks the
+illustrated strips, reveal layout at five viewport sizes, fractional split
+awards, rejection of over-awards, draft preservation during resize, and reload.
