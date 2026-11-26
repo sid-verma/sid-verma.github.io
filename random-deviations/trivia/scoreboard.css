@@ -1,0 +1,17 @@
+/* Same Helvetica, weight and tight tracking as the category titles. */
+.scorestrip .team{padding:1px 6px;gap:6px;overflow:hidden}
+.scorestrip .team-label{flex:1;min-width:0;gap:4px}
+.scorestrip .teamname,.scorestrip .score{
+  font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;
+  font-weight:800;
+  letter-spacing:-.055em;
+  line-height:1;
+  font-size:35px;
+  text-shadow:none;
+}
+.scorestrip .teamname{flex:1;min-width:0;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scorestrip .score{flex:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+.scorestrip .rank{font-size:10px;line-height:1;flex:none}
+.scorestrip .score-change .score{animation:scoreInk .3s ease}
+@keyframes scoreInk{from{opacity:.55}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.scorestrip .score-change .score{animation:none}}
